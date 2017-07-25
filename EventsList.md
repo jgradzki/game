@@ -1,0 +1,11 @@
+# Events
+	Server
+
+* core/Server
+	* SERVER_CONNECT_TO_DB_PRE (`Server`)
+	* SERVER_CONNECT_TO_DB_SUCCESS (`Server`)
+	* SERVER_SETUP_GAME_SUCCESS (`Server`)
+	* SERVER_SETUP_HTTP_SERVER_SUCCESS (`Server`)
+	* SERVER_SETUP_WEBSOCKET_SERVER_SUCCESS (`Server`)
+	* SERVER_START_SERVER_END (`Server`)
+	* SERVER_START_SERVER_FAILED  ({server: `Server`, error: `Error`})

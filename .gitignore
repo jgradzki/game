@@ -1,0 +1,9 @@
+server/
+public/js/main.js
+public/js/index.js
+public/js/register.js
+/server.js
+node_modules/
+*.log
+/build
+/src_server/data/config.js

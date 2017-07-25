@@ -1,0 +1,332 @@
+body {
+	padding: 0px;
+	margin: 0px;
+	background-color: black;
+}
+#main {
+	position: relative;
+	padding: 0px;
+	margin: 0px;
+	top: 0px;
+}
+
+#main .gameContainer {
+	
+	position: relative;
+	padding: 0px;
+	margin: 0px;
+	min-width: 800px;
+	min-height: 600px;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+}
+
+.errorBox {
+	position: absolute;
+	overflow: hidden;
+	width: 300px;
+	height: 100px;
+	border: 1px solid #990000;
+	background-color: #ff1a1a;
+	color: black;
+	z-index: 9999;
+	left: 50%;
+	top: 40%;
+	transform: translate(-50%, -50%);
+}
+
+.errorBoxTitle {
+	position: absolute;
+	width: 100%;
+	top: 0px;
+	padding-left: 15px;
+	font-size: 16px;
+	font-weight: 600;
+	border-bottom: 1px dashed #990000;
+}
+
+.errorBoxMsg {
+	position: absolute;
+	width: 100%;
+	top: 20px;
+	padding-left: 5px;
+}
+
+.gameContainer .topBar {
+	padding: 0px;
+	margin: 0px;
+	position: absolute;
+	left:0px;
+	top:0px;
+	width:100%;
+	height: 25px;
+	background-color: black;
+	background-image: url("../img/bgtop2.png");
+	color: 	#F5F5F5;
+	font-size: 16px;
+	padding-top: 10px;
+	border-top-style: hidden;
+    border-right-style: hidden;
+    border-left-style: hidden;
+    border-bottom: 10px solid transparent;
+    -webkit-border-image: url("../img/border1.jpg") 30 round; /* Safari 3.1-5 */
+    -o-border-image: url("../img/border1.jpg") 30 round; /* Opera 11-12.1 */
+    border-image: url("../img/border1.jpg") 30 round;
+   
+}
+
+	.gameContainer .topBar .login{
+		position: absolute;
+		left: 0px;
+	}
+
+	.gameContainer .topBar a.logout {
+		text-decoration: none;
+		position: absolute;
+		right: 10px;
+		color: white;
+	}
+
+	.gameContainer .mapContainer {
+		position: absolute;
+		overflow: hidden;
+		left: 50%;
+		top: 100px;
+		transform: translate(-50%, 0);
+	}
+
+	.gameContainer .mapContainer .map{
+		position: absolute;
+	}
+
+	.gameContainer .map .mapImage {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+	}
+
+	.gameContainer .map .mapElement {
+		position: absolute;
+	}
+
+.loading {
+	position: absolute;
+	width: 100px;
+	height: 100px;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.window {
+	position: absolute;
+	display: flex; 
+	flex-direction: column;
+	overflow: hidden;
+	z-index: 10;
+}
+
+.windowTitle {
+	height: 20px;
+	width: 100%;
+}
+
+.windowContent {
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	flex: 1;
+}
+
+.locationEnterButton{
+	position: absolute;
+	top: 50px;
+	left: 150px;
+	z-index: 5;
+}
+
+.locationWindow {
+	border: 5px solid darkgrey;
+	border-radius: 5px;
+	background-color: black;
+}
+
+.locationWindowTile {
+	height: 15px;
+	background-color: grey;
+}
+
+.locationWindowContent {
+	background-color: black;
+}
+
+.locationTitle {
+
+}
+
+.locationContainer {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: url("../img/dbg.jpg") no-repeat center center; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+
+.dungeonMap {
+	position: absolute;
+	top: 30px;
+	left: 50%;
+	transform: translate(-50%, 0);
+	width: 300px;
+	height: 300px;
+	overflow: hidden;
+	border: 1px white solid;
+	background-color: black;
+}
+
+
+.room {
+	background-color: black;
+	position: absolute;
+	width: 49px;
+	height: 49px;
+	border: 1px white solid;
+	/* transform: translate(-50%, -50%); */
+}
+
+.room.click:hover {
+	background-color: #262626;
+}
+.room.now {
+	background-color: #4d4d4d;
+	
+}
+
+.room.empty {
+	border-color: red;
+}
+
+.doorsUp {
+	background-color: black;
+	position: absolute;
+	width: 20px;
+	height: 1px;
+	top: -1px;
+	left: 50%;
+	transform: translate(-50%, 0);
+	z-index: 5;
+}
+
+.doorsDown {
+	background-color: black;
+	position: absolute;
+	width: 20px;
+	height: 1px;
+	top: 100%;
+	left: 50%;
+	transform: translate(-50%, 0);
+	z-index: 5;
+}
+
+.doorsLeft {
+	background-color: black;
+	position: absolute;
+	height: 20px;
+	width: 1px;
+	top: 50%;
+	left: -1px;
+	transform: translate(0, -50%);
+	z-index: 5;
+}
+
+.doorsRight {
+	background-color: black;
+	position: absolute;
+	height: 20px;
+	width: 1px;
+	top: 50%;
+	left: 100%;
+	transform: translate(0, -50%);
+	z-index: 5;
+}
+
+
+
+
+.inventory {
+	background-color: #5e4545;
+	border: 2px solid #423434;
+	position: absolute;
+	width: 400px;
+	height: 200px;
+}
+
+.inventoryTitle {
+	font-weight: bold;
+	border-bottom: 1px dashed #423434;
+}
+
+.inventoryContent {
+	position: relative;
+	overflow: auto;
+	display: flex;
+	flex-wrap: wrap;
+	height: 100%;
+	width: 100%;
+	padding: 2px;
+	margin-left: -4px;
+}
+
+.inventoryEmptySlot {
+	width: 38px;
+	height: 38px;
+	border: 1px solid black;
+	margin: 2px;
+}
+
+.inventoryItem {
+	position: relative;
+	width: 38px;
+	height: 38px;
+	border: 1px solid black;
+	background-color: #664c4c;
+	margin: 2px;	
+	overflow:hidden;
+}
+
+
+.inventoryItem:hover {
+	background-color: #423030;
+}
+
+.inventoryItem img {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 40px;
+	height: 40px;
+	margin: -1px;
+	border: 0;
+}
+
+.inventoryItem span {
+	z-index: 2;
+	font-size: 15px;
+	color: white;
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
+}
+
+.tooltip {
+	display: none;
+}
+
+
+
+
