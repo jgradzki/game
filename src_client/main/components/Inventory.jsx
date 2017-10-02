@@ -12,15 +12,15 @@ class Inventory extends Component {
 		if (this.props.items && Object.prototype.toString.call( this.props.items ) === '[object Array]' ) {
 			//this.props.items.forEach((item) => {
 			for (let i = 0; i < this.props.items.length; i++) {
-				slots.push(<div className="inventoryItem" onClick={()=>{
-					this.props.onClick(i); 
+				slots.push(<div key={i} className="inventoryItem" onClick={()=>{
+					this.props.onClick(i);
 				}}><span>{this.props.items[i].count}</span><img src="" alt={this.props.items[i].fullName} title={`${this.props.items[i].fullName}`} /></div>);
 				used++;
 			}
 		}
 
 		for (used; used<this.props.slots; used++) {
-			slots.push(<div className="inventoryEmptySlot"/>);
+			slots.push(<div key={used} className="inventoryEmptySlot"/>);
 		}
 		return slots;
 	}
@@ -48,6 +48,7 @@ Inventory.propTypes = {
 	centerY: PropTypes.bool,
 	name: PropTypes.string.isRequired,
 	slots: PropTypes.number.isRequired,
+	onClick: PropTypes.func.isRequired,
 	items: PropTypes.arrayOf(PropTypes.shape({
 		name: PropTypes.string.isRequired,
 		fullName: PropTypes.string.isRequired,

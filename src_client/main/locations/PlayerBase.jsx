@@ -1,24 +1,8 @@
-import React from 'react';
-import { store } from '../libs/store';
+import React, { Component } from 'react';
 
-class PlayerBase extends Location {
-	constructor() {
-		super();
-    	if (new.target === Location) {
-      		throw new TypeError('Cannot construct PlayerBase class');
-    	}
-	}
-
-	static render() {
-    	return <div>HOME</div>;
-	}
-
-	static onEnter(data) {
-
-	}
-
-	static onExit() {
-    	
+class PlayerBase extends Component {
+	render() {
+		return <div>HOME</div>;
 	}
 }
 

@@ -1,7 +1,14 @@
-const setLocationType = (type) => {
+const setLocationType = type => {
 	return {
 		type: 'setLocationType',
 		locationType: type
+	};
+};
+
+const setLocationInitialData = data => {
+	return {
+		type: 'setLocationInitialData',
+		data
 	};
 };
 
@@ -30,6 +37,7 @@ const changePlayerPosition = (position) => {
 
 module.exports = {
 	setLocationType,
+	setLocationInitialData,
 	setLocationMap,
 	setPlayerPosition,
 	changePlayerPosition

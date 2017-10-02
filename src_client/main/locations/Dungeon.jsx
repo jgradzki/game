@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { log } from '../libs/debug';
 import { setLocationMap, setPlayerPosition } from '../actions/location';
 import { setPlayerInventory } from '../actions/player';
-import playerSelector from '../selectors/playerSelector';
-import Location from './Location.jsx';
+import { getPlayerInventory } from '../selectors/playerSelector';
 import makeRequest from '../libs/request';
 
 import DungeonMap from '../components/DungeonMap.jsx';
 import Inventory from '../components/Inventory.jsx';
 
-class Dungeon extends Location {
+class Dungeon extends Component {
+	constructor(props) {
+		super(props);
+	}
+
+	componentWillMount() {
+		this._onEnter(this.props.location.initialData);
+	}
+
 	render() {
-		let items = Dungeon._getRoomLoot();
+		let items = this._getRoomLoot();
 
 		if (!items) {
 			items = [];
@@ -26,11 +34,11 @@ class Dungeon extends Location {
 		);
 	}
 
-	static onEnter(data) {
+	_onEnter(data) {
 		if (!data.rooms || typeof(data.rooms) !== 'object' || !data.position) {
-			throw { 
+			throw {
 				code: 3011,
-				msg: ['wrong rooms data: ', data] 
+				msg: ['wrong rooms data: ', data]
 			};
 		} else {
 			this.props.setLocationMap(data.rooms);
@@ -38,26 +46,26 @@ class Dungeon extends Location {
 		}
 	}
 
-	static onExit() {
+	_onExit() {
 
 	}
 
-	static _getPlayerPosition() {
+	_getPlayerPosition() {
 		return this.props.location.playerPosition;
 	}
 
-	static _getRooms() {
+	_getRooms() {
 		return this.props.location.map;
 	}
 
-	static _getRoomLoot() {
-		let playerPosition = Dungeon._getPlayerPosition();
+	_getRoomLoot() {
+		let playerPosition = this._getPlayerPosition();
 
-		return Dungeon._getRooms()[playerPosition.y][playerPosition.x].items;
+		return this._getRooms() && this._getRooms()[playerPosition.y][playerPosition.x].items;
 	}
 
 	_onLootClick(slot) {
-		let items = Dungeon._getRoomLoot();
+		let items = this._getRoomLoot();
 
 		if (items) {
 			if (items[slot]) {
@@ -107,16 +115,26 @@ class Dungeon extends Location {
 			}
 		}
 	}
+
+	static propTypes = {
+		player: PropTypes.object,
+		location: PropTypes.object,
+		setLocationMap: PropTypes.func,
+		setPlayerPosition: PropTypes.func,
+		setPlayerInventory: PropTypes.func,
+	};
 }
 
-let mapStateToProps  = (state) => {
+let mapStateToProps  = state => {
 	return {
 		location: state.location,
-		player: playerSelector(state)
+		player: {
+			...getPlayerInventory(state)
+		}
 	};
 };
 
-let mapDispatchToProps = (dispatch) => {
+let mapDispatchToProps = dispatch => {
 	return {
 		setLocationMap(rooms) {
 			dispatch(setLocationMap(rooms));

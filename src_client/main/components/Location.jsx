@@ -4,37 +4,21 @@ import { connect } from 'react-redux';
 import { log } from '../libs/debug';
 import Window from './Window.jsx';
 import LocationManager from '../libs/locationManager';
-import locations from '../locations/locations.jsx';
+import locations from '../locations';
 
 class Location extends Component {
-	constructor(props) {
-		super(props);		
-	}
-
-	_routeLocation() {
-		let Location = locations[this.props.location.locationType];
-
-		if (location) {
-			return <div><Location /></div>;
-		} else {
-			let DefaultLoc = locations['default'];
-
-			return <div> <DefaultLoc /> </div>;
-		}
-	}
-
 	render() {
 		log('render', 'Location render');
 		if (this.props.player.inLocation) {
 			return (
-				<Window 
-					wcn="locationWindow" 
-					tcn="locationWindowTile" 
-					ccn="locationWindowContent" 
+				<Window
+					wcn="locationWindow"
+					tcn="locationWindowTile"
+					ccn="locationWindowContent"
 					title={[
-						'Location(', this.props.location.locationType, ') | [', 
+						'Location(', this.props.location.locationType, ') | [',
 						<a onClick={()=>LocationManager.requestLocationExit()} > Wyjdź </a>, ']'
-					]}  
+					]}
 					style={{
 						left: '50%',
 						top: '50%',
@@ -44,30 +28,48 @@ class Location extends Component {
 					}}
 				>
 					<div className="locationContainer">
-						{ this._routeLocation() }
+						{ this._getLocation() }
 					</div>
 				</Window>
 			);
 		} else {
 			return null;
-		}  
+		}
 	}
+
+	_getLocation() {
+		const Location = locations[this.props.location.locationType];
+
+		if (location) {
+			return <div>
+				<Location />
+			</div>;
+		} else {
+			const DefaultLoc = locations['default'];
+
+			return <div>
+				<DefaultLoc />
+			</div>;
+		}
+	}
+
+	static propTypes = {
+		player: PropTypes.object,
+		location: PropTypes.object
+	};
 }
 
-Location.propTypes = {
-	player: PropTypes.object,
-	location: PropTypes.object
-};
-
-let mapStateToProps  = (state) => {
+const mapStateToProps  = state => {
 	return {
-		player: state.player, 
+		player: state.player,
 		location: state.location
 	};
 };
 
-let mapDispatchToProps = (dispatch) => {
-	return { };
+const mapDispatchToProps = dispatch => {
+	return {
+
+	};
 };
 
 

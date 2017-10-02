@@ -15,7 +15,6 @@ import { addMapElement } from './actions/map.js';
 import config from './config.js';
 import { setError } from './actions/error';
 import LocationManager from './libs/locationManager';
-//import request from './libs/request';
 
 Debug.setDebug(true, true);
 Debug.register(['init', 'error', 'newState', 'render', 'map', 'LocationManager', 'dungeonMap']);
@@ -85,7 +84,7 @@ axios.post('game/request', { type: 'init' })
 				</Provider>,
 				document.getElementById('main'),
 				() => resolve()
-			);	
+			);
 		});
 	})
 	.then(() => axios.post('game/request', { type: 'getMapElements' }))

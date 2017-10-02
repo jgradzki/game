@@ -1,65 +1,57 @@
 import { store } from './store';
-import locationAction from '../actions/location';
+import axios from 'axios';
+import locationActions from '../actions/location';
 import { setPlayerInLocation } from '../actions/player';
-import locations from '../locations/locations.jsx';
 import { setError } from '../actions/error';
 import { log } from '../libs/debug';
 
 class LocationManager {
 
-	static get location() {
-		if (!locations[store.getState().location.locationType]) {
-			return locations.default;
-		} else {
-			return locations[store.getState().location.locationType];
-		}
-	}
-
 	static enterLocation(type, data = {}) {
 		log('LocationManager', 'EnterLocation');
 
-		if (locations[type]) {
-			locations[type].onEnter(data);
-		}
-
-		store.dispatch(locationAction.setLocationType(type));
+		store.dispatch(locationActions.setLocationType(type));
+		store.dispatch(locationActions.setLocationInitialData(data));
 		store.dispatch(setPlayerInLocation(true));
 	}
 
 	static exitLocation() {
 		log('LocationManager', 'ExitLocation');
-		LocationManager.location.onExit();
+
 		store.dispatch(setPlayerInLocation(false));
-		store.dispatch(locationAction.setLocationType(null));
+		store.dispatch(locationActions.setLocationType(null));
 	}
 
 	static requestLocationEnter(id) {
-		$.post('/game/request', { type: 'enterLocation',
-			id }, (data) => {
-			try {
-				LocationManager._postRespond(data);
-			} catch (e) {
-				log('LocationManager', e);
-				store.dispatch(setError(
-					'Blad podczas przetwarzania rzadania(' + (e.code ? e.code : e) + ')',
-					e.msg
-				));
-			}
-		} );
+		axios.post('game/request', { type: 'enterLocation', id })
+			.then(response => response.data)
+			.then(data => {
+				try {
+					LocationManager._postRespond(data);
+				} catch (e) {
+					log('LocationManager', e);
+					store.dispatch(setError(
+						'Blad podczas przetwarzania rzadania(' + (e.code ? e.code : e) + ')',
+						e.msg
+					));
+				}
+			} );
 	}
 
 	static requestLocationExit() {
-		$.post('/game/request', { type: 'exitLocation' }, (data) =>{
-			try {
-				LocationManager._postRespondExit(data);
-			} catch (e) {
-				log('LocationManager', e);
-				store.dispatch(setError(
-					'Blad podczas przetwarzania rzadania(' + (e.code ? e.code : e) + ')',
-					e.msg
-				));
-			}
-		} );
+		axios.post('game/request', { type: 'exitLocation' })
+			.then(response => response.data)
+			.then(data => {
+				try {
+					LocationManager._postRespondExit(data);
+				} catch (e) {
+					log('LocationManager', e);
+					store.dispatch(setError(
+						'Blad podczas przetwarzania rzadania(' + (e.code ? e.code : e) + ')',
+						e.msg
+					));
+				}
+			} );
 	}
 
 	static _postRespond(data) {
@@ -75,9 +67,9 @@ class LocationManager {
 			} else {
 				if (data.success) {
 					if (!data.type) {
-						throw { 
+						throw {
 							code: 3003,
-							msg: 'No type.' 
+							msg: 'No type.'
 						};
 					}
 
@@ -86,7 +78,7 @@ class LocationManager {
 				} else {
 					throw {
 						code: 3004,
-						msg: 'wrong data: ' 
+						msg: 'wrong data: '
 					};
 				}
 			}

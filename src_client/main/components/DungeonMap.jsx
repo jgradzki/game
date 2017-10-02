@@ -8,8 +8,8 @@ import { log } from '../libs/debug';
 
 
 class DungeonMap extends Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 		this.renderedRooms = [];
 		this.roomSize = 50; //TODO
 	}
@@ -61,9 +61,9 @@ class DungeonMap extends Component {
 						}
 
 						if (data.success) {
-							this.props.changePlayerPosition({ 
+							this.props.changePlayerPosition({
 								x: data.position.x,
-								y: data.position.y 
+								y: data.position.y
 							});
 						}
 					})
