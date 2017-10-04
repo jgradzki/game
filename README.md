@@ -34,3 +34,28 @@ db: {
 ```
 > npm start
 ```
+# Development tools
+
+## Live transpilation
+
+```
+> gulp
+```
+
+## Server
+
+```
+> gulp server
+```
+
+## Auto eslint fix
+
+```
+> gulp eslint
+```
+
+## Cleaning build folder
+
+```
+> gulp clean-build
+```
