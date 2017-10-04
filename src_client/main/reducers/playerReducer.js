@@ -1,36 +1,35 @@
+import actionTypes from '../actions/actionTypes';
+
 const playerReducer = (state = 0, action) => {
 	switch (action.type) {
-	case 'setPlayerInLocation':
-		return {
-			...state,
-			inLocation: action.inLocation
-		};
-	case 'setPlayerInventory':
-		return {
-			...state,
-			inventory: action.inventory
-		};
-		break;
-	case 'addItemToInventory':
-		return {
-			...state,
-			inventory: [
-				...state.inventory,
-				action.item
-			]
-		};
-		break;
-	case 'removeItemFromInventory':
-		return {
-			...state,
-			inventory: [
-				...state.inventory.slice(0, action.slot),
-				...state.inventory.slice(action.slot + 1)
-			]
-		};
-		break;
-	default:
-		return state;
+		case actionTypes.SET_PLAYER_IN_LOCATION:
+			return {
+				...state,
+				inLocation: action.inLocation
+			};
+		case actionTypes.SET_PLAYER_INVENTORY:
+			return {
+				...state,
+				inventory: action.inventory
+			};
+		case actionTypes.ADD_ITEM_TO_PLAYER_INVENTORY:
+			return {
+				...state,
+				inventory: [
+					...state.inventory,
+					action.item
+				]
+			};
+		case actionTypes.REMOVE_ITEM_FROM_PLAYER_INVENTORY:
+			return {
+				...state,
+				inventory: [
+					...state.inventory.slice(0, action.slot),
+					...state.inventory.slice(action.slot + 1)
+				]
+			};
+		default:
+			return state;
 	}
 };
 

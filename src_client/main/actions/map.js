@@ -1,49 +1,40 @@
-export const changePosition = (x, y, ix, iy) => {
+import actionTypes from './actionTypes';
 
-	return {
-		type: 'changePosition',
-		x,
-		y,
-		initial: { x: ix,
-			y: iy }
-	};
-};
+export const changePosition = (x, y, ix, iy) => ({
+	type: actionTypes.MAP_CHANGE_POSITION,
+	x,
+	y,
+	initial: {
+		x: ix,
+		y: iy
+	}
+});
 
-export const startDrag = (x, y) => {
-	return {
-		type: 'startDrag',
-		x,
-		y
-	};
-};
+export const startDrag = (x, y) => ({
+	type: actionTypes.MAP_START_DRAG,
+	x,
+	y
+});
 
-export const stopDrag = () => {
-	return {
-		type: 'stopDrag'
-	};
-};
+export const stopDrag = () => ({
+	type: actionTypes.MAP_STOP_DRAG
+});
 
-export const addMapElement = (id, icon, position, size) => {
-	return {
-		type: 'addMapElement',
-		id,
-		position,
-		size,
-		icon
-	};
-};
+export const addMapElement = (id, icon, position, size) => ({
+	type: actionTypes.MAP_ADD_ELEMENT,
+	id,
+	position,
+	size,
+	icon
+});
 
-export const changeDestination = (position, speed = 0) => {
-	return {
-		type: 'changeDestination',
-		position,
-		movementSpeed: speed
-	};
-};
+export const changeDestination = (position, speed = 0) => ({
+	type: actionTypes.MAP_CHANGE_DESTINATION,
+	position,
+	movementSpeed: speed
+});
 
-export const changePlayerPosition = (position) => {
-	return {
-		type: 'changePlayerPosition',
-		newPosition: position
-	};
-};
+export const changePlayerPosition = position => ({
+	type: actionTypes.MAP_CHANGE_PLAYER_POSITION,
+	newPosition: position
+});

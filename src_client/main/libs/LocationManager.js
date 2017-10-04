@@ -1,9 +1,10 @@
 import { store } from './store';
 import axios from 'axios';
-import locationActions from '../actions/location';
+import * as locationActions from '../actions/location';
 import { setPlayerInLocation } from '../actions/player';
 import { setError } from '../actions/error';
 import { log } from '../libs/debug';
+
 
 class LocationManager {
 

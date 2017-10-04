@@ -3,15 +3,81 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import DungeonRoom from './DungeonRoom.jsx';
-import { changePlayerPosition } from '../actions/location';
+import { setPlayerPosition } from '../actions/location';
 import { log } from '../libs/debug';
 
 
 class DungeonMap extends Component {
 	constructor(props) {
 		super(props);
-		this.renderedRooms = [];
 		this.roomSize = 50; //TODO
+	}
+
+	render() {
+		log('render', 'DungeonMap render');
+
+		let left = 125 - ( (this.props.location.playerPosition.x ) * ( this.roomSize  ) );
+		let top = 30 + ( ( this.props.location.playerPosition.y + 1 ) * this.roomSize );
+
+		return (
+			<div className="dungeonMap">
+				<div style={{
+					position: 'absolute',
+					botton: '0px',
+					bottom: `${top}px`,
+					left: `${left}px`
+				}}>
+					{ this._renderRooms() }
+				</div>
+			</div>
+		);
+	}
+
+	_renderRooms() {
+		let rooms = this.props.location.map;
+		let array = [];
+
+		for (let y = 0; y < rooms.length; y++) {
+			for (let x = 0; x < rooms[y].length; x++) {
+				if (rooms[y][x].is) {
+					let position = {
+						left: ( this.roomSize*(x) ),
+						top: ( this.roomSize*(y) )
+					};
+
+					let os = '';
+
+					if (this.props.location.playerPosition.x === x && this.props.location.playerPosition.y === y) {
+						os += ' now';
+					}
+
+					if (this._canMove(x, y)) {
+						os += ' click';
+					}
+
+					//if(!rooms[y][x].is){
+					//os += ' empty'
+					//}
+					array.push(
+						<DungeonRoom
+							key={y+''+x}
+							overStyle={os}
+							onClick={() => this._roomClickHandler(x, y)}
+							pos={{
+								left: position.left,
+								top: position.top
+							}}
+							left={(rooms[y][x].doors.left ? 'true' : 'false')}
+							right={(rooms[y][x].doors.right ? 'true' : 'false')}
+							up={(rooms[y][x].doors.up ? 'true' : 'false')}
+							down={(rooms[y][x].doors.down ? 'true' : 'false')}
+						/>
+					);
+				}
+			}
+		}
+
+		return array;
 	}
 
 	_canMove(x, y) {
@@ -45,6 +111,7 @@ class DungeonMap extends Component {
 
 	_roomClickHandler(x, y) {
 		log('dungeonMap', 'roomClick: ', x, y);
+
 		if (typeof(x)===typeof(1) && typeof(y)===typeof(1)) {
 			if (this._canMove(x, y)) {
 				axios.post('game/request',
@@ -68,87 +135,27 @@ class DungeonMap extends Component {
 						}
 					})
 					.catch(error => {
-						log('errors', error);
+						log('error', error);
 					});
 			}
 		}
 	}
 
-	componentWillUpdate() {
-		this.renderedRooms = [];
-	}
-
-	_renderRooms() {
-		let rooms = this.props.location.map;
-
-		for (let y = 0; y < rooms.length; y++) {
-			for (let x = 0; x < rooms[y].length; x++) {
-				if (rooms[y][x].is) {
-					let position = {
-						left: ( this.roomSize*(x) ),
-						top: ( this.roomSize*(y) )
-					};
-
-					let os = '';
-
-					if (this.props.location.playerPosition.x === x && this.props.location.playerPosition.y === y) {
-						os += ' now';
-					}
-
-					if (this._canMove(x, y)) {
-						os += ' click';
-					}
-
-					//if(!rooms[y][x].is){
-					//os += ' empty'
-					//}
-					this.renderedRooms.push(
-						<DungeonRoom key={y+''+x} overStyle={os} onClick={() => this._roomClickHandler(x, y)} pos={{left: position.left,
-							top: position.top }} left={(rooms[y][x].doors.left ? 'true' : 'false')} right={(rooms[y][x].doors.right ? 'true' : 'false')} up={(rooms[y][x].doors.up ? 'true' : 'false')} down={(rooms[y][x].doors.down ? 'true' : 'false')}/>
-					);
-				}
-			}
-		}
-	}
-
-	render() {
-		log('render', 'DungeonMap render');
-		//this.renderRoom({left: 450, top: 200},this.props.dungeon.map.old)
-		this._renderRooms();
-		let left = 125 - ( (this.props.location.playerPosition.x ) * ( this.roomSize  ) );
-		let top = 30 + ( ( this.props.location.playerPosition.y + 1 ) * this.roomSize );
-
-		return (
-			<div className="dungeonMap">
-				<div style={{
-					position: 'absolute',
-					botton: '0px',
-					bottom: `${top}px`,
-					left: `${left}px`
-				}}>
-					{ this.renderedRooms }
-				</div>
-			</div>
-		);
+	static propTypes = {
+		location: PropTypes.object,
+		changePlayerPosition: PropTypes.func
 	}
 }
 
-DungeonMap.propTypes = {
-	location: PropTypes.object
-};
 
-let mapStateToProps  = (state) => {
-	return {
-		location: state.location
-	};
-};
+let mapStateToProps  = state => ({
+	location: state.location
+});
 
-let mapDispatchToProps = (dispatch) => {
-	return {
-		changePlayerPosition(position) {
-			dispatch(changePlayerPosition(position));
-		}
-	};
-};
+let mapDispatchToProps = dispatch => ({
+	changePlayerPosition(position) {
+		dispatch(setPlayerPosition(position));
+	}
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(DungeonMap);

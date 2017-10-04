@@ -1,44 +1,24 @@
-const setLocationType = type => {
-	return {
-		type: 'setLocationType',
-		locationType: type
-	};
-};
+import actionTypes from './actionTypes';
 
-const setLocationInitialData = data => {
-	return {
-		type: 'setLocationInitialData',
-		data
-	};
-};
+export const setLocationType = type => ({
+	type: actionTypes.LOCATION_SET_TYPE,
+	locationType: type
+});
+
+export const setLocationInitialData = data => ({
+	type: actionTypes.LOCATION_SET_INITIAL_DATA,
+	data
+});
 
 /* DUNGEON_MAP */
-const setLocationMap = (map) => {
-	return {
-		type: 'LocationSetMap',
-		map
-	};
-};
+export const setLocationMap = map => ({
+	type: actionTypes.LOCATION_SET_MAP,
+	map
+});
 
-const setPlayerPosition = (position) => {
-	return {
-		type: 'LocationSetPlayerPosition',
-		position
-	};
-};
+export const setPlayerPosition = position => ({
+	type: actionTypes.LOCATION_SET_PLAYER_POSITION,
+	position
+});
 
-const changePlayerPosition = (position) => {
-	return {
-		type: 'LocationSetPlayerPosition',
-		position
-	};
-};
 /* END DUNGEON_MAP */
-
-module.exports = {
-	setLocationType,
-	setLocationInitialData,
-	setLocationMap,
-	setPlayerPosition,
-	changePlayerPosition
-};

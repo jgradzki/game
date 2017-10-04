@@ -1,6 +1,8 @@
+import actionTypes from './actionTypes';
+
 export const setError = (msg, details=false, critical = false) => {
 	return {
-		type: 'setError',
+		type: actionTypes.ERROR_SET,
 		msg,
 		details,
 		critical
@@ -9,6 +11,6 @@ export const setError = (msg, details=false, critical = false) => {
 
 export const clearError = () => {
 	return {
-		type: 'clearError'
+		type: actionTypes.ERROR_CLEAR
 	};
 };

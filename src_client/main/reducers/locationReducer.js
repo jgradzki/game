@@ -1,24 +1,25 @@
+import actionTypes from '../actions/actionTypes';
 import reducers from './locations/reducers';
 
 const locationReducer = (state = {}, action) => {
 	switch (action.type) {
-		case 'setLocationType':
+		case actionTypes.LOCATION_SET_TYPE:
 			return {
 				...state,
 				locationType: action.locationType
 			};
-		case 'setLocationInitialData':
+		case actionTypes.LOCATION_SET_INITIAL_DATA:
 			return {
 				...state,
 				initialData: action.data
 			};
 		/* DUNGEON_MAP */
-		case 'LocationSetMap':
+		case actionTypes.LOCATION_SET_MAP:
 			return {
 				...state,
 				map: action.map
 			};
-		case 'LocationSetPlayerPosition':
+		case actionTypes.LOCATION_SET_PLAYER_POSITION:
 			return {
 				...state,
 				playerPosition: action.position

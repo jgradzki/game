@@ -1,37 +1,27 @@
-const setPlayerInLocation = (is) => {
-	if (is !== false && is !== true) {
-		is = false;
+import actionTypes from './actionTypes';
+
+export const setPlayerInLocation = inLocation => {
+	if (inLocation !== false && inLocation !== true) {
+		inLocation = false;
 	}
+
 	return {
-		type: 'setPlayerInLocation',
-		inLocation: is
+		type: actionTypes.SET_PLAYER_IN_LOCATION,
+		inLocation
 	};
 };
 
-const setPlayerInventory = (inventory) => {
-	return {
-		type: 'setPlayerInventory',
-		inventory
-	};
-};
+export const setPlayerInventory = inventory => ({
+	type: actionTypes.SET_PLAYER_INVENTORY,
+	inventory
+});
 
-const addItemToInventory = (item) => {
-	return {
-		type: 'addItemToInventory',
-		item
-	};
-};
+export const addItemToInventory = item => ({
+	type: actionTypes.ADD_ITEM_TO_PLAYER_INVENTORY,
+	item
+});
 
-const removeItemFromInventory = (slot) => {
-	return {
-		type: 'removeItemFromInventory',
-		slot
-	};
-};
-
-module.exports = {
-	setPlayerInLocation,
-	setPlayerInventory,
-	addItemToInventory,
-	removeItemFromInventory
-};
+export const removeItemFromInventory = slot => ({
+	type: actionTypes.REMOVE_ITEM_FROM_PLAYER_INVENTORY,
+	slot
+});
