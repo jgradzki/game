@@ -81,10 +81,10 @@ module.exports = (server) => {
 			if ((newPos.x === target.x) && (newPos.y === target.y)) {
 				player.mapTarget = undefined;
 
-				player.socket.emit('action', {
+				/*player.socket.emit('action', {
 					type: 'appAction/MAP_CHANGE_DESTINATION',
 					position: undefined
-				});
+				});*/
 				player.socket.emit('action', {
 					type: 'appAction/MAP_CHANGE_PLAYER_POSITION',
 					newPosition: newPos

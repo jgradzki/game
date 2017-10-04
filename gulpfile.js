@@ -4,16 +4,21 @@ const fs = require('fs');
 const path = require('path');
 const del = require('del');
 const merge = require('merge-stream');
+const webp = require('webpack');
 const webpack = require('webpack-stream');
 const babel = require('gulp-babel');
-const minify = require('gulp-minify');
+const uglify = require('gulp-uglify');
 const nodemon = require('gulp-nodemon');
 
-const clientSrc = 'src_client';
-const serverSrc = 'src_server';
+const clientSrc = './src_client';
+const serverSrc = './src_server';
 const publicSrc = 'public';
-const dest = 'build';
+const dest = './build';
 const serverResources = 'server_resources';
+
+if (!process.env.NODE_ENV) {
+	process.env.NODE_ENV = 'development';
+}
 
 function getFolders(dir) {
 	return fs.readdirSync(dir)
@@ -27,14 +32,12 @@ function handleError(err) {
 	this.emit('end');
 }
 
-
 gulp.task('clean-build', () => {
 	del(dest);
 });
 
 gulp.task('build-client', () => {
 	const folders = getFolders(clientSrc);
-
 	return merge(
 		gulp.src(path.resolve(publicSrc, '*/**/*.*'))
 			.pipe(gulp.dest(path.resolve(dest, publicSrc))),
@@ -50,6 +53,13 @@ gulp.task('build-client', () => {
 			return gulp.src(path.join(clientSrc, element, `${element}.jsx`))
 				.on('error', handleError)
 				.pipe(webpack({
+					plugins: [
+						new webp.DefinePlugin({
+							'process.env': {
+								'NODE_ENV': `"${process.env.NODE_ENV}"`
+							}
+						})
+					],
 					module: {
 						loaders: [
 							{
@@ -89,11 +99,10 @@ gulp.task('build-server', () => {
 		.on('error', handleError);
 });
 
-
 gulp.task('build', ['build-server', 'build-client'], () => {
-	return gulp.src(path.resolve(dest, 'public', '*/**/*.js'))
+	return gulp.src([path.resolve(dest, 'public', '*/**/*.js'), `!${path.resolve(dest, 'public', '*/**/*.min.js')}`])
 		.on('error', handleError)
-		.pipe(minify())
+		.pipe(uglify())
 		.on('error', handleError)
 		.pipe(gulp.dest(path.resolve(dest, 'public')))
 		.on('error', handleError);

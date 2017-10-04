@@ -16,7 +16,9 @@ import config from './config.js';
 import { setError } from './actions/error';
 import LocationManager from './libs/locationManager';
 
-Debug.setDebug(true, true);
+if (process.env.NODE_ENV !== 'production') {
+	Debug.setDebug(true, true);
+}
 Debug.register(['init', 'error', 'newState', 'render', 'map', 'LocationManager', 'dungeonMap']);
 Debug.enable('init', 'error', 'LocationManager');
 

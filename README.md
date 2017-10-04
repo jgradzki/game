@@ -26,11 +26,11 @@ db: {
 # Building
 
 ```
-gulp build
+> npm run build
 ```
 
 # Run
 
 ```
-npm start
+> npm start
 ```

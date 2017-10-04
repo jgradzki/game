@@ -19,7 +19,6 @@ import { playerMoveTick } from './server/intervals/movePlayerOnMap'
 import { log, initLogger } from './logger';
 import Server from './core/Server.js';
 
-
 initLogger();
 
 log('info', 'Initializing...');
@@ -72,9 +71,9 @@ server.eventEmitter.on('SERVER_START_SERVER_END', server => {
 		{
 			name: 'Admin',
 			password: '123456',
-			mapPosition: { 
+			mapPosition: {
 				x: 50,
-				y: 50 
+				y: 50
 			}
 		}
 	})
@@ -128,7 +127,7 @@ server.eventEmitter.on('SERVER_START_SERVER_END', server => {
 			log('info', `Players in db: ${count}.`);
 
 			return server.db.getModel('MapElement').count();
-		})	
+		})
 		.then(count => {
 			log('info', `Map elements in db: ${count}.`);
 
