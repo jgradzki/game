@@ -5,16 +5,48 @@ import Window from './Window.jsx';
 
 class Inventory extends Component {
 
-	slots() {
+	render() {
+		log('render', 'Inventory render');
+		return (
+			<Window
+				wcn="inventory"
+				tcn="inventoryTitle"
+				ccn="inventoryContent"
+				title={this.props.name}
+				style={{
+					width: this.props.width+'px',
+					height: this.props.height+'px',
+					top: this.props.top+'px',
+					left: this.props.left+'px'
+				}}
+			>
+				{this._getSlots()}
+			</Window>
+
+		);
+	}
+
+	_getSlots() {
 		let slots = [];
 		let used = 0;
 
 		if (this.props.items && Object.prototype.toString.call( this.props.items ) === '[object Array]' ) {
 			//this.props.items.forEach((item) => {
 			for (let i = 0; i < this.props.items.length; i++) {
-				slots.push(<div key={i} className="inventoryItem" onClick={()=>{
-					this.props.onClick(i);
-				}}><span>{this.props.items[i].count}</span><img src="" alt={this.props.items[i].fullName} title={`${this.props.items[i].fullName}`} /></div>);
+				slots.push(
+					<div
+						key={i}
+						className="inventoryItem"
+						onClick={()=>this.props.onClick(i)}
+					>
+						<span>{this.props.items[i].count}</span>
+						<img
+							src=""
+							alt={this.props.items[i].fullName}
+							title={`${this.props.items[i].fullName}`}
+						/>
+					</div>
+				);
 				used++;
 			}
 		}
@@ -22,43 +54,30 @@ class Inventory extends Component {
 		for (used; used<this.props.slots; used++) {
 			slots.push(<div key={used} className="inventoryEmptySlot"/>);
 		}
+
 		return slots;
 	}
 
-	render() {
-		log('render', 'Inventory render');
-		return (
-			<Window wcn="inventory" tcn="inventoryTitle" ccn="inventoryContent" title={this.props.name} style={{width: this.props.width+'px',
-				height: this.props.height+'px',
-				top: this.props.top+'px',
-				left: this.props.left+'px'}}>
-				{this.slots()}
-			</Window>
-
-		);
-	}
-}
-
-Inventory.propTypes = {
-	width: PropTypes.number,
-	height: PropTypes.number,
-	top: PropTypes.number,
-	left: PropTypes.number,
-	centerX: PropTypes.bool,
-	centerY: PropTypes.bool,
-	name: PropTypes.string.isRequired,
-	slots: PropTypes.number.isRequired,
-	onClick: PropTypes.func.isRequired,
-	items: PropTypes.arrayOf(PropTypes.shape({
+	static propTypes = {
+		width: PropTypes.number,
+		height: PropTypes.number,
+		top: PropTypes.number,
+		left: PropTypes.number,
+		centerX: PropTypes.bool,
+		centerY: PropTypes.bool,
 		name: PropTypes.string.isRequired,
-		fullName: PropTypes.string.isRequired,
-		count: PropTypes.number.isRequired
-	}))
-};
+		slots: PropTypes.number.isRequired,
+		onClick: PropTypes.func.isRequired,
+		items: PropTypes.arrayOf(PropTypes.shape({
+			name: PropTypes.string.isRequired,
+			fullName: PropTypes.string.isRequired,
+			count: PropTypes.number.isRequired
+		}))
+	};
 
-Inventory.defaultProps = {
-	items: []
-};
-
+	static defaultProps = {
+		items: []
+	};
+}
 
 export default Inventory;

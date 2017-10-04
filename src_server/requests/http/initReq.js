@@ -13,8 +13,8 @@ const initReq = (req, res, server, player) => {
 			},
 			player: {
 				name: player.name,
-				inventorySize: 10, //player.getInventorySize(),
-				inventory: []//player.getInventory()
+				inventorySize: player.inventory.size,
+				inventory: player.inventory.getInventory()
 			}
 		}
 	};

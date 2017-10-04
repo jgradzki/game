@@ -10,12 +10,30 @@ import getMapState from '../selectors/mapSelector';
 
 
 class Map extends Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 
 		this._requestAnimationFrameId = requestAnimationFrame(() => this._movePlayer());
 		this._lastTick = 0;
 
+	}
+
+	render() {
+		log('render', 'Map render');
+		return (
+			<div className="mapContainer" id="mapContainer" style={{width: `${this.props.size.width}px`,
+				height: `${this.props.size.height}px`}}>
+				<div className="map" onMouseLeave={(e) => this._onMouseLeave(e)} onMouseDown={(e) => this._onMouseDown(e)} onMouseMove={(e) => this._onMouseMove(e)} onMouseUp={(e) => this._onMouseUp(e)} style={{top: `${this.props.position.y}px`,
+					left: `${this.props.position.x}px`}}>
+					<img src="img/mapg.png" draggable="false" className="mapImage" />
+					{this.props.mapElements.map(element =>
+						<MapElement key={element.id} icon={element.icon} id={element.id} position={element.position} size={element.size}/>
+					)}
+					{this._renderDestination()}
+					{this._renderPlayer()}
+				</div>
+			</div>
+		);
 	}
 
 	_movePlayer() {
@@ -26,13 +44,16 @@ class Map extends Component {
 		}
 
 		if (this.props.destination) {
-
 			let x = this.props.destination.x - this.props.playerPosition.x;
 			let y = this.props.destination.y - this.props.playerPosition.y;
 			let speed = this.props.movementSpeed * ((n - this._lastTick) / 1000);
-
 			let moveX = 0;
 			let moveY = 0;
+
+			if (x === y) {
+				this.props.changeDestination(false);
+				return;
+			}
 
 			if (x > 0) {
 				if (x < speed) {
@@ -42,7 +63,7 @@ class Map extends Component {
 				}
 			} else if (x < 0) {
 				if (x > -(speed)) {
-					moveX = x; 
+					moveX = x;
 				} else {
 					moveX -= speed;
 				}
@@ -58,7 +79,7 @@ class Map extends Component {
 				if (y > -(speed)) {
 					moveY = y;
 				} else {
-					moveY -= speed; 
+					moveY -= speed;
 				}
 			}
 
@@ -66,6 +87,7 @@ class Map extends Component {
 				(this.props.playerPosition.x + moveX),
 				(this.props.playerPosition.y + moveY)
 			);
+
 		}
 
 		this._lastTick = n;
@@ -86,8 +108,10 @@ class Map extends Component {
 		log('map', 'Click coords: ', x, y);
 
 		if (!this.props.inLocation) {
-			this._changeDestination({x,
-				y});
+			this._changeDestination({
+				x,
+				y
+			});
 		}
 	}
 
@@ -170,24 +194,6 @@ class Map extends Component {
 		if (this.props.playerPosition) {
 			return <MapElement icon='destination' id='map_player' position={this.props.playerPosition} size={this.props.config.playerSize} />;
 		}
-	}
-
-	render() {
-		log('render', 'Map render');
-		return (
-			<div className="mapContainer" id="mapContainer" style={{width: `${this.props.size.width}px`,
-				height: `${this.props.size.height}px`}}>
-				<div className="map" onMouseLeave={(e) => this._onMouseLeave(e)} onMouseDown={(e) => this._onMouseDown(e)} onMouseMove={(e) => this._onMouseMove(e)} onMouseUp={(e) => this._onMouseUp(e)} style={{top: `${this.props.position.y}px`,
-					left: `${this.props.position.x}px`}}>
-					<img src="img/mapg.png" draggable="false" className="mapImage" />
-					{this.props.mapElements.map(element =>
-						<MapElement key={element.id} icon={element.icon} id={element.id} position={element.position} size={element.size}/>
-					)}
-					{this._renderDestination()}
-					{this._renderPlayer()}
-				</div>
-			</div>
-		);
 	}
 }
 

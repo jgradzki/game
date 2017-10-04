@@ -8,6 +8,7 @@ const playerReducer = (state = 0, action) => {
 				inLocation: action.inLocation
 			};
 		case actionTypes.SET_PLAYER_INVENTORY:
+
 			return {
 				...state,
 				inventory: action.inventory

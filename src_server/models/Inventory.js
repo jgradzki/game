@@ -41,18 +41,18 @@ export default class Inventory extends Model {
 	static associate(/*models*/) {
 		//
 	}
-	
+
 	getInventory() {
 		return this.content;
 	}
 
 	addItem(item) {
-		let itemData = items[item.name];
+		const itemData = items[item.name];
 
 		if (!itemData) {
 			return false;
 		} else {
-			let calculateData = this.calculateInventory(this.getInventory(), this.size, item, itemData.maxStack);
+			const calculateData = this.calculateInventory(this.getInventory(), this.size, item, itemData.maxStack);
 
 			if (calculateData && calculateData.newInventory && calculateData.countTaken) {
 				this.setDataValue('content', calculateData.newInventory);
@@ -63,18 +63,47 @@ export default class Inventory extends Model {
 		}
 	}
 
+	removeItem(slot, count = 0) {
+		if (!count || !this.content || !this.content[slot]) {
+			return;
+		}
+
+		if (this.content[slot].count <= count) {
+			this.setDataValue('content', [
+				...this.content.slice(0, slot),
+				...this.content.slice(slot + 1)
+			]);
+		} else {
+			this.content[slot].count =- count;
+		}
+	}
+
+	stackInventory() {
+		let content = this.content;
+
+		//TODO: checking items stacks
+
+		this.setDataValue('content', content.filter(item => item.count > 0));
+
+		return this;
+	}
+
 	calculateInventory(inventory, inventoryLimit, newItem, newItemMaxStack) {
 		inventory = inventory.slice();
 		let itemCount = newItem.count;
-		
-		if (inventory.length > 0) {
-			inventory.forEach(s => {
-				if (itemCount > 0) {
-					if (s.name === newItem.name) {
-						if (s.count < newItemMaxStack) {
-							let count = newItemMaxStack - s.count;
 
-							s.count += count;
+		if (inventory.length > 0) {
+			inventory.forEach(itemSlot => {
+				if (itemCount > 0) {
+					if (itemSlot.name === newItem.name) {
+						if (itemSlot.count < newItemMaxStack) {
+							let count = newItemMaxStack - itemSlot.count;
+
+							if (count > itemCount) {
+								count = itemCount;
+							}
+
+							itemSlot.count += count;
 							itemCount -= count;
 						}
 					}

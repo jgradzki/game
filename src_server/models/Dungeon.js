@@ -99,12 +99,20 @@ export default class Dungeon extends Model {
 		return this.rooms[room.y][room.x].items;
 	}
 
+	setRoomItems(room, items) {
+		if (!this.rooms[room.y] || !this.rooms[room.y][room.x]) {
+			throw new Error(`Romm ${room.y}:${room.x} not found in ${this.id}`);
+		}
+
+		this.rooms[room.y][room.x].items = items;
+	}
+
 	getPlayerLocation(id) {
 		if (!this.players[id]) {
 			return;
 		}
 
-		return this.players[id].position;		
+		return this.players[id].position;
 	}
 
 	_canMove(player, x, y) {

@@ -2,10 +2,10 @@ import { log } from '../../logger';
 
 module.exports = (req, res, server, player) => {
 	if (!player.isInLocation()) {
-		res.send({ 
-			error: true, 
-			code: 4101, 
-			msg: 'Not in location.' 
+		res.send({
+			error: true,
+			code: 4101,
+			msg: 'Not in location.'
 		});
 		return;
 	}
@@ -20,10 +20,10 @@ module.exports = (req, res, server, player) => {
 	}
 
 	if (player.locationType !== 'DUNGEON') {
-		res.send({ 
-			error: true, 
-			code: 4101, 
-			msg: 'Not in location.' 
+		res.send({
+			error: true,
+			code: 4103,
+			msg: 'Not in location.'
 		});
 		return;
 	}
@@ -36,67 +36,60 @@ module.exports = (req, res, server, player) => {
 		case 'loot':
 			server.gameManager.locationManager.getLocation(player.location, player.locationType)
 				.then(dungeon => {
-					let item = dungeon.getRoomItems(dungeon.getPlayerLocation(player.id))[action.slot];
+					let roomItems = dungeon.getRoomItems(dungeon.getPlayerLocation(player.id));
+					let item = roomItems[action.slot];
+					let lootInventory = server.db.getModel('Inventory').build({
+						size: roomItems.length,
+						content: roomItems
+					});
 
 					if (item && item.name) {
 						let countTaken = player.inventory.addItem(item);
 
 						if (countTaken && countTaken > 0) {
-							/*if (countTaken < item.count) {
-								store.dispatch(dungeonAction.changeItemCount(locationId, playerPosition, action.slot, item.count - countTaken));
-							} else {
-								store.dispatch(dungeonAction.removeItem(locationId, playerPosition, action.slot));
-							}
+							lootInventory.removeItem(action.slot, countTaken);
 
-							sendChanges({
-								type: 'post',
-								res,
-								tasks: [
-									{ 
-										commandType: 'dispatch',
-										...setLootList(playerPosition, Dungeon.getRoomItems(locationId, playerPosition)) },
-									{ 
-										commandType: 'dispatch',
-										...setPlayerInventory(player.getInventory()) 
-									}
-								]
-							});*/
+							dungeon.setRoomItems(
+								dungeon.getPlayerLocation(player.id),
+								lootInventory.getInventory()
+							);
 
 							res.send({
 								success: true,
-								newInvetory: player.inventory.getInventory()
+								newInventory: player.inventory.getInventory(),
+								lootInventory: lootInventory.getInventory()
 							});
 
 						} else {
-							res.send({ 
-								error: true, 
-								code: 4104, 
-								msg: 'Internal server error.' 
+							res.send({
+								error: true,
+								code: 4104.3,
+								msg: 'Inventory is full.'
 							});
 						}
 
 
 					} else {
-						res.send({ 
-							error: true, 
-							code: 4104, 
-							msg: 'Internal server error.' 
+						res.send({
+							error: true,
+							code: 4104.2,
+							msg: 'Internal server error.'
 						});
 					}
 				})
 				.catch(error => {
 					log('error', error);
-					res.send({ 
-						error: true, 
-						code: 4104, 
-						msg: 'Internal server error.' 
+					res.send({
+						error: true,
+						code: 4104.1,
+						msg: 'Internal server error.'
 					});
 				});
 			break;
 		default:
 			res.send({
 				error: true,
-				errorCode: 4105,
+				errorCode: 4100,
 				errorMessage: 'Unknown action type.'
 			});
 	}

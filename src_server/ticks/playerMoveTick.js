@@ -41,13 +41,13 @@ module.exports = (server) => {
 
 		if (x > 0) {
 			if (x < speed) {
-				moveX += x; 
+				moveX += x;
 			} else {
 				moveX += speed;
 			}
 		} else if (x < 0) {
 			if (x > -(speed)) {
-				moveX = x; 
+				moveX = x;
 			} else {
 				moveX -= speed;
 			}
@@ -55,9 +55,9 @@ module.exports = (server) => {
 
 		if (y > 0) {
 			if (y < speed) {
-				moveY += y; 
+				moveY += y;
 			} else {
-				moveY += speed; 
+				moveY += speed;
 			}
 		} else if (y < 0) {
 			if (y > -(speed)) {
@@ -78,16 +78,23 @@ module.exports = (server) => {
 		player.mapPosition = newPos;
 
 		if (player.socket) {
-			if ((newPos.x == target.x) && (newPos.y == target.y)) {
+			if ((newPos.x === target.x) && (newPos.y === target.y)) {
 				player.mapTarget = undefined;
-				player.socket.emit('action', { type: 'changeDestination',
-					position: undefined });
-				player.socket.emit('action', { type: 'changePlayerPosition',
-					newPosition: newPos });
+
+				player.socket.emit('action', {
+					type: 'appAction/MAP_CHANGE_DESTINATION',
+					position: undefined
+				});
+				player.socket.emit('action', {
+					type: 'appAction/MAP_CHANGE_PLAYER_POSITION',
+					newPosition: newPos
+				});
 			} else {
 				if ( (player.sendingPositionTime + ( server.config.get('gameServer.sendingPositionOnMapInterval', 10) * 1000)) < n ) {
-					player.socket.emit('action', { type: 'changePlayerPosition',
-						newPosition: newPos });
+					player.socket.emit('action', {
+						type: 'appAction/MAP_CHANGE_PLAYER_POSITION',
+						newPosition: newPos
+					});
 					player.sendingPositionTime = n;
 				}
 			}
