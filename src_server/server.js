@@ -77,24 +77,24 @@ server.eventEmitter.on('SERVER_START_SERVER_END', server => {
 			}
 		}
 	})
-		.then(result => {
-			log('info', 'Player created.');
-			let player = result[0];
+		.spread((player, created) => {
+			if (created) {
+				log('info', 'Player created.');
 
-			player.getInventory()
-				.then(inventory => {
-					if (!inventory) {
-						server.db.getModel('Inventory').create({
-							size: server.config.get('player.defaultPlayerInventorySize', 5),
-							content: []
-						})
-							.then(inventory => {
-								player.setInventory(inventory);
-							});
+				player.getInventory()
+					.then(inventory => {
+						if (!inventory) {
+							server.db.getModel('Inventory').create({
+								size: server.config.get('player.defaultPlayerInventorySize', 5),
+								content: []
+							})
+								.then(inventory => {
+									player.setInventory(inventory);
+								});
 
-					}
-				});
-
+						}
+					});
+			}
 			return Promise.all([
 				server.gameManager.locationManager.addLocation(
 					server.db.getModel('MapElement').ElementTypes.DUNGEON,

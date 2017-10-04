@@ -59,7 +59,7 @@ class LocationManager {
 	}
 
 	loadLocation(location) {
-		if (!location || !location.getType || !this.typeToModel[location.getType()]) {
+		if (!location || !location.getType() || !this.typeToModel(location.getType())) {
 			return;
 		}
 

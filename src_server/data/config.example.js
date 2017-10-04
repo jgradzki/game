@@ -10,7 +10,9 @@ let config = {
 		user: '',
 		password: '',
 		db_name: '',
-		dialect: 'postgres'
+		dialect: 'postgres',
+		sync: true,
+		forceSync: false
 	},
 	session: {
 		secret: 'fasdhntg4652nt',

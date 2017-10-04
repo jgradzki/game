@@ -65,7 +65,7 @@ class Server {
 	startServer() {
 		this.eventEmitter.emit('SERVER_START_SERVER_START', this);
 		log('info', 'Connecting to db.');
-		this.db.connect(true, true)
+		this.db.connect(this.config.get('db.sync', true), this.config.get('db.forceSync', false))
 			.then(() => {
 				this.eventEmitter.emit('SERVER_CONNECT_TO_DB_SUCCESS', this);
 				log('info', 'Setting up http server.');
@@ -105,7 +105,7 @@ class Server {
 	}
 
 	closeServer() {
-		process.exit(2);
+		process.exit(0);
 	}
 
 	get eventEmitter() {
@@ -208,24 +208,24 @@ class Server {
 		this.eventEmitter.emit('SERVER_CLOSE', this);
 		log('info', 'Server close.');
 		if (this.gameManager) {
-			this.gameManager.onExit()
+			this.gameManager.onExit(3)
 				.then(() => {
 					return this.db.connection.sync();
 				})
 				.then( () => {
-					process.exit(0);
+					process.exit(3);
 				})
 				.catch(error => {
 					log('error', 'Unable to clean server.', error);
 					//What to do exacly here?
 				});
 		} else {
-			process.exit(0);
+			process.exit();
 		}
 	}
 
 	_handleExit(code) {
-		if (code !== 0) {
+		if (code !== 3) {
 			this._onExit();
 		}
 	}

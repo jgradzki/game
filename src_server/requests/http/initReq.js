@@ -1,5 +1,4 @@
-//import PlayersManager from '../libs/player';
-//import LocationsManager from '../libs/locationsManager';
+import { log } from '../../logger';
 
 const initReq = (req, res, server, player) => {
 
@@ -32,7 +31,8 @@ const initReq = (req, res, server, player) => {
 				res.send(session);
 			})
 			.catch(error => {
-				res.send( { error });
+				log('error', error);
+				res.send( { error: 'Failed to load location. Please contact with helpdesk.' });
 			});
 	} else {
 		res.send(session);

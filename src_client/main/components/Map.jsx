@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
 
@@ -50,44 +51,43 @@ class Map extends Component {
 			let moveX = 0;
 			let moveY = 0;
 
-			if (x === y) {
+			if (x === 0 && y === 0) {
 				this.props.changeDestination(false);
-				return;
+			} else {
+
+				if (x > 0) {
+					if (x < speed) {
+						moveX += x;
+					} else {
+						moveX += speed;
+					}
+				} else if (x < 0) {
+					if (x > -(speed)) {
+						moveX = x;
+					} else {
+						moveX -= speed;
+					}
+				}
+
+				if (y > 0) {
+					if (y < speed) {
+						moveY += y;
+					} else {
+						moveY += speed;
+					}
+				} else if (y < 0) {
+					if (y > -(speed)) {
+						moveY = y;
+					} else {
+						moveY -= speed;
+					}
+				}
+
+				this.props.changePlayerPosition(
+					(this.props.playerPosition.x + moveX),
+					(this.props.playerPosition.y + moveY)
+				);
 			}
-
-			if (x > 0) {
-				if (x < speed) {
-					moveX += x;
-				} else {
-					moveX += speed;
-				}
-			} else if (x < 0) {
-				if (x > -(speed)) {
-					moveX = x;
-				} else {
-					moveX -= speed;
-				}
-			}
-
-			if (y > 0) {
-				if (y < speed) {
-					moveY += y;
-				} else {
-					moveY += speed;
-				}
-			} else if (y < 0) {
-				if (y > -(speed)) {
-					moveY = y;
-				} else {
-					moveY -= speed;
-				}
-			}
-
-			this.props.changePlayerPosition(
-				(this.props.playerPosition.x + moveX),
-				(this.props.playerPosition.y + moveY)
-			);
-
 		}
 
 		this._lastTick = n;
@@ -153,7 +153,7 @@ class Map extends Component {
 		}
 	}
 
-	_onMouseLeave(e) {
+	_onMouseLeave() {
 		if (this.props.dragging) {
 			this.props.stopDrag();
 		}
@@ -161,9 +161,7 @@ class Map extends Component {
 
 	_onMouseMove(e) {
 		if (this.props.dragging) {
-			if ((this.props.initial.y === e.pageY) && (this.props.initial.x === e.pageX)) {
-
-			} else {
+			if ((this.props.initial.y !== e.pageY) || (this.props.initial.x !== e.pageX)) {
 				let top = this.props.position.y - (this.props.initial.y - e.pageY);
 				let left = this.props.position.x - (this.props.initial.x - e.pageX) ;
 
@@ -195,6 +193,38 @@ class Map extends Component {
 			return <MapElement icon='destination' id='map_player' position={this.props.playerPosition} size={this.props.config.playerSize} />;
 		}
 	}
+
+	static propTypes = {
+		destination: PropTypes.oneOfType([
+			PropTypes.shape({
+				x: PropTypes.number.isRequired,
+				y: PropTypes.number.isRequired
+			}),
+			PropTypes.bool
+		]),
+		position: PropTypes.shape({
+			x: PropTypes.number.isRequired,
+			y: PropTypes.number.isRequired
+		}).isRequired,
+		size: PropTypes.shape({
+			height: PropTypes.number.isRequired,
+			width: PropTypes.number.isRequired
+		}).isRequired,
+		initial: PropTypes.object.isRequired,
+		config: PropTypes.object.isRequired,
+		mapElements: PropTypes.array,
+		dragging: PropTypes.bool,
+		changed: PropTypes.bool,
+		inLocation: PropTypes.bool,
+		movementSpeed: PropTypes.number.isRequired,
+		playerPosition: PropTypes.object.isRequired,
+		changePlayerPosition: PropTypes.func.isRequired,
+		changePosition: PropTypes.func.isRequired,
+		changeDestination: PropTypes.func.isRequired,
+		setError: PropTypes.func.isRequired,
+		startDrag: PropTypes.func.isRequired,
+		stopDrag: PropTypes.func.isRequired,
+	};
 }
 
 let mapStateToProps  = (state, props) => {
