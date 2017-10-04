@@ -33,36 +33,6 @@ server.eventEmitter.on('SERVER_START_SERVER_END', server => {
 	log('info', 'Server online');
 	const Player = server.db.getModel('Player');
 
-	//let location;
-
-	/*server.db.getModel('MapElement').create({
-		type: server.db.getModel('MapElement').ElementTypes.DUNGEON,
-		mapPosition: { x: 0, y: 0 },
-		size: { width: 20, height: 20 }
-	})
-	.then(cos => {
-		location = cos;
-		return server.db.getModel('Dungeon').create({
-			rooms: {'cos':true},
-			entryRoom: true
-		});
-	})
-	.then(cos => {
-		return cos.setMapPosition(location);
-	})
-	.then( co => {
-		co.mapPosition = location;
-		//console.log(co);
-		//console.log(co.mapPosition)
-		return co.getMapPosition();
-	})
-	.then( data => {
-		//console.log(data);
-	})
-	.catch(e => {
-		console.log(e)
-	});*/
-
 	Player.findOrCreate({
 		where: {
 			name: 'Admin'
@@ -80,38 +50,71 @@ server.eventEmitter.on('SERVER_START_SERVER_END', server => {
 		.spread((player, created) => {
 			if (created) {
 				log('info', 'Player created.');
-
-				player.getInventory()
-					.then(inventory => {
-						if (!inventory) {
-							server.db.getModel('Inventory').create({
-								size: server.config.get('player.defaultPlayerInventorySize', 5),
-								content: []
-							})
-								.then(inventory => {
-									player.setInventory(inventory);
-								});
-
-						}
-					});
 			}
+
+			player.getBase()
+				.then(base => {
+					if (!base) {
+						server.gameManager.locationManager.addLocation(
+							server.db.getModel('MapElement').ElementTypes.PLAYER_BASE,
+							{
+								x: 50,
+								y: 50
+							},
+							{
+								width: 20,
+								height: 20
+							},
+							{ owner: player.id },
+							{},
+							'home'
+						)
+							.then(inventory => {
+								player.setBase(inventory);
+							});
+					}
+				});
+
+
+			player.getInventory()
+				.then(inventory => {
+					if (!inventory) {
+						server.db.getModel('Inventory').create({
+							size: server.config.get('player.defaultPlayerInventorySize', 5),
+							content: []
+						})
+							.then(inventory => {
+								player.setInventory(inventory);
+							});
+
+					}
+				});
+
 			return Promise.all([
 				server.gameManager.locationManager.addLocation(
 					server.db.getModel('MapElement').ElementTypes.DUNGEON,
-					{ x: 50,
-						y: 50 },
-					{ width: 20,
-						height: 20 },
+					{
+						x: 150,
+						y: 50
+					},
+					{
+						width: 20,
+						height: 20
+					},
 					{ for: player.id },
 					{},
 					'building'
 				),
 				server.gameManager.locationManager.addLocation(
 					server.db.getModel('MapElement').ElementTypes.DUNGEON,
-					{ x: 100,
-						y: 60 },
-					{ width: 20,
-						height: 20 },
+					{
+						x: 100,
+						y: 60
+					},
+					{
+						width: 20,
+						height: 20
+					},
 					{ all: true },
 					{},
 					'building'

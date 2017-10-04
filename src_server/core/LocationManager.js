@@ -37,10 +37,10 @@ class LocationManager {
 				dungeon.locationCreated();
 
 				dungeon.save()
-					.then( () => {
+					.then(() => {
 						return this._mapManager.createMapElement(type, mapPosition, size, visibilityRules, icon, isPerm);
 					})
-					.then( mapElement => {
+					.then(mapElement => {
 						dungeon.setMapPosition(mapElement);
 						dungeon.mapPosition = mapElement;
 						this._locations.push(dungeon);
@@ -48,6 +48,26 @@ class LocationManager {
 					})
 					.catch(error => {
 						dungeon.destroy();
+						reject(error);
+					});
+
+			} else if (type === this._elementTypes.PLAYER_BASE) {
+				let playerBase = this._createPlayerBase(data);
+
+				playerBase.locationCreated();
+
+				playerBase.save()
+					.then(() => {
+						return this._mapManager.createMapElement(type, mapPosition, size, visibilityRules, icon, isPerm);
+					})
+					.then(mapElement => {
+						playerBase.setMapPosition(mapElement);
+						playerBase.mapPosition = mapElement;
+						this._locations.push(playerBase);
+						resolve(playerBase);
+					})
+					.catch(error => {
+						playerBase.destroy();
 						reject(error);
 					});
 			} else {
@@ -156,11 +176,16 @@ class LocationManager {
 		});
 	}
 
-
 	_createDungeon(data) {
 		return this._db.getModel('Dungeon').build({
 			rooms: data.rooms,
 			entryRoom: data.entryRoom
+		});
+	}
+
+	_createPlayerBase(data) {
+		return this._db.getModel('PlayerBase').build({
+
 		});
 	}
 }
