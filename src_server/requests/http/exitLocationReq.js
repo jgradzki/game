@@ -1,8 +1,6 @@
 import { log } from '../../logger';
 
 let exitLocationReq = (req, res, server, player) => {
-	let sess = req.session;
-
 	if (!player.isInLocation()) {
 		res.send({ error: 'You are not in any location!' });
 	} else {

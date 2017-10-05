@@ -10,8 +10,10 @@ const calculateCorners = (x, y, size) => {
 		y: y + (size.height / 2)
 	};
 
-	return { cLeftTop,
-		cRightBottom };
+	return {
+		cLeftTop,
+		cRightBottom
+	};
 };
 
 const checkPlayer = (player, elementId, elements) => {
@@ -19,6 +21,7 @@ const checkPlayer = (player, elementId, elements) => {
 		return false;
 	}
 
+	//TODO: Create function in MapManager(LocationManager?) for auth checking.
 	let element = elements.filter(element => element.id === elementId)[0];
 
 	if (!element) {

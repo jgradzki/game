@@ -33,15 +33,15 @@ export default class PlayerBase extends Model {
 		//
 	}
 
-	onPlayerEnter(player) {
+	onPlayerEnter(/*player*/) {
 
 	}
 
-	onPlayerExit(player) {
+	onPlayerExit(/*player*/) {
 
 	}
 
-	getDataForPlayer(id) {
+	getDataForPlayer(/*id*/) {
 		return {
 			//
 		};

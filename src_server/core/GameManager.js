@@ -1,5 +1,3 @@
-import util from 'util';
-
 import { log } from '../logger';
 import requests from '../requests';
 import PlayerManager from './PlayerManager';
@@ -7,8 +5,6 @@ import LocationManager from './LocationManager';
 import MapManager from './MapManager';
 
 import ticks from '../ticks';
-
-const setImmediatePromise = util.promisify(setImmediate);
 
 /**
  *
@@ -72,8 +68,11 @@ class GameManager {
 		return this._mapManager;
 	}
 
+	/**
+	 * @todo Kick players and disable login before saves.
+	 */
 	async onExit() {
-		console.log('Processing game shutdown.');
+		log('info', 'Processing game shutdown.');
 		await this.playerManager.savePlayers();
 		await this.mapManager.saveElements();
 		await this.locationManager.saveLocations();

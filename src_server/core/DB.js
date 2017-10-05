@@ -73,9 +73,6 @@ class DB {
 			this._loadModels().then( () => {
 				this._sequelize
 					.authenticate()
-					//.then(() => {
-					//	return this._sequelize.truncate();
-					//})
 					.then(() => {
 						if (sync) {
 							this._sequelize.sync({force: forceSync}).then(() => {

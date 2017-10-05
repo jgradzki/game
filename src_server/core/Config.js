@@ -1,5 +1,4 @@
 import _ from 'lodash';
-
 import { log } from '../logger';
 
 /*

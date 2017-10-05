@@ -45,7 +45,7 @@ export const initLogger = () => {
 			});
 		}
 	} catch (e) {
-		if (e.code == 'ENOENT') {
+		if (e.code === 'ENOENT') {
 
 		} else {
 			console.log(e);
@@ -54,7 +54,7 @@ export const initLogger = () => {
 	try {
 		fs.mkdirSync(logDir);
 	} catch (e) {
-		if (e.code == 'EEXIST') {
+		if (e.code === 'EEXIST') {
 
 		} else {
 			console.log(e);
@@ -65,7 +65,7 @@ export const initLogger = () => {
 		module.exports.currentLog = now.getTime();
 		fs.mkdirSync(module.exports.logDir + '/' + module.exports.currentLog);
 	} catch (e) {
-		if (e.code == 'EEXIST') {
+		if (e.code === 'EEXIST') {
 
 		} else {
 			console.log(e);
@@ -74,26 +74,7 @@ export const initLogger = () => {
 
 	module.exports.logger = new(winston.Logger)({
 		level: 'info',
-		transports: [
-			new(winston.transports.File)({
-				name: 'info-file',
-				filename: module.exports.logDir + '/' + module.exports.currentLog + '/filelog-info.log',
-				level: 'info'
-			}),
-			new(winston.transports.File)({
-				name: 'error-file',
-				filename: module.exports.logDir + '/' + module.exports.currentLog + '/filelog-error.log',
-				level: 'error'
-			}),
-			new(winston.transports.File)({
-				name: 'debug-file',
-				filename: module.exports.logDir + '/' + module.exports.currentLog + '/filelog-debug.log',
-				level: 'debug'
-			}),
-			new(winston.transports.Console)({
-				level: 'debug'
-			}),
-		]
+		transports: _getTransports()
 	});
 
 	dirs = getDirectories('./logs');
@@ -123,6 +104,34 @@ const log = (...args) => {
 		module.exports.logger.log(args[0], t, args[1]);
 	}
 
+};
+
+const _getTransports = () => {
+	let transports = [
+		new(winston.transports.File)({
+			name: 'info-file',
+			filename: module.exports.logDir + '/' + module.exports.currentLog + '/filelog-info.log',
+			level: 'info'
+		}),
+		new(winston.transports.File)({
+			name: 'error-file',
+			filename: module.exports.logDir + '/' + module.exports.currentLog + '/filelog-error.log',
+			level: 'error'
+		}),
+		new (winston.transports.Console)({
+			level: (process.env.NODE_ENV !== 'production' ? 'debug': 'info')
+		}),
+	];
+
+	if (process.env.NODE_ENV !== 'production') {
+		transports.push(new(winston.transports.File)({
+			name: 'debug-file',
+			filename: module.exports.logDir + '/' + module.exports.currentLog + '/filelog-debug.log',
+			level: 'debug'
+		}));
+	}
+
+	return transports;
 };
 
 module.exports = {

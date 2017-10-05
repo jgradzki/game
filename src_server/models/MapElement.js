@@ -66,21 +66,8 @@ export default class MapElement extends Model {
 		underscored: true
 	};
 
-	static associate(models) {
-		/*models['MapIcon'].belongsTo(
-			models['Dungeon'],
-			{
-				'as': 'mapPosition'
-				//foreignKey: 'map_icon'
-			}
-		);
-		models['MapIcon'].belongsTo(
-			models['PlayerBase'],
-			{
-				'as': 'mapPosition'
-				//foreignKey: 'map_icon'
-			}
-		);*/
+	static associate(/*models*/) {
+		//
 	}
 
 	getDataForPlayer(id) {

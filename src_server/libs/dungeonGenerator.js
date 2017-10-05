@@ -23,7 +23,7 @@ let rollDoors = (room, maxCount, exclude) => {
 
 	while (roll(1, 100) < odds[rollsCount]) {
 		if (rollsCount >= maxCount) {
-			break; 
+			break;
 		}
 		while (true) {
 			let direction = rollDirection();
@@ -50,22 +50,20 @@ let rollRoomsRandomV1 = (minRooms, maxRooms) => {
 	let roomLastId = 1;
 	//let roomsC = roll(minRooms, maxRooms);
 	let roomCount = 0;
-	let forcingRooms = false;
-
 	let vertical = 0;
 
 	let countRooms = (room) => {
-		if (room.up == true) {
-			roomCount++; 
-		}
-		if (room.down == true) {
-			roomCount++; 
-		}
-		if (room.left == true) {
+		if (room.up === true) {
 			roomCount++;
 		}
-		if (room.right == true) {
-			roomCount++; 
+		if (room.down === true) {
+			roomCount++;
+		}
+		if (room.left === true) {
+			roomCount++;
+		}
+		if (room.right === true) {
+			roomCount++;
 		}
 	};
 
@@ -119,7 +117,7 @@ let rollRoomsRandomV1 = (minRooms, maxRooms) => {
 			createRoom(room.right);
 		}
 
-		if ((tree == 0) && (roomCount < minRooms)) {
+		if ((tree === 0) && (roomCount < minRooms)) {
 			//force more rooms
 			if (!room.up) {
 				room.up = true;
@@ -149,8 +147,8 @@ let rollRoomsRandomV1 = (minRooms, maxRooms) => {
 		while (true) {
 			let direction = rollDirection();
 
-			if (direction == 'down') {
-				continue; 
+			if (direction === 'down') {
+				continue;
 			}
 			if (!rooms[direction]) {
 				rooms[direction] = true;
@@ -175,7 +173,7 @@ let rollRoomsRandomV2 = (minRooms, maxRooms, mapSize) => {
 
 	for (let y = 1; y <= mapSize.height; y++) {
 		for (let x = 1; x <= mapSize.width; x++) {
-			if (x == 1) {
+			if (x === 1) {
 				roomMap[y] = [];
 			}
 			roomMap[y][x] = { is: false,
@@ -224,7 +222,7 @@ let rollRoomsRandomV2 = (minRooms, maxRooms, mapSize) => {
 		}
 
 		if (roomMap[cy][cx].lock) {
-			continue; 
+			continue;
 		}
 
 		for (let y = startY; y < startY + sizeY; y++) {
@@ -321,7 +319,7 @@ let rollRoomsRandomV3 = (minRooms, maxRooms) => {
 	for (let y = 0; y <= (height); y++) {
 		for (let x = 0; x <= (width); x++) {
 			//console.log('r', y, x)
-			if (x == 0) {
+			if (x === 0) {
 				roomMap[y] = [];
 			}
 			roomMap[y][x] = { is: false,
@@ -425,12 +423,12 @@ let rollRooms = (type = 'randomV3', options = { min: 5,
 	max: 10,
 	width: 5,
 	height: 5 }) => {
-	if (type == 'randomV1') {
+	if (type === 'randomV1') {
 		return rollRoomsRandomV1(options.min, options.max);
-	} else if (type == 'randomV2') {
+	} else if (type === 'randomV2') {
 		return rollRoomsRandomV2(options.min, options.max, { width: options.width,
 			height: options.height });
-	} else if (type == 'randomV3') {
+	} else if (type === 'randomV3') {
 		let dungeon = rollRoomsRandomV3(options.min, options.max);
 
 		return {

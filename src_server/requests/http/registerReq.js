@@ -1,12 +1,9 @@
-/*import PM from '../libs/player.js'
-
-import { db } from '../libs/mysql.js'
-import bcrypt from 'bcrypt-nodejs'
-*/
-
 import validator from 'validator';
 import { log } from './../../logger';
 
+/**
+ *@todo: Create function in PlayerManager for creating user(models: user, inventory, base etc.)
+ */
 module.exports = (req, res, server) => {
 	if (!server.config.get('site.enableRegister')) {
 		res.send({
@@ -46,7 +43,7 @@ module.exports = (req, res, server) => {
 		if (pass.length < 6 || pass.length > 20) {
 			errors.push('Hasło musi skladac sie przynajmniej z 6 znakow i mieć nie więcej niż 20');
 		}
-		if (pass != repass) {
+		if (pass !== repass) {
 			errors.push('Hasła nie są takie same');
 		}
 	}
@@ -62,7 +59,7 @@ module.exports = (req, res, server) => {
 
 		server.db.getModel('Inventory').create({
 			size: server.config.get('player.defaultPlayerInventorySize', 5),
-			content: []		
+			content: []
 		})
 			.then(result => {
 				inventory = result;
@@ -88,7 +85,7 @@ module.exports = (req, res, server) => {
 				if (player) {
 					player.destroy();
 				}
-				
+
 				log('error', e);
 				res.send({
 					errors: ['Internal server error.']

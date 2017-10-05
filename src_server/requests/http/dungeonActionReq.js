@@ -28,8 +28,6 @@ module.exports = (req, res, server, player) => {
 		return;
 	}
 
-	console.log(req.body.data);
-
 	let action = req.body.data;
 
 	switch (action.type) {

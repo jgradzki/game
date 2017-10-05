@@ -2,7 +2,7 @@ import { log } from '../logger.js';
 
 let lastTick = 0;
 
-module.exports = (server) => {
+module.exports = server => {
 	let n = (new Date()).getTime();
 
 	if (lastTick === 0) {

@@ -31,50 +31,22 @@ class LocationManager {
 				throw new Error(`Wrong size(${size}.`);
 			}
 
-			if (type === this._elementTypes.DUNGEON) {
-				let dungeon = this._createDungeon(data);
+			switch (type) {
+				case this._elementTypes.DUNGEON:
+					let dungeon = this._buildDungeon(data);
 
-				dungeon.locationCreated();
+					dungeon.locationCreated();
+					this._createMapElement(resolve, reject, dungeon, type, mapPosition, size, visibilityRules, icon, isPerm);
+					break;
+				case this._elementTypes.PLAYER_BASE:
+					let playerBase = this._buildPlayerBase(data);
 
-				dungeon.save()
-					.then(() => {
-						return this._mapManager.createMapElement(type, mapPosition, size, visibilityRules, icon, isPerm);
-					})
-					.then(mapElement => {
-						dungeon.setMapPosition(mapElement);
-						dungeon.mapPosition = mapElement;
-						this._locations.push(dungeon);
-						resolve(dungeon);
-					})
-					.catch(error => {
-						dungeon.destroy();
-						reject(error);
-					});
-
-			} else if (type === this._elementTypes.PLAYER_BASE) {
-				let playerBase = this._createPlayerBase(data);
-
-				playerBase.locationCreated();
-
-				playerBase.save()
-					.then(() => {
-						return this._mapManager.createMapElement(type, mapPosition, size, visibilityRules, icon, isPerm);
-					})
-					.then(mapElement => {
-						playerBase.setMapPosition(mapElement);
-						playerBase.mapPosition = mapElement;
-						this._locations.push(playerBase);
-						resolve(playerBase);
-					})
-					.catch(error => {
-						playerBase.destroy();
-						reject(error);
-					});
-			} else {
-				reject('error');
+					playerBase.locationCreated();
+					this._createMapElement(resolve, reject, playerBase, type, mapPosition, size, visibilityRules, icon, isPerm);
+					break;
+				default:
+					reject('@LocationManager.addLocation: Unknown location type.');
 			}
-
-
 		});
 	}
 
@@ -176,14 +148,33 @@ class LocationManager {
 		});
 	}
 
-	_createDungeon(data) {
+	_createMapElement(resolve, reject, location, type, mapPosition, size, visibilityRules, icon, isPerm) {
+		location.save()
+			.then(() => {
+				return this._mapManager.createMapElement(type, mapPosition, size, visibilityRules, icon, isPerm);
+			})
+			.then(mapElement => {
+				location.mapPosition = mapElement;
+				return location.setMapPosition(mapElement);
+			})
+			.then(() => {
+				this._locations.push(location);
+				resolve(location);
+			})
+			.catch(error => {
+				location.destroy();
+				reject(error);
+			});
+	}
+
+	_buildDungeon(data) {
 		return this._db.getModel('Dungeon').build({
 			rooms: data.rooms,
 			entryRoom: data.entryRoom
 		});
 	}
 
-	_createPlayerBase(data) {
+	_buildPlayerBase(data) {
 		return this._db.getModel('PlayerBase').build({
 
 		});

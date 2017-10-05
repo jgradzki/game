@@ -111,7 +111,19 @@ class MapManager {
 		}
 	}
 
-	checkRules(element, rules) {
+	async getElementsByVisibilityRules(rules = { all: true }) {
+		let elements = this._mapElements.filter(element => this._checkRules(element, rules));
+
+		let newElements = (await this._getElementsByVisibilityRulesFromDB(elements, rules));
+
+		newElements.forEach(element => this.loadElement(element));
+		return [
+			...elements,
+			...newElements
+		];
+	}
+
+	_checkRules(element, rules) {
 		let is = false;
 
 		if (rules && rules['$or']) {
@@ -124,18 +136,6 @@ class MapManager {
 			}
 		}
 		return is;
-	}
-
-	async getElementsByVisibilityRules(rules = { all: true }) {
-		let elements = this._mapElements.filter(element => this.checkRules(element, rules));
-
-		let newElements = (await this._getElementsByVisibilityRulesFromDB(elements, rules));
-
-		newElements.forEach(element => this.loadElement(element));
-		return [
-			...elements,
-			...newElements
-		];
 	}
 
 	_getElementsByVisibilityRulesFromDB(loaded = [], rules = { all: true }) {
