@@ -68,6 +68,9 @@ class Server {
 		this.db.connect(this.config.get('db.sync', true), this.config.get('db.forceSync', false))
 			.then(() => {
 				this.eventEmitter.emit('SERVER_CONNECT_TO_DB_SUCCESS', this);
+				log('info', 'Setting up game.');
+				this._setupGame();
+				this.eventEmitter.emit('SERVER_SETUP_GAME_SUCCESS', this);
 				log('info', 'Setting up http server.');
 				return this._setupHttpServer();
 			})
@@ -78,9 +81,6 @@ class Server {
 			})
 			.then(() => {
 				this.eventEmitter.emit('SERVER_SETUP_WEBSOCKET_SERVER_SUCCESS', this);
-				log('info', 'Setting up game.');
-				this._setupGame();
-				this.eventEmitter.emit('SERVER_SETUP_GAME_SUCCESS', this);
 				log('info', 'Starting...');
 				return this._run();
 			})
@@ -182,7 +182,7 @@ class Server {
 		this._ws.use(sharedsession(this._session));
 
 		this._ws.on('connection', socket => {
-			//let session = socket.handshake.session;
+			this.gameManager.handleWebsocetRequest(socket);
 		});
 	}
 
@@ -243,9 +243,6 @@ class Server {
 			res.sendFile(path.resolve(__dirname, '../server_resources/html/index.html'));
 		});
 
-		/*
-    	 * @todo auth
-    	 */
 		this.webApplication.get(
 			'/game',
 			(req, res, next) => {
@@ -266,6 +263,8 @@ class Server {
 		//*** Main page post requests
 		this.webApplication.post('/', (req, res) => require('../requests/http/loginReq')(req, res, this));
 		this.webApplication.post('/register', (req, res) => require('../requests/http/registerReq')(req, res, this));
+
+		this.gameManager.handleHttpRequest(this.webApplication);
 
 		//react-router
 		this.webApplication.get('*', (req, res) => {

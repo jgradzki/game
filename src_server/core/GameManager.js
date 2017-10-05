@@ -40,20 +40,6 @@ class GameManager {
 		this._run = false;
 
 		//ItemManager
-
-
-		this._server.webApplication.get(
-			'/game/logout',
-			(req, res) => this._logoutPlayer(req, res)
-		);
-
-		this._server.webApplication.post(
-			'/game/request',
-			(req, res, next) => this._authenticatePostRequest(req, res, next),
-			(req, res) => this._handlePostRequest(req, res)
-		);
-
-		this._handleWebsocetRequest();
 	}
 
 	get playerManager() {
@@ -120,6 +106,64 @@ class GameManager {
 		return false;
 	}
 
+	handleHttpRequest(webApplication) {
+		webApplication.get(
+			'/game/logout',
+			(req, res) => this._logoutPlayer(req, res)
+		);
+
+		webApplication.post(
+			'/game/request',
+			(req, res, next) => this._authenticatePostRequest(req, res, next),
+			(req, res) => this._handlePostRequest(req, res)
+		);
+	}
+
+	handleWebsocetRequest(socket) {
+		let session = socket.handshake.session;
+
+		if (!this.checkClientSession(session)) {
+			log('warn', 'unauthorised connection', session);
+			socket.disconnect(true);
+			return false;
+		}
+
+		let player = this.playerManager.getPlayer(session.name);
+
+		if (player.socket) {
+			player.socket.emit('anotherLogin');
+			player.socket.disconnect(true);
+		}
+		player.socket = socket;
+		this.playerManager.clearDisconnectTimeout(player.name);
+
+		socket.on('action', req => {
+			if (!this.checkClientSession(session)) {
+				log('warn', 'unauthorised connection', session);
+				socket.disconnect(true);
+				return false;
+			}
+
+			player.activity();
+			req.type = req.type.replace('server/', '');
+
+			if (!req.type || !requests.websocket[req.type]) {
+				log('warn', 'Unknown request: %j', req);
+			} else {
+				requests.websocket[req.type](
+					req,
+					socket,
+					this._server,
+					player
+				);
+			}
+		});
+
+		socket.on('disconnect', () => {
+			this.playerManager.setDisconnectTimeout(player.name);
+			//log('info', 'user disconnected');
+		});
+	}
 
 	_startGameLoop() {
 		this._run = true;
@@ -149,11 +193,14 @@ class GameManager {
 		if (!req.body.type || !requests.http[req.body.type]) {
 			res.send(JSON.stringify({ error: `Invalid request: ${req.body.type}` }));
 		} else {
+			let player = this.playerManager.getPlayer(req.session.name);
+
+			player.activity();
 			requests.http[req.body.type](
 				req,
 				res,
 				this._server,
-				this.playerManager.getPlayer(req.session.name)
+				player
 			);
 		}
 	}
@@ -166,59 +213,18 @@ class GameManager {
 		}
 	}
 
-	_handleWebsocetRequest() {
-		this._server.webSockets.on('connection', socket => {
-			let session = socket.handshake.session;
-
-			if (!this.checkClientSession(session)) {
-				log('warn', 'unauthorised connection', session);
-				socket.disconnect(true);
-				return false;
-			}
-
-			let player = this.playerManager.getPlayer(session.name);
-
-			if (player.socket) {
-				player.socket.emit('anotherLogin');
-				player.socket.disconnect(true);
-			}
-			player.socket = socket;
-			this.playerManager.clearDisconnectTimeout(player.name);
-
-			socket.on('action', req => {
-				if (!this.checkClientSession(session)) {
-					log('warn', 'unauthorised connection', session);
-					socket.disconnect(true);
-					return false;
-				}
-
-				req.type = req.type.replace('server/', '');
-
-				if (!req.type || !requests.websocket[req.type]) {
-					log('warn', 'Unknown request: %j', req);
-				} else {
-					requests.websocket[req.type](
-						req,
-						socket,
-						this._server,
-						player
-					);
-				}
-			});
-
-			socket.on('disconnect', () => {
-				this.playerManager.setDisconnectTimeout(player.name);
-				//log('info', 'user disconnected');
-			});
-		});
-	}
-
 	_logoutPlayer(req, res) {
 		if (this.playerManager.isLoaded(req.session.name)) {
-			this.playerManager.unloadPlayer(req.session.name);
+			this.playerManager.unloadPlayer(req.session.name)
+				.then(() => {
+					log('info', `Players online: ${this.playerManager.getOnlinePlayers().length}`);
+				})
+				.catch(error => {
+					log('error', error);
+				});
 		}
+
 		this.clearSession(req.session);
-		log('info', `Players online: ${this.playerManager.getPlayers().length}`);
 		res.redirect('/');
 	}
 }

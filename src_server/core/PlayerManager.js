@@ -30,6 +30,10 @@ class PlayerManager {
 		return this._players;
 	}
 
+	getOnlinePlayers() {
+		return this._players.filter(player => player.onlineStatus);
+	}
+
 	getPlayersInMemoryCount() {
 		return this._players.length;
 	}
@@ -62,10 +66,11 @@ class PlayerManager {
 
 		let player = this.getPlayer(name);
 
+		player.onLogout();
 		await player.save()
 			.then(() => {
-				player.inventory.save();
 				this._players = this._players.filter(player => player.name !== name);
+				return player.inventory.save();
 			})
 			.catch(err => {
 				log('error', err);

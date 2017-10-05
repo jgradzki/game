@@ -3,7 +3,7 @@ import { log } from '../logger.js';
 let lastTick = 0;
 
 module.exports = server => {
-	let n = (new Date()).getTime();
+	const n = (new Date()).getTime();
 
 	if (lastTick === 0) {
 		lastTick = n;
@@ -11,15 +11,9 @@ module.exports = server => {
 
 	let speed = server.config.get('player.playerSpeedOnMap');
 
-	if ((n - lastTick) > 200) {
-		log('warn', 'playerMoveTick trwało: ', (n - lastTick));
-	} else if ((n - lastTick) > 150) {
-		log('info', 'playerMoveTick trwało: ', (n - lastTick));
-	}
-
 	speed = speed * ((n - lastTick) / 1000);
 
-	let players = server.gameManager.playerManager.getPlayers();
+	let players = server.gameManager.playerManager.getOnlinePlayers();
 
 	for (let player of players) {
 		if (!player.sendingPositionTime) {
@@ -99,6 +93,14 @@ module.exports = server => {
 				}
 			}
 		}
+	}
+
+	const end = (new Date()).getTime();
+
+	if ((end - n) > 200) {
+		log('warn', 'playerMoveTick trwało: ', (end - n));
+	} else if ((end - n) > 150) {
+		log('info', 'playerMoveTick trwało: ', (end - n));
 	}
 	lastTick = n;
 };

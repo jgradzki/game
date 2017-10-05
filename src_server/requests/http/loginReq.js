@@ -25,9 +25,9 @@ module.exports = (req, res, server) => {
 				where: {
 					name
 				},
-				include: [{ 
-					model: server.db.getModel('Inventory'), 
-					as: 'inventory' 
+				include: [{
+					model: server.db.getModel('Inventory'),
+					as: 'inventory'
 				}]
 			});
 		})
@@ -43,6 +43,7 @@ module.exports = (req, res, server) => {
 			sess.playerID = player.id;
 			player.sessionId = sess.id;
 			server.gameManager.playerManager.loadPlayer(player);
+			player.onLogin();
 			log('info', `Players online: ${server.gameManager.playerManager.getPlayers().length}`);
 			res.send({ 'success': true });
 

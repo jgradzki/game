@@ -85,13 +85,13 @@ class LocationManager {
 			this._mapManager.getElement(mapPositionId)
 				.then(position => {
 					if (!position) {
-						reject(`Position ${mapPositionId} not found`);
+						reject(`@LocationManager: Position ${mapPositionId} not found`);
 					}
 
 					let model = this.typeToModel(position.type);
 
 					if (!model) {
-						reject(`Model ${position.type} not found.`);
+						reject(`@LocationManager: Model ${position.type} not found.`);
 					}
 
 					let location = this._locations.filter(l =>  (l.mapPosition.id === position.id))[0];
@@ -129,7 +129,7 @@ class LocationManager {
 				let model = this.typeToModel(type);
 
 				if (!model) {
-					reject(`Model ${type} not found.`);
+					reject(`@LocationManager: Model ${type} not found.`);
 				}
 
 				model.findOne({

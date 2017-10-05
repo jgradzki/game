@@ -49,6 +49,7 @@ export default class Player extends Model {
 			defaultValue: ((new Date()).getTime())
 		},
 
+		onlineStatus: Sequelize.VIRTUAL(Sequelize.BOOLEAN),
 		//helpers
 		sendingPositionTime: Sequelize.VIRTUAL(Sequelize.INTEGER)
 	};
@@ -92,14 +93,22 @@ export default class Player extends Model {
 		return ((this.lastAcivity + time) < now);
 	}
 
+	onLogin() {
+		this.setDataValue('onlineStatus', true);
+	}
+
+	onLogout() {
+		this.setDataValue('onlineStatus', false);
+	}
+
 	enterLocation(id, type) {
 		this.location = id;
 		this.locationType = type;
 	}
 
 	exitLocation() {
-		this.setDataValue('location', false);
-		this.setDataValue('locationType', false);
+		this.setDataValue('location', null);
+		this.setDataValue('locationType', null);
 	}
 
 	isInLocation() {
