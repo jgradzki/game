@@ -1,21 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { log } from '../libs/debug';
-import { setLocationMap, setPlayerPosition } from '../actions/location';
-import * as dungeonActions from '../actions/locations/dungeonAction';
-import { setPlayerInventory } from '../actions/player';
-import { getPlayerInventory } from '../selectors/playerSelector';
-import makeRequest from '../libs/request';
+import { log } from '../../libs/debug';
+import { setLocationMap, setPlayerPosition } from '../../actions/location';
+import * as dungeonActions from '../../actions/locations/dungeonActions';
+import { setPlayerInventory } from '../../actions/player';
+import { getPlayerInventory } from '../../selectors/playerSelector';
+import makeRequest from '../../libs/request';
 
-import DungeonMap from '../components/DungeonMap.jsx';
-import Inventory from '../components/Inventory.jsx';
+import DungeonMap from './Dungeon/DungeonMap.jsx';
+import Inventory from '../Inventory.jsx';
 
 class Dungeon extends Component {
-	constructor(props) {
-		super(props);
-	}
-
 	componentWillMount() {
 		this._onEnter(this.props.location.initialData);
 	}
@@ -27,8 +23,9 @@ class Dungeon extends Component {
 			items = [];
 		}
 		return (
-			<div>
+			<div className="locationDungeonContainer">
 				<DungeonMap />
+				<a className="locationDungeonExitButton" onClick={()=>this.props.requestExit()} >[Wyjdź]</a>
 				<Inventory
 					name="Znalezione"
 					onClick={slot => this._onLootClick(slot)}
@@ -55,10 +52,10 @@ class Dungeon extends Component {
 
 	_onEnter(data) {
 		if (!data.rooms || typeof(data.rooms) !== 'object' || !data.position) {
-			throw {
+			log('error', {
 				code: 3011,
 				msg: ['wrong rooms data: ', data]
-			};
+			});
 		} else {
 			this.props.setLocationMap(data.rooms);
 			this.props.setPlayerPosition(data.position);
@@ -144,12 +141,13 @@ class Dungeon extends Component {
 	}
 
 	static propTypes = {
-		player: PropTypes.object,
-		location: PropTypes.object,
-		setLocationMap: PropTypes.func,
-		setLootList: PropTypes.func,
-		setPlayerPosition: PropTypes.func,
-		setPlayerInventory: PropTypes.func,
+		player: PropTypes.object.isRequired,
+		location: PropTypes.object.isRequired,
+		setLocationMap: PropTypes.func.isRequired,
+		setLootList: PropTypes.func.isRequired,
+		setPlayerPosition: PropTypes.func.isRequired,
+		setPlayerInventory: PropTypes.func.isRequired,
+		requestExit: PropTypes.func.isRequired,
 	};
 }
 

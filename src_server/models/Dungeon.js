@@ -54,7 +54,7 @@ export default class Dungeon extends Model {
 		this.setDataValue('entryRoom', roll.mainRoom);
 	}
 
-	getDataForPlayer(id) {
+	async getDataForPlayer(id) {
 		return {
 			rooms: this.rooms,
 			position: this.getPlayerLocation(id) || this.entryRoom

@@ -70,7 +70,7 @@ export default class MapElement extends Model {
 		//
 	}
 
-	getDataForPlayer(id) {
+	async getDataForPlayer(id) {
 
 		return {
 			type: this.type,

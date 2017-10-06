@@ -5,7 +5,7 @@ import { log } from '../libs/debug';
 import getLoadingStatus from '../selectors/loadingSelector';
 
 class Loading extends Component {
-	render() {   
+	render() {
 		if (this.props.loading.status) {
 			log('render', 'Loading render');
 			return (
@@ -25,7 +25,7 @@ let mapStateToProps  = (state, props) => {
 	};
 };
 
-let mapDispatchToProps = (dispatch) => {
+let mapDispatchToProps = dispatch => {
 	return {};
 };
 

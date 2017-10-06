@@ -2,26 +2,26 @@ module.exports = {
 	MATERIAL_WOOD: {
 		type: 'material',
 		name: 'Drewno',
-		rollChance: 50,
+		rollChance: 59,
 		maxStack: 8
 	},
 	MATERIAL_JUNK: {
 		type: 'material',
 		name: 'Złom',
-		rollChance: 50,
+		rollChance: 59,
 		maxStack: 12
 	},
 	MATERIAL_NAIL: {
 		type: 'material',
 		name: 'Gwoździe',
-		rollChance: 50,
+		rollChance: 20,
 		minStack: 2,
 		maxStack: 24
 	},
 	MATERIAL_WOOD_NAIL: {
 		type: 'material',
 		name: 'Deska z gwoźdzmi',
-		rollChance: 20,
+		rollChance: 25,
 		maxStack: 6
 	},
 	MATERIAL_GUNPOWDER: {
@@ -72,7 +72,7 @@ module.exports = {
 			food: 60
 		}
 	},
-	FOOD_AXE: {
+	WEAPON_AXE: {
 		type: 'tool',
 		name: 'Siekiera',
 		rollChance: 10,
@@ -82,36 +82,36 @@ module.exports = {
 			speed: 3
 		}
 	},
-	FOOD_HAMMER: {
+	TOOL_HAMMER: {
 		type: 'tool',
 		name: 'Młotek',
-		rollChance: 15,
+		rollChance: 10,
 		maxStack: 1,
 		combat: {
 			atack: 7,
 			speed: 3
 		}
 	},
-	FOOD_SCREWDRIVER: {
+	TOOL_SCREWDRIVER: {
 		type: 'tool',
 		name: 'Śrubokręt',
-		rollChance: 15,
+		rollChance: 10,
 		maxStack: 1,
 		combat: {
 			atack: 5,
 			speed: 4
 		}
 	},
-	FOOD_HAMMER: {
+	TOOL_BLADE: {
 		type: 'tool',
 		name: 'Brzeszczot',
-		rollChance: 15,
+		rollChance: 10,
 		maxStack: 1
 	},
-	FOOD_CROWBAR: {
+	TOOL_CROWBAR: {
 		type: 'tool',
 		name: 'Łom',
-		rollChance: 15,
+		rollChance: 10,
 		maxStack: 1,
 		combat: {
 			atack: 8,

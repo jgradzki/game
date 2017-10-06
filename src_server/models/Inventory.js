@@ -1,4 +1,5 @@
 import Sequelize, { Model } from 'sequelize';
+import _ from 'lodash';
 import items from '../data/items';
 
 export default class Inventory extends Model {
@@ -86,6 +87,29 @@ export default class Inventory extends Model {
 		this.setDataValue('content', content.filter(item => item.count > 0));
 
 		return this;
+	}
+
+	has(items) {
+		if (!_.isArray(items)) {
+			return false;
+		}
+
+		let has = true;
+
+		items.forEach((item) => {
+			let count = 0;
+
+			this.getInventory().forEach((inventoryItem) => {
+				if (item.name === inventoryItem.name) {
+					count += inventoryItem.count;
+				}
+			});
+			if (count < item.count) {
+				has = false;
+			}
+		});
+
+		return has;
 	}
 
 	calculateInventory(inventory, inventoryLimit, newItem, newItemMaxStack) {

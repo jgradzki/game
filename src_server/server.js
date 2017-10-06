@@ -23,7 +23,7 @@ server.eventEmitter.on('SERVER_START_SERVER_END', server => {
 			if (!admin) {
 				return server.gameManager.playerManager.createPlayer('Admin', 123456);
 			} else {
-				return new Promise(resolve => resolve(false));
+				return false;
 			}
 		})
 		.then(created => {

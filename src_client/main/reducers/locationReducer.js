@@ -10,7 +10,7 @@ const locationReducer = (state = {}, action) => {
 			};
 		case actionTypes.LOCATION_SET_INITIAL_DATA:
 			return {
-				...state,
+				locationType: state.locationType,
 				initialData: action.data
 			};
 		/* DUNGEON_MAP */

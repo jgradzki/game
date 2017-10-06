@@ -37,7 +37,7 @@ class Inventory extends Component {
 					<div
 						key={i}
 						className="inventoryItem"
-						onClick={()=>this.props.onClick(i)}
+						onClick={()=>this.props.onClick && this.props.onClick(i)}
 					>
 						<span>{this.props.items[i].count}</span>
 						<img
@@ -67,7 +67,7 @@ class Inventory extends Component {
 		centerY: PropTypes.bool,
 		name: PropTypes.string.isRequired,
 		slots: PropTypes.number.isRequired,
-		onClick: PropTypes.func.isRequired,
+		onClick: PropTypes.func,
 		items: PropTypes.arrayOf(PropTypes.shape({
 			name: PropTypes.string.isRequired,
 			fullName: PropTypes.string.isRequired,

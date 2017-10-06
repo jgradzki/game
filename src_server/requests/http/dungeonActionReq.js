@@ -28,7 +28,7 @@ module.exports = (req, res, server, player) => {
 		return;
 	}
 
-	let action = req.body.data;
+	const action = req.body.data;
 
 	switch (action.type) {
 		case 'loot':

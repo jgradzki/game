@@ -2,36 +2,14 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { log } from '../libs/debug';
-import Window from './Window.jsx';
 import LocationManager from '../libs/locationManager';
-import locations from '../locations';
+import locations from './locations';
 
 class Location extends Component {
 	render() {
 		log('render', 'Location render');
 		if (this.props.player.inLocation) {
-			return (
-				<Window
-					wcn="locationWindow"
-					tcn="locationWindowTile"
-					ccn="locationWindowContent"
-					title={[
-						'Location(', this.props.location.locationType, ') | [',
-						<a onClick={()=>LocationManager.requestLocationExit()} > Wyjdź </a>, ']'
-					]}
-					style={{
-						left: '50%',
-						top: '50%',
-						width: '800px',
-						height: '800px',
-						transform: 'translate(-50%, -50%)'
-					}}
-				>
-					<div className="locationContainer">
-						{ this._getLocation() }
-					</div>
-				</Window>
-			);
+			return <div className="locationWindow">{this._getLocation()}</div>;
 		} else {
 			return null;
 		}
@@ -42,7 +20,7 @@ class Location extends Component {
 
 		if (location) {
 			return <div>
-				<Location />
+				<Location requestExit={LocationManager.requestLocationExit} />
 			</div>;
 		} else {
 			const DefaultLoc = locations['default'];

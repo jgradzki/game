@@ -61,19 +61,19 @@
         "block-spacing": [
             "warn",
             "always"
-        ], 
+        ],
         "array-bracket-spacing": [
             "warn",
             "never"
-        ], 
+        ],
         "newline-after-var": [
             "error",
             "always"
-        ], 
+        ],
         "brace-style": [
             "warn",
             "1tbs"
-        ], 
+        ],
         "comma-spacing": [
             "warn",
             {
@@ -92,11 +92,11 @@
             {
                 "max": 2,
                 "maxEOF": 1,
-                "maxBOF": 0 
+                "maxBOF": 0
             }
         ],
         "no-whitespace-before-property": "warn",
-        "object-property-newline": "error",
+        "object-property-newline": 0,
         "react/jsx-indent": [
             "error",
             "tab"

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import DungeonRoom from './DungeonRoom.jsx';
-import { setPlayerPosition } from '../actions/location';
-import { log } from '../libs/debug';
+import { setPlayerPosition } from '../../../actions/location';
+import { log } from '../../../libs/debug';
 
 
 class DungeonMap extends Component {

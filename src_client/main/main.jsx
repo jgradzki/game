@@ -59,17 +59,22 @@ axios.post('game/request', { type: 'init' })
 		socket.on('SERVER_SHUTDOWN', () => {
 		//alert('Server is shutting down...')
 		});
-		socket.on('anotherLogin', msg => {
+		socket.on('anotherLogin', () => {
 			alert('Someone else has logged in...');
 		});
 		socket.on('disconnect', () => {
 		//alert('You have been disconnected.')
 			window.location = '/';
 		});
-		let socketIoMiddleware = createSocketIoMiddleware(socket, 'server/');
 
-		//let store = createStore(reducers, initialStates);
-		initStore(applyMiddleware(socketIoMiddleware)(createStore)(reducers, storeInitialStates));
+		const socketIoMiddleware = createSocketIoMiddleware(socket, 'server/');
+
+		initStore(applyMiddleware(socketIoMiddleware)(createStore)(
+			reducers,
+			storeInitialStates,
+			process.env.NODE_ENV !== 'production' ? window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__() : undefined
+		));
+
 
 		store.subscribe(() => {
 			log('newState', 'new client state: ', store.getState());
@@ -79,7 +84,7 @@ axios.post('game/request', { type: 'init' })
 			LocationManager.enterLocation(data.location.type, data.location.data);
 		}
 
-		return new Promise((resolve, reject) => {
+		return new Promise(resolve => {
 			ReactDOM.render(
 				<Provider store = { store }>
 					<GameContainer />

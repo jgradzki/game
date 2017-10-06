@@ -1,4 +1,4 @@
-import { actionTypes } from '../../actions/locations/dungeonAction';
+import { actionTypes } from '../../actions/locations/dungeonActions';
 
 const dungeonReducer = (state, action) => {
 	let rooms;

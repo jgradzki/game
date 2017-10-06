@@ -5,6 +5,7 @@ import enterLocation from './enterLocationReq';
 import exitLocation from './exitLocationReq';
 import dungeonChangePosition from './dungeonChangePositionReq';
 import dungeonAction from './dungeonActionReq';
+import playerBaseAction from './playerBaseActionReq';
 
 module.exports = {
 	init,
@@ -13,5 +14,6 @@ module.exports = {
 	enterLocation,
 	exitLocation,
 	dungeonChangePosition,
-	dungeonAction
+	dungeonAction,
+	playerBaseAction
 };

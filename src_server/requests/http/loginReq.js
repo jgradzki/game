@@ -2,9 +2,6 @@ import validator from 'validator';
 import { log } from './../../logger';
 
 module.exports = (req, res, server) => {
-
-	let player;
-
 	new Promise((resolve, reject) => {
 		if (!req.body.form) {
 			reject(false);
@@ -45,7 +42,9 @@ module.exports = (req, res, server) => {
 			if (!player.inventory || !player.base) {
 				return server.gameManager.playerManager.checkPlayerAssociations(player);
 			} else {
-				return new Promise(resolve => resolve(player));
+				new Promise(resolve => resolve(server.gameManager.locationManager.getLocation(player.base.id, player.base.getType())))
+					.then(base => player.base = base);
+				return player;
 			}
 		})
 		.then(player => {

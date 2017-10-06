@@ -64,13 +64,22 @@ module.exports = (req, res, server, player) => {
 			return server.gameManager.locationManager.getLocationByMapPosition(mapPosition.id);
 		})
 		.then(location => {
+			return Promise.all([
+				location,
+				location.getDataForPlayer(player.id)
+			]);
+		})
+		.then(results => {
+			const location = results[0];
+			const data = results[1];
+
 			player.enterLocation(location.id, location.getType());
 			location.onPlayerEnter(player);
 
 			res.send({
 				success: true,
 				type: location.getType(),
-				data: location.getDataForPlayer(player.id)
+				data
 			});
 		})
 		.catch(error => {

@@ -75,7 +75,6 @@ class LocationManager {
 					}
 
 					LocationManager.enterLocation(data.type, data.data);
-
 				} else {
 					throw {
 						code: 3004,

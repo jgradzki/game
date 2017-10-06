@@ -127,6 +127,12 @@ gulp.task('eslint', () => {
 });
 
 gulp.task('default', () => {
+	gulp.watch(`./${publicSrc}/**/*.*`, ['build-client'])
+		.on('error', handleError)
+		.on('change', event => {
+			console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
+		});
+
 	gulp.watch([path.join(clientSrc, '/**/*.jsx'), path.join(clientSrc, '/**/*.js')], ['build-client'])
 		.on('error', handleError)
 		.on('change', event => {

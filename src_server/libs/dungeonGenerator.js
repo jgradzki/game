@@ -1,4 +1,6 @@
+import _ from 'lodash';
 import { roll } from './functions';
+import items from '../data/items';
 
 let odds = {
 	1: 60,
@@ -397,20 +399,36 @@ const rollItems = (rooms) => {
 	rooms.forEach((y)=>{
 		y.forEach((x)=>{
 			if (x.is) {
-				x.items = [
-					{
-						name: 'MATERIAL_WOOD',
-						fullName: 'Drewno',
-						count: roll(1, 8)
+				x.items = [];
+				_.forEach(items, (item, key) => {
+					if (item.rollChance > 0) {
+						let count = 0;
+
+						while (roll(1, 100) < item.rollChance) {
+							count++;
+
+							if (count > item.maxStack) {
+								count -= item.maxStack;
+
+								x.items.push({
+									name: key,
+									type: item.type,
+									fullName: item.name,
+									count: item.maxStack
+								});
+							}
+						}
+
+						if (count > 0 ) {
+							x.items.push({
+								name: key,
+								type: item.type,
+								fullName: item.name,
+								count: item.maxStack
+							});
+						}
 					}
-				];
-				if (roll(1, 100) > 50) {
-					x.items.push({
-						name: 'MATERIAL_JUNK',
-						fullName: 'Złom',
-						count: roll(1, 12)
-					});
-				}
+				});
 			}
 		});
 	});

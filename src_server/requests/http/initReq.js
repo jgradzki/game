@@ -22,10 +22,19 @@ const initReq = (req, res, server, player) => {
 	if (player.isInLocation()) {
 		server.gameManager.locationManager.getLocation(player.location, player.locationType)
 			.then(location => {
+				return Promise.all([
+					location,
+					location.getDataForPlayer(player.id)
+				]);
+			})
+			.then(results => {
+				const location = results[0];
+				const data = results[1];
+
 				session.inLocation = true;
 				session.location = {
 					type: location.getType(),
-					data: location.getDataForPlayer(player.id)
+					data: data
 				};
 
 				res.send(session);

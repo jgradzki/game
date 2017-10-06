@@ -17,7 +17,6 @@ const reducers = combineReducers({
 	location: locationReducer,
 	error: errorReducer,
 	system: systemReducer,
-	lastAction
 });
 
 export default reducers;

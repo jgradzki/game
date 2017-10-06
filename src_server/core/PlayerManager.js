@@ -153,7 +153,7 @@ class PlayerManager {
 				})
 				.then(player => {
 					return Promise.all([
-						new Promise(resolve => resolve(player)),
+						player,
 						this._createPlayerInventory(player),
 						this._createPlayerBase(player),
 						this._createFirstDungeon(player)
@@ -232,21 +232,48 @@ class PlayerManager {
 
 	_createPlayerBase(player, position) {
 		return new Promise((resolve, reject) => {
-			this._server.gameManager.locationManager.addLocation(
-				this._server.db.getModel('MapElement').ElementTypes.PLAYER_BASE,
-				this._findStartPosition(position),
-				{
-					width: 20,
-					height: 20
-				},
-				{ owner: player.id },
-				{},
-				'home'
-			)
-				.then(base => {
-					return player.setBase(base);
+			Promise.all([
+				this._server.gameManager.locationManager.addLocation(
+					this._server.db.getModel('MapElement').ElementTypes.PLAYER_BASE,
+					this._findStartPosition(position),
+					{
+						width: 20,
+						height: 20
+					},
+					{ owner: player.id },
+					{},
+					'home'
+				),
+				this._server.db.getModel('Inventory').create({
+					size: 10,
+					content: []
+				}),
+				this._server.db.getModel('Inventory').create({
+					size: 10,
+					content: []
+				}),
+				this._server.db.getModel('Inventory').create({
+					size: 10,
+					content: []
+				})
+			])
+				.then(result => {
+					let base = result[0];
+					let box1 = result[1];
+					let box2 = result[2];
+					let box3 = result[3];
+
+					return Promise.all([
+						player.setBase(base),
+						this._server.gameManager.locationManager.getLocation(base.id, base.getType()),
+						base.setBox1(box1),
+						base.setBox2(box2),
+						base.setBox3(box3),
+					]);
 				})
 				.then(base => {
+					base = base[1];
+
 					player.base = base;
 					resolve(base);
 				})
