@@ -14,24 +14,22 @@ class LoginForm extends Component {
 			pass: '123456'
 		};
 
-		setTimeout(() => {
-			this._onClick();
-		}, 500);
+		setTimeout(() => this._onClick(), 500);
 	}
 
 	_postHandle(data) {
 		if (data.error) {
 			this.setState({ error: data.error });
-		} else if (data.success == true) {
+		} else if (data.success === true) {
 			this.setState({ success: true });
 			window.location.replace('/game');
 		}
 	}
 
 	_handleChange(event) {
-		if (event.target.name == 'login') {
+		if (event.target.name === 'login') {
 			this.setState({ login: event.target.value });
-		} else if (event.target.name == 'pass') {
+		} else if (event.target.name === 'pass') {
 			this.setState({ pass: event.target.value });
 		}
 	}

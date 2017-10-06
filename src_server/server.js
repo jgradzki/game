@@ -14,96 +14,22 @@ server.eventEmitter.on('SERVER_START_SERVER_END', server => {
 	log('info', 'Server online');
 	const Player = server.db.getModel('Player');
 
-	Player.findOrCreate({
+	Player.find({
 		where: {
 			name: 'Admin'
-		},
-		defaults:
-		{
-			name: 'Admin',
-			password: '123456',
-			mapPosition: {
-				x: 50,
-				y: 50
-			}
 		}
 	})
-		.spread((player, created) => {
-			if (created) {
-				log('info', 'Player created.');
+		.then(admin => {
+			if (!admin) {
+				return server.gameManager.playerManager.createPlayer('Admin', 123456);
+			} else {
+				return new Promise(resolve => resolve(false));
 			}
-
-			player.getBase()
-				.then(base => {
-					if (!base) {
-						server.gameManager.locationManager.addLocation(
-							server.db.getModel('MapElement').ElementTypes.PLAYER_BASE,
-							{
-								x: 50,
-								y: 50
-							},
-							{
-								width: 20,
-								height: 20
-							},
-							{ owner: player.id },
-							{},
-							'home'
-						)
-							.then(inventory => {
-								player.setBase(inventory);
-							});
-					}
-				});
-
-
-			player.getInventory()
-				.then(inventory => {
-					if (!inventory) {
-						server.db.getModel('Inventory').create({
-							size: server.config.get('player.defaultPlayerInventorySize', 5),
-							content: []
-						})
-							.then(inventory => {
-								player.setInventory(inventory);
-							});
-
-					}
-				});
-
-			return Promise.all([
-				server.gameManager.locationManager.addLocation(
-					server.db.getModel('MapElement').ElementTypes.DUNGEON,
-					{
-						x: 150,
-						y: 50
-					},
-					{
-						width: 20,
-						height: 20
-					},
-					{ for: player.id },
-					{},
-					'building'
-				),
-				server.gameManager.locationManager.addLocation(
-					server.db.getModel('MapElement').ElementTypes.DUNGEON,
-					{
-						x: 100,
-						y: 60
-					},
-					{
-						width: 20,
-						height: 20
-					},
-					{ all: true },
-					{},
-					'building'
-				)
-			]);
 		})
-		.then(loc => {
-			log('info', `Locations ${loc[0].id}, ${loc[1].id} created.`);
+		.then(created => {
+			if (created) {
+				log('info', 'Admin account created.');
+			}
 
 			return server.db.getModel('Player').count();
 		})
@@ -128,7 +54,6 @@ server.eventEmitter.on('SERVER_START_SERVER_END', server => {
 		.catch(e => {
 			log('error', e);
 		});
-
 
 });
 

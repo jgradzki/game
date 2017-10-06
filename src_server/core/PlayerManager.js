@@ -12,6 +12,7 @@ class PlayerManager {
 		 * @type {Server}
 		 */
 		this._server = server;
+		this._playerModel = this._server.db.getModel('Player');
 
 		this._players = [];
 	}
@@ -40,12 +41,12 @@ class PlayerManager {
 
 
 	loadPlayer(player) {
-		if (player && (player instanceof this._server.db.getModel('Player'))) {
+		if (player && (player instanceof this._playerModel)) {
 			if (this._players.filter(p => p.name === player.name)) {
 				this._players.push(player);
 			}
 		} else {
-			throw new TypeError('player must be instance of Player model.');
+			throw new TypeError(`laodPlayer: player must be instance of Player model. Value: ${player}`);
 		}
 	}
 
@@ -77,9 +78,9 @@ class PlayerManager {
 			});
 	}
 
-	async findPlayer() {
+	async findPlayer(name) {
 		try {
-			let player = await this._server.db.getModel('Player').findOne({
+			let player = await this._playerModel.findOne({
 				where: {
 					name
 				}
@@ -133,6 +134,146 @@ class PlayerManager {
 			return;
 		}
 		clearTimeout(this.getPlayer(name).disconnectTimeout);
+	}
+
+	createPlayer(name, password, position) {
+		return new Promise((resolve, reject) => {
+			this.findPlayer(name)
+				.then(player => {
+					if (player) {
+						reject('Username already taken.');
+						return;
+					}
+
+					return this._playerModel.create({
+						name,
+						password,
+						mapPosition: this._findStartPosition(position)
+					});
+				})
+				.then(player => {
+					return Promise.all([
+						new Promise(resolve => resolve(player)),
+						this._createPlayerInventory(player),
+						this._createPlayerBase(player),
+						this._createFirstDungeon(player)
+					]);
+				})
+				.then(results => resolve(results[0]))
+				.catch(error => reject(error));
+		});
+	}
+
+	checkPlayerAssociations(player) {
+		return new Promise((resolve, reject) => {
+			if (player && (player instanceof this._playerModel)) {
+				Promise.all([
+					player.getInventory(),
+					player.getBase()
+				])
+					.then(results => {
+						let toFix = [];
+
+						if (!results[0]) {
+							toFix.push(this._createPlayerInventory(player));
+						}
+						if (!results[1]) {
+							toFix.push(this._createPlayerBase(player));
+						}
+						if (toFix.length > 0) {
+							Promise.all(toFix)
+								.then(() => resolve(player))
+								.catch(error => reject(error));
+						} else {
+							resolve(player);
+						}
+					})
+					.catch(error =>	reject(error));
+			} else {
+				throw new TypeError(`checkPlayerAssociations: player must be instance of Player model. Value: ${player}`);
+			}
+		});
+	}
+
+	_findStartPosition(position = 'default') {
+		if (position === 'default' || !position.x || !position.y) {
+			return this._server.config.get(
+				'player.defaultPlayerOnMapPosition',
+				{
+					x: 50,
+					y: 50
+				}
+			);
+		} else {
+			//todo
+			return {
+				x: 50,
+				y: 50
+			};
+		}
+	}
+
+	_createPlayerInventory(player) {
+		return new Promise((resolve, reject) => {
+			this._server.db.getModel('Inventory').create({
+				size: this._server.config.get('player.defaultPlayerInventorySize', 5),
+				content: []
+			})
+				.then(inventory => {
+					return player.setInventory(inventory);
+				})
+				.then(inventory => {
+					player.inventory = inventory;
+					resolve(inventory);
+				})
+				.catch(error => reject(error));
+		});
+	}
+
+	_createPlayerBase(player, position) {
+		return new Promise((resolve, reject) => {
+			this._server.gameManager.locationManager.addLocation(
+				this._server.db.getModel('MapElement').ElementTypes.PLAYER_BASE,
+				this._findStartPosition(position),
+				{
+					width: 20,
+					height: 20
+				},
+				{ owner: player.id },
+				{},
+				'home'
+			)
+				.then(base => {
+					return player.setBase(base);
+				})
+				.then(base => {
+					player.base = base;
+					resolve(base);
+				})
+				.catch(error => reject(error));
+		});
+	}
+
+	_createFirstDungeon(player) {
+		return new Promise((resolve, reject) => {
+			this._server.gameManager.locationManager.addLocation(
+				this._server.db.getModel('MapElement').ElementTypes.DUNGEON,
+				{
+					x: player.mapPosition.x+20,
+					y: player.mapPosition.y+20
+				},
+				{
+					width: 20,
+					height: 20
+				},
+				{ for: player.id },
+				{},
+				'building',
+				true
+			)
+				.then(location => resolve(location))
+				.catch(error => reject(error));
+		});
 	}
 }
 

@@ -57,22 +57,7 @@ module.exports = (req, res, server) => {
 		let inventory;
 		let player;
 
-		server.db.getModel('Inventory').create({
-			size: server.config.get('player.defaultPlayerInventorySize', 5),
-			content: []
-		})
-			.then(result => {
-				inventory = result;
-				return server.db.getModel('Player').create({
-					name: login,
-					password: req.body.form.pass,
-					mapPosition: server.config.get('player.defaultPlayerOnMapPosition')
-				});
-			})
-			.then( result => {
-				player = result;
-				return player.setInvetory(inventory);
-			})
+		server.gameManager.playerManager.createPlayer(login, req.body.form.pass)
 			.then(() => {
 				res.send({
 					success: true

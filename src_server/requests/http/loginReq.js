@@ -25,18 +25,30 @@ module.exports = (req, res, server) => {
 				where: {
 					name
 				},
-				include: [{
-					model: server.db.getModel('Inventory'),
-					as: 'inventory'
-				}]
+				include: [
+					{
+						model: server.db.getModel('Inventory'),
+						as: 'inventory'
+					},
+					{
+						model: server.db.getModel('PlayerBase'),
+						as: 'base'
+					}
+				]
 			});
 		})
-		.then(result => {
-			player = result;
+		.then(player => {
 			if (!player || !player.auth(req.body.form.pass)) {
 				throw true;
 			}
 
+			if (!player.inventory || !player.base) {
+				return server.gameManager.playerManager.checkPlayerAssociations(player);
+			} else {
+				return new Promise(resolve => resolve(player));
+			}
+		})
+		.then(player => {
 			let sess = req.session;
 
 			sess.name = player.name;
