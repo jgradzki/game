@@ -5,13 +5,19 @@ const mapIcons = {
 	destination: { img: 'img/point.png' }
 };
 
-const mapPosition = { top: 100,
-	left: 150 };
+const mapPosition = {
+	top: 100,
+	left: 150
+};
 
-const playerSize = { width: 20,
-	height: 20 };
-const destSize = { width: 20,
-	height: 20 };
+const playerSize = {
+	width: 20,
+	height: 20
+};
+const destSize = {
+	width: 20,
+	height: 20
+};
 
 const mapElements = [];
 
@@ -20,25 +26,33 @@ const systemReducerInitial = {
 };
 
 const mapStateReducerInitial = {
-	size: { width: 800,
-		height: 700 },
+	size: {
+		width: 800,
+		height: 700
+	},
 	test: 0,
-	position: { x: 0,
-		y: 0 },
-	initial: { x: 0,
-		y: 0 },
+	position: {
+		x: 0,
+		y: 0
+	},
+	initial: {
+		x: 0,
+		y: 0
+	},
 	dragging: false,
 	changed: false,
 	mapElements,
-	playerPosition: { x: 0,
-		y: 0 },
+	playerPosition: {
+		x: 0,
+		y: 0
+	},
 	destination: undefined
 };
 
 const playerReducerInitial = {
 	name: 'unknown',
-	hp: 100,
-	energy: 100,
+	hp: 0,
+	energy: 0,
 	inLocation: false,
 	inventory: []
 };

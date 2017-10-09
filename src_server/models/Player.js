@@ -27,6 +27,16 @@ export default class Player extends Model {
 		},
 		socket: Sequelize.VIRTUAL,
 		disconnectTimeout: Sequelize.VIRTUAL,
+		hp: {
+			type: Sequelize.INTEGER,
+			defaultValue: 100,
+			allowNull: false,
+		},
+		energy: {
+			type: Sequelize.INTEGER,
+			defaultValue: 100,
+			allowNull: false,
+		},
 		mapPosition: {
 			type: Sequelize.JSON,
 			allowNull: false,
