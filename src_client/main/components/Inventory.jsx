@@ -1,18 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { log } from '../libs/debug';
-import Window from './Window.jsx';
 
 class Inventory extends Component {
 
 	render() {
 		log('render', 'Inventory render');
 		return (
-			<Window
-				wcn="inventory"
-				tcn="inventoryTitle"
-				ccn="inventoryContent"
-				title={this.props.name}
+			<div
+				className="inventory"
 				style={{
 					width: this.props.width+'px',
 					height: this.props.height+'px',
@@ -20,9 +17,13 @@ class Inventory extends Component {
 					left: this.props.left+'px'
 				}}
 			>
-				{this._getSlots()}
-			</Window>
-
+				<div className="inventoryTitle">
+					{this.props.name || 'Inventory'}
+				</div>
+				<div className="inventoryContent">
+					{this._getSlots()}
+				</div>
+			</div>
 		);
 	}
 
@@ -30,7 +31,7 @@ class Inventory extends Component {
 		let slots = [];
 		let used = 0;
 
-		if (this.props.items && Object.prototype.toString.call( this.props.items ) === '[object Array]' ) {
+		if (this.props.items && _.isArray(this.props.items) ) {
 			//this.props.items.forEach((item) => {
 			for (let i = 0; i < this.props.items.length; i++) {
 				slots.push(

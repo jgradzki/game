@@ -265,22 +265,22 @@ body {
 	position: absolute;
 	width: 400px;
 	height: 200px;
+	overflow-y: auto;
 }
 
 .inventoryTitle {
 	font-weight: bold;
 	border-bottom: 1px dashed #423434;
+	top: 0px;
+	height: 20px;
 }
 
 .inventoryContent {
-	position: relative;
-	overflow: auto;
+	position: absolute;
 	display: flex;
 	flex-wrap: wrap;
-	height: 100%;
-	width: 100%;
-	padding: 2px;
-	margin-left: -4px;
+	flex-direction: row;
+	top: 20px;
 }
 
 .inventoryEmptySlot {
@@ -292,6 +292,7 @@ body {
 
 .inventoryItem {
 	position: relative;
+	flex: 0 0 auto;
 	width: 38px;
 	height: 38px;
 	border: 1px solid black;
