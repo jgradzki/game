@@ -1,10 +1,11 @@
+import _ from 'lodash';
 import { log } from '../logger';
 import requests from '../requests';
 import PlayerManager from './PlayerManager';
 import LocationManager from './LocationManager';
 import MapManager from './MapManager';
 
-import ticks from '../ticks';
+import tasks from '../tasks';
 
 /**
  *
@@ -33,7 +34,7 @@ class GameManager {
 		/**
 		 * @type {Object}
 		 */
-		this._tickFunctions = ticks;
+		this._tasks = tasks;
 		/**
 		 * @type {boolean}
 		 */
@@ -69,16 +70,7 @@ class GameManager {
 	}
 
 	start() {
-		this._startGameLoop();
-	}
-
-	addTickFunction(name, func) {
-		this._ticks[name] = setImmediate(() => func());
-	}
-
-	removeTickFunction(name) {
-		clearImmediate(this._ticks[name]);
-		this._ticks = this._ticks.filter((v, k) => k !== name);
+		this._startTasks();
 	}
 
 	clearSession(session) {
@@ -165,28 +157,28 @@ class GameManager {
 		});
 	}
 
-	_startGameLoop() {
+	_startTasks() {
 		this._run = true;
-		this._tick();
+
+		for (let name in this._tasks) {
+			this._requestTaskExecution(name, 0);
+		}
 	}
 
-	_stopGameLoop() {
+	_stopTasks() {
 		this._run = false;
 	}
 
-	_tick() {
-		if (!this._run) {
-			return;
+	_requestTaskExecution(task, time) {
+		if (this._run && this._tasks[task] && _.isFunction(this._tasks[task])) {
+			setTimeout(
+				() => this._tasks[task](
+					time => this._requestTaskExecution(task, time),
+					this._server
+				),
+				_.isNumber(time) ? time : 0
+			);
 		}
-
-		for (let name in this._tickFunctions) {
-			this._tickFunctions[name](this._server);
-		}
-
-		setTimeout(
-			() => this._tick(),
-			1000 / this._server.config.get('gameServer.tickrate', 10)
-		);
 	}
 
 	_handlePostRequest(req, res) {

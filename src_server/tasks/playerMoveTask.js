@@ -2,7 +2,7 @@ import { log } from '../logger.js';
 
 let lastTick = 0;
 
-module.exports = server => {
+module.exports = (requestExecution, server) => {
 	const n = (new Date()).getTime();
 
 	if (lastTick === 0) {
@@ -98,9 +98,11 @@ module.exports = server => {
 	const end = (new Date()).getTime();
 
 	if ((end - n) > 200) {
-		log('warn', 'playerMoveTick trwało: ', (end - n));
+		log('warn', 'playerMoveTask trwało: ', (end - n));
 	} else if ((end - n) > 150) {
-		log('info', 'playerMoveTick trwało: ', (end - n));
+		log('info', 'playerMoveTask trwało: ', (end - n));
 	}
 	lastTick = n;
+
+	requestExecution(10);
 };
