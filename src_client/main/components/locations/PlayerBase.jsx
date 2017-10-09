@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { log } from '../../libs/debug';
 import makeRequest from '../../libs/request';
 import * as actions from '../../actions/locations/playerBaseActions';
+import { setPlayerInventory } from '../../actions/player';
 
 import MainView from './PlayerBase/PlayerBaseMainView.jsx';
 import UpgradeView from './PlayerBase/PlayerBaseUpgradeView.jsx';
@@ -72,6 +73,9 @@ class PlayerBase extends Component {
 						});
 						this.props.setViewToMain();
 					}
+					if (data.inventory) {
+						this.props.setPlayerInventory(data.inventory);
+					}
 				}
 				if (data.message) {
 					this.setState({
@@ -92,6 +96,7 @@ class PlayerBase extends Component {
 		setViewToMain: PropTypes.func.isRequired,
 		setViewToUpgrade: PropTypes.func.isRequired,
 		setViewToWorkshop: PropTypes.func.isRequired,
+		setPlayerInventory: PropTypes.func.isRequired,
 	};
 }
 
@@ -109,6 +114,9 @@ const mapDispatchToProps = dispatch => ({
 	},
 	setViewToWorkshop() {
 		dispatch(actions.setViewToWorkshop());
+	},
+	setPlayerInventory(inventory) {
+		dispatch(setPlayerInventory(inventory));
 	}
 });
 

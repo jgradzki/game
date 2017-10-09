@@ -64,7 +64,7 @@ export default class Inventory extends Model {
 		}
 	}
 
-	removeItem(slot, count = 0) {
+	removeSlot(slot, count = 0) {
 		if (!count || !this.content || !this.content[slot]) {
 			return;
 		}
@@ -80,7 +80,7 @@ export default class Inventory extends Model {
 	}
 
 	stackInventory() {
-		let content = this.content;
+		let content = this.content.slice();
 
 		//TODO: checking items stacks
 
@@ -96,10 +96,10 @@ export default class Inventory extends Model {
 
 		let has = true;
 
-		items.forEach((item) => {
+		items.forEach(item => {
 			let count = 0;
 
-			this.getInventory().forEach((inventoryItem) => {
+			this.getInventory().forEach(inventoryItem => {
 				if (item.name === inventoryItem.name) {
 					count += inventoryItem.count;
 				}
@@ -110,6 +110,32 @@ export default class Inventory extends Model {
 		});
 
 		return has;
+	}
+
+	removeItems(items) {
+		if (!this.has(items)) {
+			return false;
+		}
+
+		let inventory = this.getInventory();
+
+		items.forEach(item => {
+			inventory = inventory.map(inventoryItem => {
+				if (item.count > 0 && item.name === inventoryItem.name) {
+					if (inventoryItem.count < item.count) {
+						item.count -= inventoryItem.count;
+						inventoryItem.count = 0;
+					} else {
+						inventoryItem.count -= item.count;
+						item.count = 0;
+					}
+				}
+				return inventoryItem;
+			});
+		});
+
+		this.setDataValue('content', inventory);
+		return this.stackInventory().getInventory();
 	}
 
 	calculateInventory(inventory, inventoryLimit, newItem, newItemMaxStack) {

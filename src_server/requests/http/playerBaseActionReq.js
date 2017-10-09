@@ -46,12 +46,15 @@ module.exports = (req, res, server, player) => {
 							message: 'Not enough items.'
 						});
 					} else {
+						const inventory = player.inventory.removeItems(player.base.getUpgradeCosts(action.equipment, level));
+
 						player.base.upgrade(action.equipment);
 						player.base.getDataForPlayer(player.id)
 							.then(data => {
 								res.send({
 									success: true,
-									equipment: data.equipment
+									equipment: data.equipment,
+									inventory
 								});
 							});
 					}

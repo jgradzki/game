@@ -45,7 +45,7 @@ module.exports = (req, res, server, player) => {
 						let countTaken = player.inventory.addItem(item);
 
 						if (countTaken && countTaken > 0) {
-							lootInventory.removeItem(action.slot, countTaken);
+							lootInventory.removeSlot(action.slot, countTaken);
 
 							dungeon.setRoomItems(
 								dungeon.getPlayerLocation(player.id),
