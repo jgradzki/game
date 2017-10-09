@@ -6,6 +6,7 @@ import ErrorBox from './ErrorBox.jsx';
 import TopBar from './TopBar.jsx';
 import Map from './Map.jsx';
 import Location from './Location.jsx';
+import InventoryView from './InventoryView.jsx';
 import LocationEnterButton from './LocationEnterButton.jsx';
 import Loading from './Loading.jsx';
 
@@ -21,6 +22,7 @@ class GameContainer extends Component {
 				<LocationEnterButton />
 				<Loading />
 				<ErrorBox />
+				<InventoryView />
 			</div>
 		);
 	}

@@ -29,6 +29,16 @@ const playerReducer = (state = 0, action) => {
 					...state.inventory.slice(action.slot + 1)
 				]
 			};
+		case actionTypes.OPEN_PLAYER_INVENTORY:
+			return {
+				...state,
+				inventoryIsOpen: true
+			};
+		case actionTypes.CLOSE_PLAYER_INVENTORY:
+			return {
+				...state,
+				inventoryIsOpen: false
+			};
 		default:
 			return state;
 	}

@@ -4,7 +4,6 @@ import Inventory from '../../Inventory.jsx';
 
 export default class PlayerBaseUpgradeView extends Component {
 	render() {
-		console.log(this.props);
 		return (
 			<div>
 				<div>Ulepszenie {this.props.equipment.name} na poziom {this.props.equipment.level + 1}</div>

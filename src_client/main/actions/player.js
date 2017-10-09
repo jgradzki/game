@@ -25,3 +25,11 @@ export const removeItemFromInventory = slot => ({
 	type: actionTypes.REMOVE_ITEM_FROM_PLAYER_INVENTORY,
 	slot
 });
+
+export const openPlayerInventory = () => ({
+	type: actionTypes.OPEN_PLAYER_INVENTORY
+});
+
+export const closePlayerInventory = () => ({
+	type: actionTypes.CLOSE_PLAYER_INVENTORY
+});
