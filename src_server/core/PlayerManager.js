@@ -294,7 +294,12 @@ class PlayerManager {
 					height: 20
 				},
 				{ for: player.id },
-				{},
+				{
+					min: 2,
+					max: 3,
+					maxEnemies: 2,
+					difficulty: 1
+				},
 				'building',
 				true
 			)

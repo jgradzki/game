@@ -35,7 +35,7 @@ class LocationManager {
 				case this._elementTypes.DUNGEON:
 					let dungeon = this._buildDungeon(data);
 
-					dungeon.locationCreated();
+					dungeon.locationCreated(data);
 					this._createMapElement(resolve, reject, dungeon, type, mapPosition, size, visibilityRules, icon, isPerm);
 					break;
 				case this._elementTypes.PLAYER_BASE:

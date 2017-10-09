@@ -43,12 +43,12 @@ export default class Dungeon extends Model {
 		return 'DUNGEON';
 	}
 
-	locationCreated() {
-		this.generate();
+	locationCreated(data) {
+		this.generate(data);
 	}
 
-	generate() {
-		let roll = rollRooms();
+	generate(data) {
+		let roll = rollRooms(data);
 
 		this.setDataValue('rooms', roll.rooms);
 		this.setDataValue('entryRoom', roll.mainRoom);

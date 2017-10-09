@@ -1,6 +1,12 @@
 import _ from 'lodash';
 import { roll } from './functions';
+import enemiesGenerator from './enemiesGenerator';
 import items from '../data/items';
+
+
+/**
+ * Whole file needs rewrite.
+ */
 
 let odds = {
 	1: 60,
@@ -395,7 +401,7 @@ let rollRoomsRandomV3 = (minRooms, maxRooms) => {
 	return mapSettings;
 };
 
-const rollItems = (rooms) => {
+const rollItemsAndEnemies = (rooms, maxEnemies, difficulty) => {
 	rooms.forEach((y)=>{
 		y.forEach((x)=>{
 			if (x.is) {
@@ -429,6 +435,8 @@ const rollItems = (rooms) => {
 						}
 					}
 				});
+
+				x.enemies = enemiesGenerator(maxEnemies, difficulty);
 			}
 		});
 	});
@@ -437,21 +445,28 @@ const rollItems = (rooms) => {
 };
 
 
-let rollRooms = (type = 'randomV3', options = { min: 5,
-	max: 10,
-	width: 5,
-	height: 5 }) => {
-	if (type === 'randomV1') {
+let rollRooms = (options = {}) => {
+	options = {
+		type: options.type || 'randomV3',
+		min: options.min || 5,
+		max: options.max || 10,
+		width: options.width || 5,
+		height: options.height || 5,
+		maxEnemies: options.maxEnemies || 3,
+		difficulty: options.difficulty || 1
+	};
+
+	if (options.type === 'randomV1') {
 		return rollRoomsRandomV1(options.min, options.max);
-	} else if (type === 'randomV2') {
+	} else if (options.type === 'randomV2') {
 		return rollRoomsRandomV2(options.min, options.max, { width: options.width,
 			height: options.height });
-	} else if (type === 'randomV3') {
+	} else if (options.type === 'randomV3') {
 		let dungeon = rollRoomsRandomV3(options.min, options.max);
 
 		return {
 			...dungeon,
-			rooms: rollItems(dungeon.rooms)
+			rooms: rollItemsAndEnemies(dungeon.rooms, options.maxEnemies, options.difficulty)
 		};
 
 	}
