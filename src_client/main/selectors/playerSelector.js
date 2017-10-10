@@ -7,7 +7,8 @@ export const getPlayerStateForTopBar = createSelector(
 	player => ({
 		name: player.name,
 		hp: player.hp,
-		energy: player.energy
+		energy: player.energy,
+		hunger: player.hunger
 	})
 );
 

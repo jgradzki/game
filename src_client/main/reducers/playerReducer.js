@@ -39,6 +39,21 @@ const playerReducer = (state = 0, action) => {
 				...state,
 				inventoryIsOpen: false
 			};
+		case actionTypes.SET_PLAYER_HP:
+			return {
+				...state,
+				hp: action.hp
+			};
+		case actionTypes.SET_PLAYER_ENERGY:
+			return {
+				...state,
+				energy: action.energy
+			};
+		case actionTypes.SET_PLAYER_HUNGER:
+			return {
+				...state,
+				hunger: action.hunger
+			};
 		default:
 			return state;
 	}

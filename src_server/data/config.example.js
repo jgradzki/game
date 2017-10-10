@@ -25,7 +25,7 @@ let config = {
 	},
 	gameServer: {
 		tickrate: 10, //ticks per second
-		sendingPositionOnMapInterval: 10, //seconds
+		sendingPositionOnMapInterval: 5, //seconds
 		unloadPlayerTimeout: 5 //minutes
 	},
 	player: {
@@ -34,6 +34,7 @@ let config = {
 			y: 100
 		},
 		playerSpeedOnMap: 50,
+		hungerOnMapRate: 2, //rate of hunger increase when moving on map
 		defaultPlayerInventorySize: 3
 	},
 	world: {

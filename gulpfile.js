@@ -64,7 +64,7 @@ gulp.task('build-client', () => {
 						loaders: [
 							{
 								test: /\.css$/,
-								use: [ 'style-loader', 'css-loader' ]
+								loaders: [ 'style-loader', 'css-loader' ]
 							},
 							{
 								test: /.json$/,

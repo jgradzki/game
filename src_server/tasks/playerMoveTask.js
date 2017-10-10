@@ -1,3 +1,4 @@
+import  _ from 'lodash';
 import { log } from '../logger.js';
 
 let lastTick = 0;
@@ -70,6 +71,27 @@ module.exports = (requestExecution, server) => {
 		};
 
 		player.mapPosition = newPos;
+		player.hunger += _.round(server.config.get('player.hungerOnMapRate', 0.1) * ((n - lastTick) / 1000), 3);
+
+		if (player.hunger > 90) {
+			player.hp -= _.round(server.config.get('player.hungerDamage.90', 1) * ((n - lastTick) / 1000), 3);
+			player.socket.emit('action', {
+				type: 'appAction/SET_PLAYER_HP',
+				hp: player.hp,
+			});
+		} else if (player.hunger > 70) {
+			player.hp -= _.round(server.config.get('player.hungerDamage.70', 1) * ((n - lastTick) / 1000), 3);
+			player.socket.emit('action', {
+				type: 'appAction/SET_PLAYER_HP',
+				hp: player.hp,
+			});
+		} else if (player.hunger > 50) {
+			player.hp -= _.round(server.config.get('player.hungerDamage.50', 1) * ((n - lastTick) / 1000), 3);
+			player.socket.emit('action', {
+				type: 'appAction/SET_PLAYER_HP',
+				hp: player.hp,
+			});
+		}
 
 		if (player.socket) {
 			if ((newPos.x === target.x) && (newPos.y === target.y)) {
@@ -83,11 +105,19 @@ module.exports = (requestExecution, server) => {
 					type: 'appAction/MAP_CHANGE_PLAYER_POSITION',
 					newPosition: newPos
 				});
+				player.socket.emit('action', {
+					type: 'appAction/SET_PLAYER_HUNGER',
+					hunger: player.hunger,
+				});
 			} else {
 				if ( (player.sendingPositionTime + ( server.config.get('gameServer.sendingPositionOnMapInterval', 10) * 1000)) < n ) {
 					player.socket.emit('action', {
 						type: 'appAction/MAP_CHANGE_PLAYER_POSITION',
 						newPosition: newPos
+					});
+					player.socket.emit('action', {
+						type: 'appAction/SET_PLAYER_HUNGER',
+						hunger: player.hunger
 					});
 					player.sendingPositionTime = n;
 				}

@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { roll } from './functions';
 import enemiesGenerator from './enemiesGenerator';
 import items from '../data/items';
+import { Inventory } from '../models';
 
 
 /**
@@ -394,8 +395,10 @@ let rollRoomsRandomV3 = (minRooms, maxRooms) => {
 	let mapSettings = {
 		rooms: roomMap,
 		//old: rooms,
-		mainRoom: { y: mainRoomY,
-			x: mainRoomX }
+		mainRoom: {
+			y: mainRoomY,
+			x: mainRoomX
+		}
 	};
 
 	return mapSettings;
@@ -410,27 +413,26 @@ const rollItemsAndEnemies = (rooms, maxEnemies, difficulty) => {
 					if (item.rollChance > 0) {
 						let count = 0;
 
-						while (roll(1, 100) < item.rollChance) {
+						while (roll(0, 100) < item.rollChance) {
 							count++;
 
 							if (count > item.maxStack) {
 								count -= item.maxStack;
 
 								x.items.push({
-									name: key,
-									type: item.type,
-									fullName: item.name,
-									count: item.maxStack
+									...item,
+									key,
+									count: item.maxStack,
+
 								});
 							}
 						}
 
 						if (count > 0 ) {
 							x.items.push({
-								name: key,
-								type: item.type,
-								fullName: item.name,
-								count: item.maxStack
+								...item,
+								key,
+								count
 							});
 						}
 					}

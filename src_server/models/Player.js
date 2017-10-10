@@ -1,5 +1,6 @@
 import Sequelize, { Model } from 'sequelize';
 import bcrypt from 'bcrypt-nodejs';
+import _ from 'lodash';
 
 export default class Player extends Model {
 
@@ -31,11 +32,43 @@ export default class Player extends Model {
 			type: Sequelize.INTEGER,
 			defaultValue: 100,
 			allowNull: false,
+			set(value) {
+				if (value > 100) {
+					value = 100;
+				}
+				if (value < 0) {
+					value = 0;
+				}
+				this.setDataValue('hp', value);
+			}
+		},
+		hunger: {
+			type: Sequelize.FLOAT,
+			defaultValue: 0,
+			allowNull: false,
+			set(value) {
+				if (value > 100) {
+					value = 100;
+				}
+				if (value < 0) {
+					value = 0;
+				}
+				this.setDataValue('hunger', value);
+			}
 		},
 		energy: {
-			type: Sequelize.INTEGER,
+			type: Sequelize.FLOAT,
 			defaultValue: 100,
 			allowNull: false,
+			set(value) {
+				if (value > 100) {
+					value = 100;
+				}
+				if (value < 0) {
+					value = 0;
+				}
+				this.setDataValue('energy', value);
+			}
 		},
 		mapPosition: {
 			type: Sequelize.JSON,
@@ -136,62 +169,15 @@ export default class Player extends Model {
 
 		return true;
 	}
+
+	eat(item) {
+		if (item.hunger && _.isNumber(item.hunger)) {
+			let hunger = this.hunger - item.hunger;
+
+			if (hunger < 0) {
+				hunger = 0;
+			}
+			this.setDataValue('hunger', hunger);
+		}
+	}
 }
-
-/*
-export default (sequelize, DataTypes) => {
-	const Player = sequelize.define('Player', {
-		id: {
-		type: DataTypes.UUID,
-		defaultValue: DataTypes.UUIDV4,
-		unique: true,
-		primaryKey: true
-		},
-		name: {
-			type: DataTypes.STRING,
-			allowNull: false,
-			unique: true
-		},
-		password: {
-			type: DataTypes.STRING,
-			allowNull: false,
-			set: function(value) {
-				this.setDataValue('password', Player.generateHash(value));
-			},
-		},
-		sessionId: {
-			type: DataTypes.VIRTUAL(DataTypes.STRING),
-		},
-		mapPosition: {
-			type: DataTypes.JSON,
-			allowNull: false,
-			field: 'map_position',
-			validate: {
-				isCorrect: v => {
-					if ( !v.x || !v.y) {
-						throw Error('Player.mapPosition must have x and y properties.');
-					}
-				}
-			}
-		},
-	},
-	{
-		underscored: true,
-    	classMethods: {
-      		associate: models => {
-        		//
-      		},
-      		generateHash: password => {
-      			return bcrypt.hashSync(password);
-      		}
-    	},
-    	instanceMethods: {
-    		auth: function(password) {
-				return bcrypt.compareSync(password, this.password);
-			}
-    	},
-    });
-
-  	return Player;
-};
-*/

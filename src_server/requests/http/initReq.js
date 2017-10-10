@@ -13,8 +13,9 @@ const initReq = (req, res, server, player) => {
 			player: {
 				name: player.name,
 				inventorySize: player.inventory.size,
-				inventory: player.inventory.getInventory(),
+				inventory: player.inventory.filtreItems(),
 				hp: player.hp,
+				hunger: player.hunger,
 				energy: player.energy
 			}
 		}

@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import uuidv4 from 'uuid/v4';
+import { ContextMenuProvider } from 'react-contexify';
 import { log } from '../libs/debug';
+
+import PlayerInventoryMenu from './PlayerInventoryMenu.jsx';
 
 class Inventory extends Component {
 
@@ -30,24 +34,55 @@ class Inventory extends Component {
 	_getSlots() {
 		let slots = [];
 		let used = 0;
+		const menuId = uuidv4();
 
 		if (this.props.items && _.isArray(this.props.items) ) {
 			//this.props.items.forEach((item) => {
 			for (let i = 0; i < this.props.items.length; i++) {
-				slots.push(
-					<div
+				const item = this.props.items[i];
+				let itemRender;
+
+				if (this.props.menu === 'playerInventory') {
+					const className = `inventoryItem${item.combat && item.combat.selected ? ' inventoryItemSelected' : ''}`;
+
+					itemRender = (
+						<div
+							key={i}
+							id={i}
+							className={className}
+							onClick={()=>this.props.onClick && this.props.onClick(i)}
+						>
+							<ContextMenuProvider id={`${menuId}-${i}`}>
+								<span>{item.count}</span>
+								<img
+									src=""
+									alt={item.name}
+									title={`${item.name}`}
+								/>
+							</ContextMenuProvider>
+							<PlayerInventoryMenu
+								id={`${menuId}-${i}`}
+								item={item}
+								onClick={action => this.props.onMenuClick(action, i)}
+							/>
+						</div>
+					);
+				} else {
+					itemRender = <div
 						key={i}
+						id={i}
 						className="inventoryItem"
 						onClick={()=>this.props.onClick && this.props.onClick(i)}
 					>
-						<span>{this.props.items[i].count}</span>
+						<span>{item.count}</span>
 						<img
 							src=""
-							alt={this.props.items[i].fullName}
-							title={`${this.props.items[i].fullName}`}
+							alt={item.name}
+							title={`${item.name}`}
 						/>
-					</div>
-				);
+					</div>;
+				}
+				slots.push(itemRender);
 				used++;
 			}
 		}
@@ -67,11 +102,13 @@ class Inventory extends Component {
 		centerX: PropTypes.bool,
 		centerY: PropTypes.bool,
 		name: PropTypes.string.isRequired,
+		menu: PropTypes.string,
 		slots: PropTypes.number.isRequired,
 		onClick: PropTypes.func,
+		onMenuClick: PropTypes.func,
 		items: PropTypes.arrayOf(PropTypes.shape({
+			key: PropTypes.string.isRequired,
 			name: PropTypes.string.isRequired,
-			fullName: PropTypes.string.isRequired,
 			count: PropTypes.number.isRequired
 		}))
 	};

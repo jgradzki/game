@@ -143,7 +143,7 @@ export default class PlayerBase extends Model {
 			return PLAYER_BASE[equipment].LEVELS[currentLevel].map(item => {
 				return {
 					...item,
-					fullName: items && items[item.name].name
+					name: items && items[item.key].name
 				};
 			});
 		}

@@ -237,6 +237,10 @@ body {
 	z-index: 5;
 }
 
+.react-contexify {
+	z-index: 10;
+}
+
 .doorsDown {
 	background-color: black;
 	position: absolute;
@@ -314,6 +318,10 @@ body {
 	color: black;
 	margin: 2px;
 	overflow:hidden;
+}
+
+.inventoryItemSelected {
+	border: 1px dashed red;
 }
 
 

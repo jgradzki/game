@@ -47,8 +47,19 @@ export default class Inventory extends Model {
 		return this.content;
 	}
 
+	filtreItems() {
+		return this.content.map(item => ({
+			key: item.key,
+			type: item.type,
+			name: item.name,
+			count: item.count,
+			combat: item.combat,
+			eat: item.eat
+		}));
+	}
+
 	addItem(item) {
-		const itemData = items[item.name];
+		const itemData = items[item.key];
 
 		if (!itemData) {
 			return false;
@@ -75,7 +86,7 @@ export default class Inventory extends Model {
 				...this.content.slice(slot + 1)
 			]);
 		} else {
-			this.content[slot].count =- count;
+			this.content[slot].count -= count;
 		}
 	}
 
@@ -136,6 +147,40 @@ export default class Inventory extends Model {
 
 		this.setDataValue('content', inventory);
 		return this.stackInventory().getInventory();
+	}
+
+	setMeleeWepon(slot) {
+		if (
+			this.getInventory()[slot] &&
+			this.getInventory()[slot].combat &&
+			this.getInventory()[slot].combat.type === 'melee'
+		) {
+			this.setDataValue('content', this.getInventory().map(item => {
+				if (item.combat && item.combat.type === 'melee' && item.combat.selected) {
+					item.combat.selected = false;
+				}
+				return item;
+			}));
+
+			this.getInventory()[slot].combat.selected = true;
+		}
+	}
+
+	setRangeWepon(slot) {
+		if (
+			this.getInventory()[slot] &&
+			this.getInventory()[slot].combat &&
+			this.getInventory()[slot].combat.type === 'range'
+		) {
+			this.setDataValue('content', this.getInventory().map(item => {
+				if (item.combat && item.combat.type === 'range' && item.combat.selected) {
+					item.combat.selected = false;
+				}
+				return item;
+			}));
+
+			this.getInventory()[slot].combat.selected = true;
+		}
 	}
 
 	calculateInventory(inventory, inventoryLimit, newItem, newItemMaxStack) {

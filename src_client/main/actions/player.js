@@ -33,3 +33,18 @@ export const openPlayerInventory = () => ({
 export const closePlayerInventory = () => ({
 	type: actionTypes.CLOSE_PLAYER_INVENTORY
 });
+
+export const setPlayerHP = hp => ({
+	type: actionTypes.SET_PLAYER_HP,
+	hp
+});
+
+export const setPlayerEnergy = energy => ({
+	type: actionTypes.SET_PLAYER_ENERGY,
+	energy
+});
+
+export const setPlayerHunger = hunger => ({
+	type: actionTypes.SET_PLAYER_HUNGER,
+	hunger
+});

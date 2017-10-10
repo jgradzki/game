@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 import axios from 'axios';
 
 import { log } from '../libs/debug';
 import { changePosition, startDrag, stopDrag, changeDestination, changePlayerPosition } from '../actions/map.js';
+import { setPlayerHunger } from '../actions/player.js';
 import { setError } from '../actions/error.js';
 import MapElement from './MapElement.jsx';
 import getMapState from '../selectors/mapSelector';
@@ -16,7 +18,7 @@ class Map extends Component {
 
 		this._requestAnimationFrameId = requestAnimationFrame(() => this._movePlayer());
 		this._lastTick = 0;
-
+		this.hungerOnMapRate = 0;
 	}
 
 	render() {
@@ -48,8 +50,15 @@ class Map extends Component {
 			let x = this.props.destination.x - this.props.playerPosition.x;
 			let y = this.props.destination.y - this.props.playerPosition.y;
 			let speed = this.props.movementSpeed * ((n - this._lastTick) / 1000);
+			let hunger = this.props.playerHunger + _.round(this.hungerOnMapRate * ((n - this._lastTick) / 1000), 3);
 			let moveX = 0;
 			let moveY = 0;
+
+			if (hunger > 100) {
+				hunger = 100;
+			}
+
+			this.props.setPlayerHunger(hunger);
 
 			if (x === 0 && y === 0) {
 				this.props.changeDestination(false);
@@ -133,6 +142,7 @@ class Map extends Component {
 					this.props.setError(`Błąd: ${data.errorMessage}`);
 				}
 				if (data.success) {
+					this.hungerOnMapRate = data.hungerOnMapRate;
 					this.props.changeDestination(position, data.movementSpeed);
 				}
 			})
@@ -227,36 +237,36 @@ class Map extends Component {
 	};
 }
 
-let mapStateToProps  = (state, props) => {
-	return {
-		...getMapState(state, props),
-		config: { ...state.config },
-		inLocation: state.player.inLocation
-	};
-};
+let mapStateToProps  = (state, props) => ({
+	...getMapState(state, props),
+	config: { ...state.config },
+	inLocation: state.player.inLocation,
+	playerHunger: state.player.hunger
+});
 
-let mapDispatchToProps = (dispatch) => {
-	return {
-		changePosition: (x, y, ix, iy) => {
-			dispatch(changePosition(x, y, ix, iy));
-		},
-		startDrag: (x, y) => {
-			dispatch(startDrag(x, y));
-		},
-		stopDrag: () => {
-			dispatch(stopDrag());
-		},
-		changeDestination: (position, speed) => {
-			dispatch(changeDestination(position, speed));
-		},
-		setError: (msg, details = false, critical = false) => {
-			dispatch(setError(msg, details, critical));
-		},
-		changePlayerPosition: (x, y) => {
-			dispatch(changePlayerPosition({ x,
-				y }));
-		}
-	};
-};
+let mapDispatchToProps = dispatch => ({
+	changePosition: (x, y, ix, iy) => {
+		dispatch(changePosition(x, y, ix, iy));
+	},
+	startDrag: (x, y) => {
+		dispatch(startDrag(x, y));
+	},
+	stopDrag: () => {
+		dispatch(stopDrag());
+	},
+	changeDestination: (position, speed) => {
+		dispatch(changeDestination(position, speed));
+	},
+	setError: (msg, details = false, critical = false) => {
+		dispatch(setError(msg, details, critical));
+	},
+	changePlayerPosition: (x, y) => {
+		dispatch(changePlayerPosition({ x,
+			y }));
+	},
+	setPlayerHunger(hunger) {
+		dispatch(setPlayerHunger(hunger));
+	}
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Map);

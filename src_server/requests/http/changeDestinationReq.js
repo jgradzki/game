@@ -27,7 +27,8 @@ module.exports = (req, res, server, player) => {
 		res.send({
 			success: true,
 			position: req.position,
-			movementSpeed: server.config.get('player.playerSpeedOnMap')
+			movementSpeed: server.config.get('player.playerSpeedOnMap'),
+			hungerOnMapRate: server.config.get('player.hungerOnMapRate')
 		});
 	}
 };

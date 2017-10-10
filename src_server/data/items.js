@@ -1,14 +1,33 @@
+/*
+	type
+	name
+	rollChance,
+	maxStack,
+	combat: { --item can be set as weapon
+		type[melee|range]
+		attack --attack power
+		speed --attack speed
+	}
+	eat: { --item can be eaten(removed)
+		food --how much restores hunger
+	}
+	use: { item can be used[not implemented]
+
+	}
+
+*/
+
 module.exports = {
 	MATERIAL_WOOD: {
 		type: 'material',
 		name: 'Drewno',
-		rollChance: 59,
+		rollChance: 80,
 		maxStack: 8
 	},
 	MATERIAL_JUNK: {
 		type: 'material',
 		name: 'Złom',
-		rollChance: 59,
+		rollChance: 80,
 		maxStack: 12
 	},
 	MATERIAL_NAIL: {
@@ -22,7 +41,12 @@ module.exports = {
 		type: 'material',
 		name: 'Deska z gwoźdzmi',
 		rollChance: 25,
-		maxStack: 6
+		maxStack: 6,
+		combat: {
+			type: 'melee',
+			attack: 5,
+			speed: 2
+		}
 	},
 	MATERIAL_GUNPOWDER: {
 		type: 'material',
@@ -59,8 +83,8 @@ module.exports = {
 		name: 'Mała konserwa',
 		rollChance: 20,
 		maxStack: 6,
-		restore: {
-			food: 30
+		eat: {
+			hunger: 30
 		}
 	},
 	FOOD_LARGE_CAN: {
@@ -68,17 +92,18 @@ module.exports = {
 		name: 'Duża konserwa',
 		rollChance: 15,
 		maxStack: 3,
-		restore: {
-			food: 60
+		eat: {
+			hunger: 60
 		}
 	},
-	WEAPON_AXE: {
+	TOOL_AXE: {
 		type: 'tool',
 		name: 'Siekiera',
 		rollChance: 10,
 		maxStack: 1,
 		combat: {
-			atack: 10,
+			type: 'melee',
+			attack: 10,
 			speed: 3
 		}
 	},
@@ -88,7 +113,8 @@ module.exports = {
 		rollChance: 10,
 		maxStack: 1,
 		combat: {
-			atack: 7,
+			type: 'melee',
+			attack: 7,
 			speed: 3
 		}
 	},
@@ -98,7 +124,8 @@ module.exports = {
 		rollChance: 10,
 		maxStack: 1,
 		combat: {
-			atack: 5,
+			type: 'melee',
+			attack: 5,
 			speed: 4
 		}
 	},
@@ -114,7 +141,8 @@ module.exports = {
 		rollChance: 10,
 		maxStack: 1,
 		combat: {
-			atack: 8,
+			type: 'melee',
+			attack: 8,
 			speed: 3
 		}
 	}
