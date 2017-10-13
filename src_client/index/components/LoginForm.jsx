@@ -7,14 +7,23 @@ class LoginForm extends Component {
 		this._onClick = this._onClick.bind(this);
 		this._postHandle = this._postHandle.bind(this);
 		this._handleChange = this._handleChange.bind(this);
-		this.state = {
-			success: false,
-			error: false,
-			login: 'Admin',
-			pass: '123456'
-		};
 
-		setTimeout(() => this._onClick(), 500);
+		if (process.env.NODE_ENV !== 'production') {
+			this.state = {
+				success: false,
+				error: false,
+				login: 'Admin',
+				pass: '123456'
+			};
+			setTimeout(() => this._onClick(), 500);
+		} else {
+			this.state = {
+				success: false,
+				error: false,
+				login: '',
+				pass: ''
+			};
+		}
 	}
 
 	_postHandle(data) {
