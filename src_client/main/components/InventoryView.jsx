@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { connect } from 'react-redux';
 import { log } from '../libs/debug';
-import makeRequest from '../libs/request';
 
-import { closePlayerInventory, setPlayerInventory, setPlayerHP, setPlayerEnergy, setPlayerHunger } from '../actions/player';
+import { onMenuAction } from '../libs/playerInventory';
+import { closePlayerInventory } from '../actions/player';
 import Inventory from './Inventory.jsx';
-
 
 class InventoryView extends Component {
 	render() {
@@ -27,7 +25,7 @@ class InventoryView extends Component {
 					slots={this.props.inventorySize}
 					items={this.props.inventory}
 					menu='playerInventory'
-					onMenuClick={(action, slot) => this._onMenuAction(action, slot)}
+					onMenuClick={(action, slot) => onMenuAction(action, slot)}
 				/>
 				<button
 					onClick={() => this.props.closePlayerInventory()}
@@ -36,39 +34,6 @@ class InventoryView extends Component {
 
 			</div>
 		);
-	}
-
-	_onMenuAction(action, slot) {
-		makeRequest('playerAction',
-			{
-				type: action,
-				slot
-			}
-		)
-			.then(response => response.data)
-			.then(data => {
-				if (data.error) {
-					log('error', data);
-				}
-
-				if (data.success) {
-					if (data.inventory) {
-						this.props.setPlayerInventory(data.inventory);
-					}
-					if (_.isNumber(data.hp)) {
-						this.props.setPlayerHP(data.hp);
-					}
-					if (_.isNumber(data.energy)) {
-						this.props.setPlayerEnergy(data.energy);
-					}
-					if (_.isNumber(data.hunger)) {
-						this.props.setPlayerHunger(data.hunger);
-					}
-				}
-			})
-			.catch(error => {
-				log('error', error);
-			});
 	}
 
 	static propTypes = {
@@ -88,18 +53,6 @@ let mapStateToProps  = state => ({
 let mapDispatchToProps = dispatch => ({
 	closePlayerInventory() {
 		dispatch(closePlayerInventory());
-	},
-	setPlayerInventory(inventory) {
-		dispatch(setPlayerInventory(inventory));
-	},
-	setPlayerHP(hp) {
-		dispatch(setPlayerHP(hp));
-	},
-	setPlayerEnergy(energy) {
-		dispatch(setPlayerEnergy(energy));
-	},
-	setPlayerHunger(hunger) {
-		dispatch(setPlayerHunger(hunger));
 	}
 });
 

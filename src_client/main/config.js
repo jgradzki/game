@@ -22,7 +22,8 @@ const destSize = {
 const mapElements = [];
 
 const systemReducerInitial = {
-	loading: {}
+	loading: {},
+	deadMode: false,
 };
 
 const mapStateReducerInitial = {

@@ -5,6 +5,7 @@ export const actionTypes = {
 	'REMOVE_ITEM': `${actionPrefix}REMOVE_ITEM`,
 	'ADD_ITEM': `${actionPrefix}ADD_ITEM`,
 	'CHANGE_ITEM_COUNT': `${actionPrefix}CHANGE_ITEM_COUNT`,
+	'SET_FIGHT_LOG': `${actionPrefix}SET_FIGHT_LOG`,
 };
 
 export const setLootList = (room, inventory) => ({
@@ -31,3 +32,9 @@ export const changeItemCount = (room, slot, count) => ({
 	slot,
 	count
 });
+
+export const setFightLog = fight => ({
+	type: actionTypes.SET_FIGHT_LOG,
+	fight
+});
+

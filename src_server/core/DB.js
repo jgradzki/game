@@ -71,19 +71,18 @@ class DB {
 			);
 
 			this._loadModels().then( () => {
-				this._sequelize
-					.authenticate()
-					.then(() => {
-						if (sync) {
-							this._sequelize.sync({force: forceSync}).then(() => {
-								resolve(this);
-							});
-						} else {
-							resolve(this);
-						}
-
-					});
+				return this._sequelize.authenticate();
 			})
+				.then(() => {
+					if (sync) {
+						this._sequelize.sync({force: forceSync}).then(() => {
+							resolve(this);
+						});
+					} else {
+						resolve(this);
+					}
+
+				})
 				.catch(err => {
 					reject(err);
 				});

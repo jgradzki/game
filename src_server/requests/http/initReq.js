@@ -5,6 +5,9 @@ const initReq = (req, res, server, player) => {
 	let session = {
 		...req.session,
 		store: {
+			system: {
+				showDeadWindow: !player.isAlive()
+			},
 			map: {
 				playerPosition: player.mapPosition,
 				destination: player.mapTarget,

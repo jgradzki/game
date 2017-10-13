@@ -79,16 +79,17 @@ export default class PlayerBase extends Model {
 	}
 
 	onPlayerEnter(/*player*/) {
-
+		return {
+			location: this,
+			data: this.getDataForPlayer()
+		};
 	}
 
 	onPlayerExit(/*player*/) {
 
 	}
 
-	async getDataForPlayer(/*id*/) {
-		const box1 = await this.getBox1();
-
+	getDataForPlayer(/*id*/) {
 		return {
 			equipment: {
 				bed: {
@@ -101,7 +102,13 @@ export default class PlayerBase extends Model {
 					upgradeCosts: this.getUpgradeCosts('WORKSHOP', this.getDataValue('workshopLevel'))
 				},
 				box1: {
-					items: box1.getInventory()
+					items: this.box1.getInventory()
+				},
+				box2: {
+					items: this.box2.getInventory()
+				},
+				box3: {
+					items: this.box3.getInventory()
 				}
 			}
 		};

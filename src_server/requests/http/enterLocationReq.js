@@ -47,6 +47,14 @@ module.exports = (req, res, server, player) => {
 		return;
 	}
 
+	if (!player.isAlive()) {
+		res.send({
+			error: true,
+			errorMessage: 'Jesteś martwy(na śmierć).'
+		});
+		return;
+	}
+
 	if (player.isInLocation()) {
 		res.send({ error: 'You are already in location.' });
 		return;
@@ -64,17 +72,12 @@ module.exports = (req, res, server, player) => {
 			return server.gameManager.locationManager.getLocationByMapPosition(mapPosition.id);
 		})
 		.then(location => {
-			return Promise.all([
-				location,
-				location.getDataForPlayer(player.id)
-			]);
+			return location.onPlayerEnter(player);
 		})
 		.then(results => {
-			const location = results[0];
-			const data = results[1];
+			const { location, data } = results;
 
 			player.enterLocation(location.id, location.getType());
-			location.onPlayerEnter(player);
 
 			res.send({
 				success: true,

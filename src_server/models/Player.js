@@ -144,6 +144,10 @@ export default class Player extends Model {
 		this.setDataValue('onlineStatus', false);
 	}
 
+	isAlive() {
+		return this.hp > 0;
+	}
+
 	enterLocation(id, type) {
 		this.location = id;
 		this.locationType = type;
@@ -163,7 +167,7 @@ export default class Player extends Model {
 	}
 
 	canMoveOnMap() {
-		if (this.location) {
+		if (!this.isAlive() || this.location) {
 			return false;
 		}
 

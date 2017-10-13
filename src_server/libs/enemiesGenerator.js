@@ -1,15 +1,6 @@
 import _ from 'lodash';
 import { roll } from './functions';
-
-const enemiesDataBase = [
-	{
-		name: 'Zombie',
-		minDifficulty: 1,
-		hp: 30,
-		attackPower: 5,
-		attackSpeed: 3,
-	}
-];
+import enemiesDataBase from '../data/enemies';
 
 const enemiesGenerator = (maxEnemies, difficulty) => {
 	let enemies = [];
@@ -23,13 +14,16 @@ const enemiesGenerator = (maxEnemies, difficulty) => {
 
 		do {
 			enemy = enemiesDataBase[roll(0, enemiesDataBase.length - 1)];
-			if (enemy.minDifficulty && enemy.minDifficulty < difficulty) {
+			if (enemy.minDifficulty && enemy.minDifficulty > difficulty) {
 				enemy = undefined;
 			}
 			tries++;
 		}
 		while (!enemy && (tries < 10) );
-		enemies.push(enemy);
+
+		if (enemy) {
+			enemies.push(enemy);
+		}
 	}
 
 	return enemies;

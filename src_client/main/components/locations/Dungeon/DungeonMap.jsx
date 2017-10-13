@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import DungeonRoom from './DungeonRoom.jsx';
-import { setPlayerPosition } from '../../../actions/location';
+import { setPlayerPosition, setLocationMap } from '../../../actions/location';
+import { setFightLog } from '../../../actions/locations/dungeonActions';
+import { setPlayerHP } from '../../../actions/player';
 import { log } from '../../../libs/debug';
 
 
@@ -81,6 +84,10 @@ class DungeonMap extends Component {
 	}
 
 	_canMove(x, y) {
+		if (this.props.location.fight) {
+			return false;
+		}
+
 		let can = false;
 		let rooms = this.props.location.map;
 
@@ -117,8 +124,10 @@ class DungeonMap extends Component {
 				axios.post('game/request',
 					{
 						type: 'dungeonChangePosition',
-						position: {x,
-							y}
+						position: {
+							x,
+							y
+						}
 					}
 				)
 					.then(response => response.data)
@@ -129,9 +138,18 @@ class DungeonMap extends Component {
 
 						if (data.success) {
 							this.props.changePlayerPosition({
-								x: data.position.x,
-								y: data.position.y
+								x: data.data.position.x,
+								y: data.data.position.y
 							});
+							this.props.setLocationMap(data.data.rooms);
+							if (data.data.fight) {
+								this.props.setFightLog(data.data.fight);
+								if (_.isNumber(data.data.fight.playerHP)) {
+									this.props.setPlayerHP(data.data.fight.playerHP);
+								}
+							} else {
+								this.props.setFightLog(undefined);
+							}
 						}
 					})
 					.catch(error => {
@@ -143,7 +161,10 @@ class DungeonMap extends Component {
 
 	static propTypes = {
 		location: PropTypes.object,
-		changePlayerPosition: PropTypes.func
+		changePlayerPosition: PropTypes.func.isRequired,
+		setLocationMap: PropTypes.func.isRequired,
+		setFightLog: PropTypes.func.isRequired,
+		setPlayerHP: PropTypes.func.isRequired
 	}
 }
 
@@ -155,6 +176,15 @@ let mapStateToProps  = state => ({
 let mapDispatchToProps = dispatch => ({
 	changePlayerPosition(position) {
 		dispatch(setPlayerPosition(position));
+	},
+	setLocationMap(rooms) {
+		dispatch(setLocationMap(rooms));
+	},
+	setFightLog(text) {
+		dispatch(setFightLog(text));
+	},
+	setPlayerHP(hp) {
+		dispatch(setPlayerHP(hp));
 	}
 });
 

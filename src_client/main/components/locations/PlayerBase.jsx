@@ -46,8 +46,6 @@ class PlayerBase extends Component {
 	}
 
 	_onEnter(data) {
-		console.log(data);
-
 		this.setState({
 			equipment: data.equipment
 		});

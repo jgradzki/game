@@ -10,6 +10,7 @@ import { setPlayerHunger } from '../actions/player.js';
 import { setError } from '../actions/error.js';
 import MapElement from './MapElement.jsx';
 import getMapState from '../selectors/mapSelector';
+import { getDeadModeStatus } from '../selectors/systemSelectors';
 
 
 class Map extends Component {
@@ -40,6 +41,10 @@ class Map extends Component {
 	}
 
 	_movePlayer() {
+		if (this.props.deadMode) {
+			return;
+		}
+
 		let n = new Date().getTime();
 
 		if (!this._lastTick ) {
@@ -109,6 +114,10 @@ class Map extends Component {
 	}
 
 	_mapClick(e) {
+		if (this.props.deadMode) {
+			return;
+		}
+
 		let element = document.getElementById('mapContainer');
 		let rect = element.getBoundingClientRect();
 		let x = e.pageX - (rect.left + this.props.position.x);
@@ -221,6 +230,7 @@ class Map extends Component {
 			width: PropTypes.number.isRequired
 		}).isRequired,
 		initial: PropTypes.object.isRequired,
+		deadMode: PropTypes.bool.isRequired,
 		config: PropTypes.object.isRequired,
 		mapElements: PropTypes.array,
 		dragging: PropTypes.bool,
@@ -238,6 +248,7 @@ class Map extends Component {
 }
 
 let mapStateToProps  = (state, props) => ({
+	deadMode: getDeadModeStatus(state, props),
 	...getMapState(state, props),
 	config: { ...state.config },
 	inLocation: state.player.inLocation,

@@ -271,10 +271,15 @@ class PlayerManager {
 						base.setBox3(box3),
 					]);
 				})
-				.then(base => {
-					base = base[1];
+				.then(results => {
+					let base = results[1];
+
+					base.box1 = results[2];
+					base.box2 = results[3];
+					base.box3 = results[4];
 
 					player.base = base;
+
 					resolve(base);
 				})
 				.catch(error => reject(error));
@@ -295,9 +300,9 @@ class PlayerManager {
 				},
 				{ for: player.id },
 				{
-					min: 2,
-					max: 3,
-					maxEnemies: 2,
+					min: 5,
+					max: 10,
+					maxEnemies: 1,
 					difficulty: 1
 				},
 				'building',

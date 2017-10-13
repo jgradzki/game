@@ -73,7 +73,6 @@ class LocationManager {
 							msg: 'No type.'
 						};
 					}
-
 					LocationManager.enterLocation(data.type, data.data);
 				} else {
 					throw {
@@ -88,12 +87,16 @@ class LocationManager {
 	static _postRespondExit(data) {
 		log('LocationManager', '_postRespond data:', data);
 		if (!data) {
-			throw {code: 3011,
-				msg: 'no data reveived'};
+			throw {
+				code: 3011,
+				msg: 'no data reveived'
+			};
 		} else {
 			if (data.error) {
-				throw {code: 3012,
-					msg: data.error};
+				throw {
+					code: 3012,
+					msg: data.error
+				};
 			} else {
 				if (data.success) {
 					LocationManager.exitLocation();

@@ -166,6 +166,10 @@ export default class Inventory extends Model {
 		}
 	}
 
+	getMeleeWeapon() {
+		return this.getInventory().filter(item => item.combat && item.combat.type === 'melee' && item.combat.selected)[0];
+	}
+
 	setRangeWepon(slot) {
 		if (
 			this.getInventory()[slot] &&
@@ -181,6 +185,10 @@ export default class Inventory extends Model {
 
 			this.getInventory()[slot].combat.selected = true;
 		}
+	}
+
+	getRangeWeapon() {
+		return this.content.filter(item => item.combat && item.combat.type === 'range' && item.combat.selected)[0];
 	}
 
 	calculateInventory(inventory, inventoryLimit, newItem, newItemMaxStack) {

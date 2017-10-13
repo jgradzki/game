@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 import { log } from '../../libs/debug';
+import makeRequest from '../../libs/request';
+
 import { setLocationMap, setPlayerPosition } from '../../actions/location';
 import * as dungeonActions from '../../actions/locations/dungeonActions';
-import { setPlayerInventory } from '../../actions/player';
+import { setPlayerInventory, setPlayerHP } from '../../actions/player';
 import { getPlayerInventory } from '../../selectors/playerSelector';
-import makeRequest from '../../libs/request';
+import { onMenuAction } from '../../libs/playerInventory';
 
 import DungeonMap from './Dungeon/DungeonMap.jsx';
 import Inventory from '../Inventory.jsx';
@@ -17,15 +20,64 @@ class Dungeon extends Component {
 	}
 
 	render() {
+		return (
+			<div className="locationDungeonContainer">
+				<DungeonMap />
+				<a className="locationDungeonExitButton" onClick={()=>this.props.requestExit()} >[Wyjdź]</a>
+				{this._getContent()}
+			</div>
+		);
+	}
+
+	_onEnter(data) {
+		if (!data.rooms || typeof(data.rooms) !== 'object' || !data.position) {
+			log('error', {
+				code: 3011,
+				msg: ['wrong rooms data: ', data]
+			});
+		} else {
+			this.props.setLocationMap(data.rooms);
+			this.props.setPlayerPosition(data.position);
+			if (data.fight) {
+				this.props.setFightLog(data.fight);
+				if (_.isNumber(data.fight.playerHP)) {
+					this.props.setPlayerHP(data.fight.playerHP);
+				}
+			}
+		}
+	}
+
+	_onExit() {
+
+	}
+
+	_getContent() {
+		if (this.props.location.fight) {
+			return this._getFightView();
+		} else {
+			return this._getLootView();
+		}
+	}
+
+	_getFightView() {
+		return (
+			<div className="dungenFightBox">
+				<div className="logBox">
+					{(this.props.location.fight &&  this.props.location.fight.fightLog)|| 'error'}
+				</div>
+				<button onClick={() => this.props.setFightLog(false)}>OK</button>
+			</div>
+		);
+	}
+
+	_getLootView() {
 		let items = this._getRoomLoot();
 
 		if (!items) {
 			items = [];
 		}
 		return (
-			<div className="locationDungeonContainer">
-				<DungeonMap />
-				<a className="locationDungeonExitButton" onClick={()=>this.props.requestExit()} >[Wyjdź]</a>
+			<div>
 				<Inventory
 					name="Znalezione"
 					onClick={slot => this._onLootClick(slot)}
@@ -45,25 +97,11 @@ class Dungeon extends Component {
 					height={100}
 					slots={this.props.player.inventorySize}
 					items={this.props.player.inventory}
+					menu='playerInventory'
+					onMenuClick={(action, slot) => onMenuAction(action, slot)}
 				/>
 			</div>
 		);
-	}
-
-	_onEnter(data) {
-		if (!data.rooms || typeof(data.rooms) !== 'object' || !data.position) {
-			log('error', {
-				code: 3011,
-				msg: ['wrong rooms data: ', data]
-			});
-		} else {
-			this.props.setLocationMap(data.rooms);
-			this.props.setPlayerPosition(data.position);
-		}
-	}
-
-	_onExit() {
-
 	}
 
 	_getPlayerPosition() {
@@ -74,10 +112,18 @@ class Dungeon extends Component {
 		return this.props.location.map;
 	}
 
-	_getRoomLoot() {
+	_getCurrentRoom() {
 		const playerPosition = this._getPlayerPosition();
 
-		return this._getRooms() && this._getRooms()[playerPosition.y][playerPosition.x].items;
+		return this._getRooms() && this._getRooms()[playerPosition.y][playerPosition.x];
+	}
+
+	_getEnemies() {
+		return this._getCurrentRoom() && this._getCurrentRoom().enemies;
+	}
+
+	_getRoomLoot() {
+		return this._getCurrentRoom() && this._getCurrentRoom().items;
 	}
 
 	_onLootClick(slot) {
@@ -148,6 +194,8 @@ class Dungeon extends Component {
 		setPlayerPosition: PropTypes.func.isRequired,
 		setPlayerInventory: PropTypes.func.isRequired,
 		requestExit: PropTypes.func.isRequired,
+		setFightLog: PropTypes.func.isRequired,
+		setPlayerHP: PropTypes.func.isRequired,
 	};
 }
 
@@ -170,6 +218,12 @@ const mapDispatchToProps = dispatch => ({
 	},
 	setPlayerInventory(inventory) {
 		dispatch(setPlayerInventory(inventory));
+	},
+	setFightLog(fight) {
+		dispatch(dungeonActions.setFightLog(fight));
+	},
+	setPlayerHP(hp) {
+		dispatch(setPlayerHP(hp));
 	}
 });
 

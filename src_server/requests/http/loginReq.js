@@ -29,7 +29,21 @@ module.exports = (req, res, server) => {
 					},
 					{
 						model: server.db.getModel('PlayerBase'),
-						as: 'base'
+						as: 'base',
+						include: [
+							{
+								model: server.db.getModel('Inventory'),
+								as: 'box1'
+							},
+							{
+								model: server.db.getModel('Inventory'),
+								as: 'box2'
+							},
+							{
+								model: server.db.getModel('Inventory'),
+								as: 'box3'
+							}
+						]
 					}
 				]
 			});

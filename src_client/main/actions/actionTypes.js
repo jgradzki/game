@@ -4,6 +4,8 @@ const actionTypes = {
 	ERROR_SET: `${actionPrefix}/ERROR_SET`,
 	ERROR_CLEAR: `${actionPrefix}/ERROR_CLEAR`,
 
+	SYSTEM_DEAD_MODE: `${actionPrefix}/SYSTEM_DEAD_MODE`,
+
 	SET_PLAYER_IN_LOCATION: `${actionPrefix}/SET_PLAYER_IN_LOCATION`,
 	SET_PLAYER_INVENTORY: `${actionPrefix}/SET_PLAYER_INVENTORY`,
 	SET_PLAYER_HP: `${actionPrefix}/SET_PLAYER_HP`,

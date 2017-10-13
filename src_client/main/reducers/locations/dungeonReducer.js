@@ -28,6 +28,11 @@ const dungeonReducer = (state, action) => {
 				...state,
 				map: rooms
 			};
+		case actionTypes.SET_FIGHT_LOG:
+			return {
+				...state,
+				fight: action.fight
+			};
 		default:
 			return state;
 	}

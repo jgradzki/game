@@ -1,6 +1,14 @@
 import { log } from '../../logger';
 
 module.exports = (req, res, server, player) => {
+	if (!player.isAlive()) {
+		res.send({
+			error: true,
+			errorMessage: 'Jesteś martwy(na śmierć).'
+		});
+		return;
+	}
+
 	if (!player.isInLocation()) {
 		res.send({
 			error: true,

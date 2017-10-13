@@ -32,7 +32,11 @@ axios.post('game/request', { type: 'init' })
 
 		const storeInitialStates = {
 			error: { is: false },
-			system: config.systemReducerInitial,
+			system: {
+				...config.systemReducerInitial,
+				...data.store.system,
+				deadMode: data.store.player && data.store.player.hp <= 0
+			},
 			mapState: {
 				...config.mapStateReducerInitial,
 				...data.store.map
