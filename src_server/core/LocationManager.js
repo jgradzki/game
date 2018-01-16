@@ -94,7 +94,10 @@ class LocationManager {
 						reject(`@LocationManager: Model ${position.type} not found.`);
 					}
 
-					let location = this._locations.filter(l =>  (l.mapPosition.id === position.id))[0];
+					let location = this._locations.find(
+						location =>
+							location.mapPosition && (location.mapPosition.id === position.id)
+					);
 
 
 					if ( location ) {

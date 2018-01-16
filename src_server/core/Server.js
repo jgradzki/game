@@ -68,20 +68,26 @@ class Server {
 		this.db.connect(this.config.get('db.sync', true), this.config.get('db.forceSync', false))
 			.then(() => {
 				this.eventEmitter.emit('SERVER_CONNECT_TO_DB_SUCCESS', this);
+
 				log('info', 'Setting up game.');
 				this._setupGame();
 				this.eventEmitter.emit('SERVER_SETUP_GAME_SUCCESS', this);
+
 				log('info', 'Setting up http server.');
+
 				return this._setupHttpServer();
 			})
 			.then(() => {
 				this.eventEmitter.emit('SERVER_SETUP_HTTP_SERVER_SUCCESS', this);
+
 				log('info', 'Setting up websockets.');
+
 				return this._setupWebSockets();
 			})
 			.then(() => {
 				this.eventEmitter.emit('SERVER_SETUP_WEBSOCKET_SERVER_SUCCESS', this);
 				log('info', 'Starting...');
+
 				return this._run();
 			})
 			.then(() => {

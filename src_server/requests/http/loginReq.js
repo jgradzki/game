@@ -22,30 +22,7 @@ module.exports = (req, res, server) => {
 				where: {
 					name
 				},
-				include: [
-					{
-						model: server.db.getModel('Inventory'),
-						as: 'inventory'
-					},
-					{
-						model: server.db.getModel('PlayerBase'),
-						as: 'base',
-						include: [
-							{
-								model: server.db.getModel('Inventory'),
-								as: 'box1'
-							},
-							{
-								model: server.db.getModel('Inventory'),
-								as: 'box2'
-							},
-							{
-								model: server.db.getModel('Inventory'),
-								as: 'box3'
-							}
-						]
-					}
-				]
+				include: [{ all: true, nested: true }]
 			});
 		})
 		.then(player => {
@@ -56,8 +33,8 @@ module.exports = (req, res, server) => {
 			if (!player.inventory || !player.base) {
 				return server.gameManager.playerManager.checkPlayerAssociations(player);
 			} else {
-				new Promise(resolve => resolve(server.gameManager.locationManager.getLocation(player.base.id, player.base.getType())))
-					.then(base => player.base = base);
+				server.gameManager.locationManager.loadLocation(player.base);
+
 				return player;
 			}
 		})
