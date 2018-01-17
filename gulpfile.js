@@ -10,6 +10,9 @@ const babel = require('gulp-babel');
 const uglify = require('gulp-uglify');
 const nodemon = require('gulp-nodemon');
 
+var ts = require("gulp-typescript");
+var tsProject = ts.createProject("tsconfig.json");
+
 const clientSrc = './src_client';
 const serverSrc = './src_server';
 const publicSrc = 'public';
@@ -92,15 +95,19 @@ gulp.task('build-client', () => {
 });
 
 gulp.task('build-server', () => {
-	gulp.src(path.resolve(serverSrc, '**/**/**.js'))
-		.on('error', handleError)
+	//gulp.src(path.resolve(serverSrc, '**/**/**.js'))
+		/*.on('error', handleError)
 		.pipe(babel({
 			presets: ['es2017', 'stage-0'],
 			plugins: ['transform-es2015-modules-commonjs']
 		}))
 		.on('error', handleError)
 		.pipe(gulp.dest(dest))
-		.on('error', handleError);
+		.on('error', handleError);*/
+
+	 return tsProject.src()
+        .pipe(tsProject())
+        .js.pipe(gulp.dest(dest));
 });
 
 gulp.task('build', ['build-server', 'build-client'], () => {
@@ -143,7 +150,7 @@ gulp.task('default', () => {
 			console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
 		});
 
-	gulp.watch([path.join(serverSrc, '/**/*.js')], ['build-server'])
+	gulp.watch([path.join(serverSrc, '/**/*.*')], ['build-server'])
 		.on('error', handleError)
 		.on('change', event => {
 			console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
