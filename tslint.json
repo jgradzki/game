@@ -48,6 +48,13 @@
         ],
         "one-variable-per-declaration": [
             false
+        ],
+        "trailing-comma": [
+            true,
+            {
+                "multiline": "ignore",
+                "singleline": "never"
+            }
         ]
     },
     "rulesDirectory": []

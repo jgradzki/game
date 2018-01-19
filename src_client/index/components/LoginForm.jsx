@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
+import { post } from 'axios';
+
 import FormTitle from './FormTitle.jsx';
 
 class LoginForm extends Component {
 	constructor() {
 		super();
-		this._onClick = this._onClick.bind(this);
-		this._postHandle = this._postHandle.bind(this);
-		this._handleChange = this._handleChange.bind(this);
 
 		if (process.env.NODE_ENV !== 'production') {
 			this.state = {
@@ -44,8 +43,14 @@ class LoginForm extends Component {
 	}
 
 	_onClick() {
-		$.post('/', { form: { login: this.state.login,
-			pass: this.state.pass } }, this._postHandle, 'json');
+		post('/api/login', {
+			login: this.state.login,
+			pass: this.state.pass
+		})
+			.then(response => this._postHandle(response.data))
+			.catch(() => this.setState({ error: 'Wystąpił błąd. Spróbuj ponownie później.' }));
+
+
 	}
 
 	_renderError() {
@@ -59,9 +64,11 @@ class LoginForm extends Component {
 			<div className = "loginForm">
 				<FormTitle>Logowanie</FormTitle>
 				{this._renderError()}
-				Login: <input type = "text"	placeholder = "Login" name = "login" onChange = { this._handleChange }/><br/ >
-				Hasło: <input type = "password"	placeholder = "Password" name = "pass" onChange = { this._handleChange }/><br/ >
-				<button onClick = { this._onClick }>Submit</button><br/ >
+				Login:
+				<input type = "text" placeholder="Login" name="login" onChange={ event => this._handleChange(event) } /><br/>
+				Hasło:
+				<input type = "password" placeholder="Password"name="pass" onChange={ event => this._handleChange(event) } /><br/>
+				<button onClick = { () => this._onClick() }>Submit</button><br/ >
 			</div>
 		);
 	}

@@ -1,14 +1,17 @@
-import { Get, Response, Controller } from '@nestjs/common';
+import { Get, Response, Controller, UseGuards } from '@nestjs/common';
 import * as path from 'path';
 
-@Controller()
+import { LoggedInGuard } from './guards/loggedin.guard';
+
+@Controller('game')
+@UseGuards(LoggedInGuard)
 export class GameController {
-	@Get('/game')
-	root(@Response() res) {
+	@Get('/')
+	game(@Response() res) {
 		res.sendFile(path.resolve(__dirname, '../server_resources/html/main.html'));
 	}
 
-	@Get('/game/*')
+	@Get('/*')
 	rest(@Response() res) {
 		res.sendFile(path.resolve(__dirname, '../server_resources/html/main.html'));
 	}

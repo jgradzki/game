@@ -1,9 +1,13 @@
-import { Module } from '@nestjs/common';
+import { Module  } from '@nestjs/common';
+
+import { PlayerModule } from './player/player.module';
+
 import { GameController } from './game.controller';
+import { ApiController } from './api/api.controller';
 
 @Module({
-  imports: [],
-  controllers: [GameController],
-  components: [],
+  imports: [PlayerModule],
+  controllers: [GameController, ApiController],
+  components: []
 })
 export class GameModule {}

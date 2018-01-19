@@ -1,5 +1,8 @@
 # Requirements
-Application requires database supported by Sequelize and which supports Sequelize.ARRAY (Only PostgreSQL for now).
+
+Application requires database supported by TypeORM.
+
+NodeGyp: https://github.com/nodejs/node-gyp#installation
 
 # Installation
 

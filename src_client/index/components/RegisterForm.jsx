@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
+import { post } from 'axios';
 import FormTitle from './FormTitle.jsx';
 
 class RegisterForm extends Component {
 	constructor() {
 		super();
-		this._onClick = this._onClick.bind(this);
-		this._postHandle = this._postHandle.bind(this);
-		this._handleChange = this._handleChange.bind(this);
 		this.state = {
 			success: false,
 			errors: []
@@ -22,21 +20,24 @@ class RegisterForm extends Component {
 	}
 
 	_handleChange(event) {
-		if (event.target.name == 'login') {
+		if (event.target.name === 'login') {
 			this.setState({ login: event.target.value });
-		} else if (event.target.name == 'pass') {
+		} else if (event.target.name === 'pass') {
 			this.setState({ pass: event.target.value });
-		} else if (event.target.name == 'repass') {
+		} else if (event.target.name === 'repass') {
 			this.setState({ repass: event.target.value });
 		}
 	}
 
 	_onClick() {
 		this.setState({ errors: [] });
-		$.post('/register', { form: { login: this.state.login,
+		post('/api/register', {
+			login: this.state.login,
 			pass: this.state.pass,
-			repass: this.state.repass } },
-		this._postHandle, 'json');
+			repass: this.state.repass
+		})
+			.then(response => this._postHandle(response.data))
+			.catch(() => this.setState({ errors: ['Wystąpił błąd. Spróbuj ponownie później.'] }));
 	}
 
 	_renderSuccess() {
@@ -47,22 +48,28 @@ class RegisterForm extends Component {
 		if (this.state.errors.length > 0) {
 			return (<div className = 'error' >
                 Błędy: <br/>
-				{ this.state.errors.map(v => <div>{v}</div>) }
+				{ this.state.errors.map((v, k) => <div key={k}>{v}</div>) }
 			</div>);
 		}
 	}
 
 	_renderForm() {
-		return (<div className = "registerForm" >
-			<FormTitle> Rejestracja </FormTitle> { this._renderError() }
-			Login: <input type = "text" name = "login"	onChange = { this._handleChange } /><br/ >
-			Hasło: <input type = "password" name = "pass" onChange = { this._handleChange } /><br/ >
-			Powtórz Hasło: <input type = "password" name = "repass" onChange = { this._handleChange } /><br/ >
-			<button onClick = { this._onClick }> Submit </button> </div>);
+		return (
+			<div className = "registerForm">
+				<FormTitle> Rejestracja </FormTitle>
+				{ this._renderError() }
+
+				Login: <input type = "text" name = "login"	onChange = { event => this._handleChange(event) } /><br/>
+				Hasło: <input type = "password" name = "pass" onChange = { event => this._handleChange(event) } /><br/>
+				Powtórz Hasło: <input type = "password" name = "repass" onChange = { event => this._handleChange(event) } /><br/>
+
+				<button onClick = { () => this._onClick() }> Submit </button>
+			</div>
+		);
 	}
 
 	render() {
-		if (this.state.success == true) {
+		if (this.state.success) {
 			return this._renderSuccess();
 
 		} else {
