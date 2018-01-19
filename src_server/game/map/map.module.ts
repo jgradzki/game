@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '../../db';
 
-//import { Map } from './Map.entity';
+import { MapElement } from './MapElement.entity';
 
 import { LoggedInGuard } from '../guards/loggedin.guard';
 
@@ -12,10 +12,10 @@ import { MapService } from './map.service';
 import { MapController } from './map.controller';
 
 @Module({
-  imports: [PlayerModule],
+  imports: [PlayerModule, TypeOrmModule.forFeature([MapElement])],
   controllers: [MapController],
   components: [MapService],
-  exports: [MapService]
+  exports: [TypeOrmModule.forFeature([MapElement]), MapService]
 })
 export class MapModule {
 

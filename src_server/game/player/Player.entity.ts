@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 import { MapPosition } from '../map/interfaces/map-position.interface';
 
-@Entity()
+@Entity({ name: 'Players' })
 export class Player {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;

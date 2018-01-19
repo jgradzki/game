@@ -9,13 +9,13 @@ import { ApiController } from './api/api.controller';
 import { RequestController } from './request/request.controller';
 
 @Module({
-  imports: [
-  	PlayerModule,
-  	EventsModule,
-  	MapModule
-  ],
-  controllers: [GameController, ApiController, RequestController],
-  components: [],
-  exports: []
+	imports: [
+		PlayerModule,
+		EventsModule,
+		MapModule
+	],
+	controllers: [GameController, ApiController, RequestController],
+	components: [],
+	exports: []
 })
 export class GameModule {}

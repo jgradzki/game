@@ -8,6 +8,6 @@ import { PlayersService } from './players.service';
 @Module({
   imports: [TypeOrmModule.forFeature([Player])],
   components: [PlayersService],
-  exports: [PlayersService]
+  exports: [TypeOrmModule.forFeature([Player]), PlayersService]
 })
 export class PlayerModule {}
