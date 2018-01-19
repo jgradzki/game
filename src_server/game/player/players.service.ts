@@ -30,6 +30,10 @@ export class PlayersService {
 		return player;
 	}
 
+	loaded(): Array<Player> {
+		return this.players;
+	}
+
 	async findById(id: string): Promise<Player> {
 		return await this.playerRepository.findOne({
 			where: {
@@ -53,7 +57,7 @@ export class PlayersService {
 			return false;
 		}
 
-		if (find(this.players, (pa: Player) => pa.id === player.login)) {
+		if (find(this.players, (pa: Player) => pa.id === player.id)) {
 			log('debug', `Player ${player.login}(${player.id} already loaded.)`);
 			return true;
 		}
@@ -99,7 +103,7 @@ export class PlayersService {
 	}
 
 	async getPlayerById(id: string): Promise<Player> {
-		const player = find(this.players, (loadedPlayer: Player) => player.id === id);
+		const player = find(this.players, (loadedPlayer: Player) => loadedPlayer.id === id);
 
 		if (player) {
 			return player;

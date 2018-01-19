@@ -11,6 +11,14 @@ class RegisterForm extends Component {
 		};
 	}
 
+	render() {
+		if (this.state.success) {
+			return this._renderSuccess();
+		} else {
+			return this._renderForm();
+		}
+	}
+
 	_postHandle(data) {
 		if (data.errors) {
 			this.setState({ errors: data.errors });
@@ -66,15 +74,6 @@ class RegisterForm extends Component {
 				<button onClick = { () => this._onClick() }> Submit </button>
 			</div>
 		);
-	}
-
-	render() {
-		if (this.state.success) {
-			return this._renderSuccess();
-
-		} else {
-			return this._renderForm();
-		}
 	}
 }
 

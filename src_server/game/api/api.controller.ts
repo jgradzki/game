@@ -16,9 +16,6 @@ export class ApiController {
 
 	@Post('register')
 	async register(@Body() registerData: RegisterDto, @Response() res) {
-		console.log('register request');
-		console.log(registerData);
-
 		const { login, pass, errors } = this.checkRegisterForm(registerData);
 
 		if (errors.length > 0) {
@@ -29,7 +26,7 @@ export class ApiController {
 			return;
 		}
 
-		if (this.isLoginTaken(login)) {
+		if (await this.isLoginTaken(login)) {
 			res.send({
 				errors: ['Login zajęty.']
 			});
@@ -110,7 +107,7 @@ export class ApiController {
 		};
 	}
 
-	private isLoginTaken(login: string) {
-		return !this.playersService.findByLogin(login);
+	private async isLoginTaken(login: string) {
+		return !!await this.playersService.findByLogin(login);
 	}
 }

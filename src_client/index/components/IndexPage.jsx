@@ -4,9 +4,7 @@ import LoginForm from './LoginForm.jsx';
 class IndexPage extends Component {
 
 	render() {
-		return (
-			<div><LoginForm /></div>
-		);
+		return <LoginForm />;
 	}
 }
 

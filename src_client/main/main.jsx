@@ -25,7 +25,7 @@ Debug.enable('init', 'error', 'LocationManager');
 log('init', 'Initial configuration: ', config);
 
 
-axios.post('game/request', { type: 'init' })
+axios.post('game/request/init')
 	.then(response => response.data)
 	.then(data => {
 		log('init', 'Session data: ', data);
@@ -98,7 +98,7 @@ axios.post('game/request', { type: 'init' })
 			);
 		});
 	})
-	.then(() => axios.post('game/request', { type: 'getMapElements' }))
+	.then(() => axios.get('game/map/elements'))
 	.then(response => response.data)
 	.then(data => {
 		log('init', 'Map elements: ', data);

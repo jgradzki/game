@@ -156,7 +156,7 @@ class Map extends Component {
 				}
 			})
 			.catch(error => {
-				log('errors', error);
+				log('error', error);
 				if (error && error.toString().includes('timeout')) {
 					this.props.setError('Serwer nie odpowiada.');
 				}

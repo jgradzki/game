@@ -25,6 +25,20 @@ class LoginForm extends Component {
 		}
 	}
 
+	render() {
+		return (
+			<div className = "loginForm">
+				<FormTitle>Logowanie</FormTitle>
+				{this._renderError()}
+				Login:
+				<input type = "text" placeholder="Login" name="login" onChange={ event => this._handleChange(event) } /><br/>
+				Hasło:
+				<input type = "password" placeholder="Password"name="pass" onChange={ event => this._handleChange(event) } /><br/>
+				<button onClick = { () => this._onClick() }>Submit</button><br/ >
+			</div>
+		);
+	}
+
 	_postHandle(data) {
 		if (data.error) {
 			this.setState({ error: data.error });
@@ -57,20 +71,6 @@ class LoginForm extends Component {
 		if (this.state.error) {
 			return <div className = 'error' > Error: { this.state.error } </div>;
 		}
-	}
-
-	render() {
-		return (
-			<div className = "loginForm">
-				<FormTitle>Logowanie</FormTitle>
-				{this._renderError()}
-				Login:
-				<input type = "text" placeholder="Login" name="login" onChange={ event => this._handleChange(event) } /><br/>
-				Hasło:
-				<input type = "password" placeholder="Password"name="pass" onChange={ event => this._handleChange(event) } /><br/>
-				<button onClick = { () => this._onClick() }>Submit</button><br/ >
-			</div>
-		);
 	}
 }
 

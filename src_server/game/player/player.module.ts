@@ -10,6 +10,4 @@ import { PlayersService } from './players.service';
   components: [PlayersService],
   exports: [PlayersService]
 })
-export class PlayerModule {
-
-}
+export class PlayerModule {}

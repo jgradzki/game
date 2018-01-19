@@ -1,5 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
+import { MapPosition } from '../map/interfaces/map-position.interface';
+
 @Entity()
 export class Player {
 	@PrimaryGeneratedColumn('uuid')
@@ -21,13 +23,19 @@ export class Player {
 	energy: number;
 
 	@Column({ name: 'map_position', type: 'json' })
-	mapPosition: object;
+	mapPosition: MapPosition;
 
 	sessionId: string;
 
 	online = false;
 
+	mapTarget: MapPosition = null;
+
 	public setOnline(): void {
 		this.online = true;
+	}
+
+	isAlive() {
+		return this.hp > 0;
 	}
 }
