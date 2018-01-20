@@ -13,6 +13,7 @@ import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/map';
 import * as sharedsession from 'express-socket.io-session';
 import * as Session from 'express-session';
+import { RequestHandler } from 'express';
 import { log } from '../../logger';
 
 import { LoggedInGuard } from '../guards/loggedin.guard';
@@ -22,7 +23,7 @@ import { PlayersService } from '../player/players.service';
 @WebSocketGateway()
 export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer() server;
-	session: Session;
+	session: RequestHandler;
 
 	constructor(private readonly playersService: PlayersService) {}
 

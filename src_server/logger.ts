@@ -2,22 +2,22 @@ import * as winston from 'winston';
 import * as fs from 'fs';
 import * as path from 'path';
 
-//Log levels: error: 0, warn: 1, info: 2, verbose: 3, debug: 4
+// Log levels: error: 0, warn: 1, info: 2, verbose: 3, debug: 4
 
-let logDir = './logs';
+const logDir = './logs';
 let currentLog = '';
 let logger: winston.Logger = {};
 
 const getDirectories = (srcpath) => {
-	return fs.readdirSync(srcpath).filter(function(file) {
+	return fs.readdirSync(srcpath).filter(file => {
 		return fs.statSync(path.join(srcpath, file)).isDirectory();
 	});
 };
 
-const deleteFolderRecursive = (path) => {
-	if (fs.existsSync(path)) {
-		fs.readdirSync(path).forEach(function(file) {
-			var curPath = path + '/' + file;
+const deleteFolderRecursive = filePath => {
+	if (fs.existsSync(filePath)) {
+		fs.readdirSync(filePath).forEach(file => {
+			const curPath = filePath + '/' + file;
 
 			if (fs.statSync(curPath).isDirectory()) { // recurse
 				deleteFolderRecursive(curPath);
@@ -25,7 +25,7 @@ const deleteFolderRecursive = (path) => {
 				fs.unlinkSync(curPath);
 			}
 		});
-		fs.rmdirSync(path);
+		fs.rmdirSync(filePath);
 	}
 };
 
@@ -37,7 +37,7 @@ export const initLogger = () => {
 		dirs = getDirectories('./logs');
 		if (dirs) {
 			dirs.map(t => {
-				let d = new Date(parseInt(t));
+				const d = new Date(parseInt(t, 10));
 
 				if ((d.getFullYear === now.getFullYear) && (d.getMonth() === now.getMonth()) && (d.getDate() === now.getDate())) {
 					now = d;
@@ -62,7 +62,7 @@ export const initLogger = () => {
 	}
 
 	try {
-		currentLog = "" + now.getTime();
+		currentLog = '' + now.getTime();
 		fs.mkdirSync(logDir + '/' + currentLog);
 	} catch (e) {
 		if (e.code === 'EEXIST') {
@@ -79,13 +79,13 @@ export const initLogger = () => {
 
 	dirs = getDirectories('./logs');
 	if (dirs.length > 31) {
-		let oldDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 31);
+		const oldDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 31);
 
 		dirs.map(t => {
-			let d = new Date(parseInt(t));
+			const d = new Date(parseInt(t, 10));
 
 			if (d.getTime() < oldDate.getTime()) {
-				let delDir = logDir + '/' + t;
+				const delDir = logDir + '/' + t;
 
 				deleteFolderRecursive(delDir);
 			}
@@ -95,8 +95,8 @@ export const initLogger = () => {
 };
 
 export const log = (type, error) => {
-	var d = new Date();
-	var t = '['+d.getHours()+':'+d.getMinutes()+':'+d.getSeconds()+']';
+	const d = new Date();
+	const t = '[' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + ']';
 
 	logger.log(type, `${t} ${error}`);
 

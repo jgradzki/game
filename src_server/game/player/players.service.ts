@@ -70,6 +70,7 @@ export class PlayersService {
 		const toUnload = find(this.players, (ptu: Player) => ptu.id === player.id);
 
 		if (!toUnload) {
+			log('debug', `@unloadPlayer: Player ${player.login} not loaded.`);
 			return false;
 		}
 
@@ -87,6 +88,12 @@ export class PlayersService {
 		log('debug', `Player ${toUnload.login} unloaded.`);
 
 		return true;
+	}
+
+	async unloadAllPlayers() {
+		for (const player of this.players) {
+			await this.unloadPlayer(player);
+		}
 	}
 
 	async savePlayer(player: Player): Promise<boolean> {

@@ -1,7 +1,7 @@
 import { Component } from '@nestjs/common';
 import { TypeOrmModule, InjectRepository } from '../../db';
 import { EntityManager, Repository } from 'typeorm';
-import { find, map, forEach } from 'lodash';
+import { find, map, forEach, findIndex } from 'lodash';
 
 import { log } from '../../logger';
 
@@ -64,6 +64,12 @@ export class MapService {
 		log('debug', `mapElement ${mapElement.id} saved.`);
 
 		return true;
+	}
+
+	async unloadAllMapElements() {
+		for (const element of this.elements) {
+			await this.unloadMapElement(element);
+		}
 	}
 
 	async getMapElementById(id: string): Promise<MapElement> {
@@ -132,21 +138,29 @@ export class MapService {
 	}
 
 	private async unloadMapElement(mapElement: MapElement): Promise<boolean> {
+
 		if (mapElement.constructor.name !== MapElement.name) {
 			log('error', `${mapElement} is not mapElement instance:`);
 			log('error', mapElement);
 			return false;
 		}
 
-		const toUnload = find(this.elements, (ptu: MapElement) => ptu.id === mapElement.id);
+		const toUnload = find(this.elements, element => element.id === mapElement.id);
 
 		if (!toUnload) {
+			log('debug', `@unloadMapElement: mapElement ${toUnload.id} not loaded.`);
 			return false;
 		}
 
 		await this.saveMapElement(toUnload);
 
-		this.elements.filter((pa: MapElement) => pa.id !== mapElement.id);
+		const index = findIndex(this.elements, element => element.id === toUnload.id);
+
+		if (index > -1) {
+			this.elements.splice(index, 1);
+		} else {
+			log('error', `@unloadMapElement: Error finding index in elements of ${toUnload.id}`);
+		}
 		log('debug', `mapElement ${toUnload.id} unloaded.`);
 
 		return true;

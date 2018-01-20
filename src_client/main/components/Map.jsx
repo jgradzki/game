@@ -114,7 +114,7 @@ class Map extends Component {
 	}
 
 	_mapClick(e) {
-		if (this.props.deadMode) {
+		if (this.props.deadMode || e.button !== 0) {
 			return;
 		}
 

@@ -20,7 +20,7 @@ export class GameController {
 	}
 
 	@Get('logout')
-	async logout(@Request() req, @Response() res, @Session() session) {
+	async logout(@Request() req, @Response() res, @Session() session: Express.Session) {
 		if (!await this.checkSession(req, res)) {
 			return;
 		}
@@ -33,7 +33,9 @@ export class GameController {
 			log('info', `Players online: ${this.playersService.onlineCount()}`);
 		}
 
-		res.redirect('/');
+		session.playerID = 0;
+		session.name = undefined;
+		session.destroy(() => res.redirect('/'));
 	}
 
 	private async checkSession(req, res): Promise<boolean> {

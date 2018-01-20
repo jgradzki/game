@@ -20,13 +20,13 @@ class GameContainer extends Component {
 		log('render', 'GameContainer render');
 		if (this.props.showDeadWindow) {
 			return (
-				<div className="gameContainer">
+				<div className="gameContainer" onContextMenu={this.contextMenu}>
 					<DeadView />
 				</div>
 			);
 		} else {
 			return (
-				<div className="gameContainer">
+				<div className="gameContainer" onContextMenu={this.contextMenu}>
 					<TopBar />
 					<Map />
 					<Location />
@@ -37,6 +37,10 @@ class GameContainer extends Component {
 				</div>
 			);
 		}
+	}
+
+	contextMenu(event) {
+		event.preventDefault();
 	}
 
 	static propTypes = {

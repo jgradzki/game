@@ -1,5 +1,4 @@
 import { Component } from '@nestjs/common';
-import { forEach } from 'lodash';
 import { log } from '../../logger';
 
 import { ITask } from './task.interface';
@@ -16,8 +15,16 @@ export class TasksService {
 		this.tasks.push(playerMoveOnMapTask);
 	}
 
-	startTasks() {
-		forEach(this.tasks, task => task.start());
+	async startTasks() {
+		for (const task of this.tasks) {
+			await task.start();
+		}
+	}
+
+	async stopTasks() {
+		for (const task of this.tasks) {
+			await task.stop();
+		}
 	}
 
 }
