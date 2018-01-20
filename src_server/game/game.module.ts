@@ -1,5 +1,7 @@
 import { Module  } from '@nestjs/common';
 
+import { ConfigService } from './config/config.service';
+
 import { PlayerModule } from './player/player.module';
 import { EventsModule } from './events/events.module';
 import { MapModule } from './map/map.module';
@@ -15,7 +17,7 @@ import { RequestController } from './request/request.controller';
 		MapModule
 	],
 	controllers: [GameController, ApiController, RequestController],
-	components: [],
-	exports: []
+	components: [ConfigService],
+	exports: [ConfigService]
 })
 export class GameModule {}

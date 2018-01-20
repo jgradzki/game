@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "test",
   "scripts": {
-    "start": "cross-env NODE_ENV=production ts-node ./build/server",
+    "start": "cross-env NODE_ENV=production node ./build/server",
     "build": "cross-env NODE_ENV=production gulp build"
   },
   "dependencies": {

@@ -3,13 +3,15 @@ import * as path from 'path';
 
 import { LoggedInGuard } from '../guards/loggedin.guard';
 
+import { ConfigService } from '../config/config.service';
 import { PlayersService } from '../player/players.service';
 
 @Controller('game/request')
 @UseGuards(LoggedInGuard)
 export class RequestController {
 	constructor(
-		private readonly playersService: PlayersService
+		private readonly playersService: PlayersService,
+		private readonly configService: ConfigService
 	) {}
 
 	@Post('init')
@@ -24,7 +26,7 @@ export class RequestController {
 				map: {
 					playerPosition: player.mapPosition,
 					destination: player.mapTarget,
-					movementSpeed: 50 // server.config.get('player.playerSpeedOnMap')
+					movementSpeed: this.configService.get('player.playerSpeedOnMap', '50')
 				},
 				player: {
 					name: player.login,

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '../../db';
 
-import { Player } from './Player.entity';
+import { Player } from './player.entity';
 
 import { PlayersService } from './players.service';
 

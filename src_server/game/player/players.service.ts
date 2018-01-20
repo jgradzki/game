@@ -6,7 +6,7 @@ import { find } from 'lodash';
 
 import { log } from '../../logger';
 
-import { Player } from './Player.entity';
+import { Player } from './player.entity';
 
 @Component()
 export class PlayersService {

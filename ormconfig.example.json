@@ -2,9 +2,9 @@
   "type": "postgres",
   "host": "127.0.0.1",
   "port": 5432,
-  "username": "bt",
-  "password": "reskuletuw",
-  "database": "bt",
+  "username": "root",
+  "password": "",
+  "database": "game",
   "entities": ["./src_server/**/**.entity.ts"],
   "synchronize": true
 }
