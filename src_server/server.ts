@@ -8,9 +8,10 @@ import { log, initLogger } from './logger';
 
 import { ApplicationModule } from './app.module';
 import { GameModule } from './game/game.module';
+import { ConfigModule } from './game/config/config.module';
+import { ConfigService } from './game/config/config.service';
 import { EventsModule } from './game/events/events.module';
 import { EventsGateway } from './game/events/events.gateway';
-import { ConfigService } from './game/config/config.service';
 
 initLogger();
 
@@ -20,6 +21,7 @@ async function bootstrap() {
 	const app = await NestFactory.create(ApplicationModule);
 
 	const configService = app.select(GameModule)
+		.select(ConfigModule)
 		.get(ConfigService);
 
 	app.use(Express.static(path.resolve(__dirname, configService.get('httpPublicFolder', 'public'))));

@@ -1,5 +1,6 @@
-import { Get, Request, Response, Controller, UseGuards } from '@nestjs/common';
+import { Get, Request, Response, Session, Controller, UseGuards } from '@nestjs/common';
 import * as path from 'path';
+import { log } from '../logger';
 
 import { LoggedInGuard } from './guards/loggedin.guard';
 
@@ -16,6 +17,23 @@ export class GameController {
 		}
 
 		res.sendFile(path.resolve(__dirname, '../server_resources/html/main.html'));
+	}
+
+	@Get('logout')
+	async logout(@Request() req, @Response() res, @Session() session) {
+		if (!await this.checkSession(req, res)) {
+			return;
+		}
+
+		const player = await this.playersService.getPlayerById(session.playerID);
+
+		if (player) {
+			player.setOffline();
+			await this.playersService.unloadPlayer(player);
+			log('info', `Players online: ${this.playersService.onlineCount()}`);
+		}
+
+		res.redirect('/');
 	}
 
 	private async checkSession(req, res): Promise<boolean> {

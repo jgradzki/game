@@ -106,7 +106,7 @@ export const log = (type, error) => {
 };
 
 const _getTransports = () => {
-	let transports = [
+	const transports = [
 		new(winston.transports.File)({
 			name: 'info-file',
 			filename: logDir + '/' + currentLog + '/filelog-info.log',
@@ -118,7 +118,7 @@ const _getTransports = () => {
 			level: 'error'
 		}),
 		new (winston.transports.Console)({
-			level: (process.env.NODE_ENV !== 'production' ? 'debug': 'info')
+			level: (process.env.NODE_ENV !== 'production' ? 'debug' : 'info')
 		}),
 	];
 

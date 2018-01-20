@@ -3,8 +3,7 @@ import { get, has } from 'lodash';
 
 import { log } from '../../logger';
 
-import  config from '../data/config';
-
+import config from '../data/config';
 
 @Component()
 export class ConfigService {

@@ -40,6 +40,7 @@ export class ApiController {
 
 		try {
 			const player = await this.playersService.create(login, pass);
+
 			await this.mapService.create(
 				{ x: 50, y: 50 },
 				MapIcon.HOME,
@@ -59,20 +60,24 @@ export class ApiController {
 	async login(@Body() loginData: LoginDto, @Response() res, @Session() session) {
 		const login = trim(loginData.login);
 		const pass = loginData.pass;
+		const player = await this.playersService.getPlayerByLogin(login);
 
-		const player = await this.playersService.findByLogin(login);
+		if (player) {
+			const isPasswordValid = await this.playersService.checkPassword(pass, player.password);
+			if (isPasswordValid) {
+				session.playerID = player.id;
+				session.login = player.login;
+				player.sessionId = session.id;
+				player.setOnline();
 
-		if (player && await this.playersService.checkPassword(pass, player.password)) {
-			session.playerID = player.id;
-			session.login = player.login;
-			player.sessionId = session.id;
-			player.setOnline();
+				log('info', `Players online: ${this.playersService.onlineCount()}`);
 
-			this.playersService.loadPlayer(player);
+				res.send({ success: true });
 
-			res.send({ success: true });
+				return;
+			}
 
-			return;
+			this.playersService.unloadPlayer(player, false);
 		}
 
 		res.send({ error: 'Błędny login lub hasło.' });
@@ -119,6 +124,6 @@ export class ApiController {
 	}
 
 	private async isLoginTaken(login: string) {
-		return !!await this.playersService.findByLogin(login);
+		return !!await this.playersService.getPlayerByLogin(login);
 	}
 }

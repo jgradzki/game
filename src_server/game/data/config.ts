@@ -1,6 +1,6 @@
 const config = {
 	host: {
-		//ip: '192.168.1.246',
+		// ip: '192.168.1.246',
 		adress: 'localhost',
 		port: 3000
 	},
@@ -14,9 +14,7 @@ const config = {
 		enableRegister: true
 	},
 	gameServer: {
-		tickrate: 10, //ticks per second
-		sendingPositionOnMapInterval: 5, //seconds
-		unloadPlayerTimeout: 1 //minutes
+		unloadPlayerTimeout: 1 // minutes
 	},
 	player: {
 		defaultPlayerOnMapPosition: {
@@ -24,7 +22,7 @@ const config = {
 			y: 100
 		},
 		playerSpeedOnMap: 50,
-		hungerOnMapRate: 2, //rate of hunger increase when moving on map
+		hungerOnMapRate: 2, // rate of hunger increase when moving on map
 		hungerDamage: {
 			90: 5,
 			70: 3,

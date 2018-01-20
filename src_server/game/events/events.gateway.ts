@@ -30,17 +30,29 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		io.use(sharedsession(this.session));
 	}
 
-	handleConnection(socket: SocketIO.Socket) {
+	async handleConnection(socket: SocketIO.Socket) {
 		const sess = this.getSession(socket);
 
 		if (!LoggedInGuard.isLoggedIn(sess, this.playersService)) {
 			socket.disconnect();
 			return;
 		}
+
+		const player = await this.playersService.getPlayerById(sess.playerID);
+
+		if (player) {
+			player.socket = socket;
+		}
 	}
 
-	handleDisconnect(socket: SocketIO.Socket) {
+	async handleDisconnect(socket: SocketIO.Socket) {
 		const sess = this.getSession(socket);
+
+		const player = await this.playersService.getPlayerById(sess.playerID);
+
+		if (player) {
+			player.socket = null;
+		}
 	}
 
 	/*@SubscribeMessage('test')
@@ -51,7 +63,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		return Observable.from(response).map(res => ({ event, data: res }));
 	}*/
 
-	private getSession(socket: any): object {
+	private getSession(socket: any): any {
 		return socket.handshake.session;
 	}
 

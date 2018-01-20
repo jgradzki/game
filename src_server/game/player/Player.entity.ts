@@ -13,26 +13,32 @@ export class Player {
 	@Column()
 	password: string;
 
-	@Column({ default: 100 })
+	@Column({ default: 100, type: 'real' })
 	hp: number;
 
-	@Column({ default: 0 })
+	@Column({ default: 0, type: 'real' })
 	hunger: number;
 
-	@Column({ default: 100 })
+	@Column({ default: 100, type: 'real' })
 	energy: number;
 
 	@Column({ name: 'map_position', type: 'json' })
 	mapPosition: MapPosition;
 
 	sessionId: string;
+	socket: SocketIO.Socket;
 
 	online = false;
 
 	mapTarget: MapPosition = null;
+	sendingPositionTime = 0;
 
-	public setOnline(): void {
+	setOnline(): void {
 		this.online = true;
+	}
+
+	setOffline(): void {
+		this.online = false;
 	}
 
 	isAlive() {

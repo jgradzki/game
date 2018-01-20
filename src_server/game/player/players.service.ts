@@ -2,7 +2,7 @@ import { Component } from '@nestjs/common';
 import { TypeOrmModule, InjectRepository } from '../../db';
 import {  EntityManager, Repository } from 'typeorm';
 import { hash, compare } from 'bcrypt';
-import { find } from 'lodash';
+import { find, reduce, filter, findIndex } from 'lodash';
 
 import { log } from '../../logger';
 
@@ -34,20 +34,12 @@ export class PlayersService {
 		return this.players;
 	}
 
-	async findById(id: string): Promise<Player> {
-		return await this.playerRepository.findOne({
-			where: {
-				id
-			}
-		});
+	onlineCount(): number {
+		return reduce(this.players, (sum, player) => sum += (player.online ? 1 : 0), 0);
 	}
 
-	async findByLogin(login: string): Promise<Player> {
-		return await this.playerRepository.findOne({
-			where: {
-				login
-			}
-		});
+	onlinePlayers(): Player[] {
+		return filter(this.players, player => player.online);
 	}
 
 	loadPlayer(player: Player): boolean {
@@ -57,7 +49,7 @@ export class PlayersService {
 			return false;
 		}
 
-		if (find(this.players, (pa: Player) => pa.id === player.id)) {
+		if (find(this.players, pa => pa.id === player.id)) {
 			log('debug', `Player ${player.login}(${player.id}) already loaded.`);
 			return true;
 		}
@@ -68,7 +60,7 @@ export class PlayersService {
 		return true;
 	}
 
-	async unloadPlayer(player: Player): Promise<boolean> {
+	async unloadPlayer(player: Player, save = true): Promise<boolean> {
 		if (player.constructor.name !== Player.name) {
 			log('error', `${player} is not Player instance:`);
 			log('error', Player);
@@ -81,9 +73,17 @@ export class PlayersService {
 			return false;
 		}
 
-		await this.savePlayer(toUnload);
+		if (save) {
+			await this.savePlayer(toUnload);
+		}
 
-		this.players.filter((pa: Player) => pa.id !== player.id);
+		const index = findIndex(this.players, pa => pa.id === player.id);
+
+		if (index > -1) {
+			this.players.splice(index, 1);
+		} else {
+			log('error', `@unloadPlayer: Error finding index in Players of ${player.id}`);
+		}
 		log('debug', `Player ${toUnload.login} unloaded.`);
 
 		return true;
@@ -103,7 +103,7 @@ export class PlayersService {
 	}
 
 	async getPlayerById(id: string): Promise<Player> {
-		const player = find(this.players, (loadedPlayer: Player) => loadedPlayer.id === id);
+		const player = find(this.players, loadedPlayer => loadedPlayer.id === id);
 
 		if (player) {
 			return player;
@@ -142,5 +142,21 @@ export class PlayersService {
 
 	private async generateHash(password: string): Promise<string> {
 		return await hash(password, 10);
+	}
+
+	private async findById(id: string): Promise<Player> {
+		return await this.playerRepository.findOne({
+			where: {
+				id
+			}
+		});
+	}
+
+	private async findByLogin(login: string): Promise<Player> {
+		return await this.playerRepository.findOne({
+			where: {
+				login
+			}
+		});
 	}
 }

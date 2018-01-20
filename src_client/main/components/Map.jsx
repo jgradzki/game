@@ -134,18 +134,16 @@ class Map extends Component {
 	}
 
 	_changeDestination(position) {
-		axios.post('/game/request',
+		axios.post('/game/player/changeDestination',
 			{
-				type: 'changeDestination',
 				position
 			},
 			{
-				method: 'post',
 				timeout: 5000
 			}
 		)
 			.then(response => {
-				let data = response.data;
+				const data = response.data;
 
 				if (data.errorMessage) {
 					this.props.setError(`Błąd: ${data.errorMessage}`);

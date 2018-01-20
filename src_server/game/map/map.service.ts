@@ -147,7 +147,7 @@ export class MapService {
 		await this.saveMapElement(toUnload);
 
 		this.elements.filter((pa: MapElement) => pa.id !== mapElement.id);
-		log('debug', `mapElement ${toUnload.login} unloaded.`);
+		log('debug', `mapElement ${toUnload.id} unloaded.`);
 
 		return true;
 	}
