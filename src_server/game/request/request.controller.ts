@@ -8,13 +8,14 @@ import { PlayersService } from '../player/players.service';
 @Controller('game/request')
 @UseGuards(LoggedInGuard)
 export class RequestController {
-	constructor(private readonly playersService: PlayersService) {}
+	constructor(
+		private readonly playersService: PlayersService
+	) {}
 
 	@Post('init')
 	async init(@Response() res, @Session() session) {
 		const player = await this.playersService.getPlayerById(session.playerID);
 
-		// res.sendFile(path.resolve(__dirname, '../server_resources/html/main.html'));
 		res.send({
 			store: {
 				system: {

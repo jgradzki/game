@@ -15,7 +15,7 @@ export class PlayersService {
 	constructor(
 		private readonly entityManager: EntityManager,
 		@InjectRepository(Player)
-		private readonly playerRepository: Repository<Player>,
+		private readonly playerRepository: Repository<Player>
 	) {}
 
 	async create(login: string, password: string, options?: object): Promise<Player> {
@@ -58,7 +58,7 @@ export class PlayersService {
 		}
 
 		if (find(this.players, (pa: Player) => pa.id === player.id)) {
-			log('debug', `Player ${player.login}(${player.id} already loaded.)`);
+			log('debug', `Player ${player.login}(${player.id}) already loaded.`);
 			return true;
 		}
 

@@ -1,4 +1,4 @@
 export interface MapPosition {
-	x: number,
-	y: number
+	x: number;
+	y: number;
 }

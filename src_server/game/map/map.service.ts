@@ -1,11 +1,13 @@
 import { Component } from '@nestjs/common';
 import { TypeOrmModule, InjectRepository } from '../../db';
 import { EntityManager, Repository } from 'typeorm';
-import { find } from 'lodash';
+import { find, map, forEach } from 'lodash';
 
 import { log } from '../../logger';
 
 import { MapElement } from './MapElement.entity';
+import { MapPosition } from './interfaces/map-position.interface';
+import { MapIcon } from './interfaces/map-icon.enum';
 
 @Component()
 export class MapService {
@@ -14,6 +16,154 @@ export class MapService {
 	constructor(
 		private readonly entityManager: EntityManager,
 		@InjectRepository(MapElement)
-		private readonly mapElementRepository: Repository<MapElement>,
-	) {}
+		private readonly mapElementRepository: Repository<MapElement>
+	) {
+		this.loadElements();
+	}
+
+	private async loadElements() {
+		const elements = await this.mapElementRepository.findAndCount();
+
+		forEach(elements[0], element => this.loadMapElement(element));
+
+		log('info', `Loaded ${elements[1]} map elements.`);
+	}
+
+	async create(
+		mapPosition: MapPosition,
+		mapIcon: MapIcon,
+		visibilityRules,
+		size?: { width: number, height: number },
+		isPerm = false
+	): Promise<MapElement> {
+		const mapElement = await this.mapElementRepository.create({
+			mapPosition,
+			mapIcon,
+			size,
+			visibilityRules,
+			isPerm
+		});
+
+		await this.entityManager.save(mapElement);
+
+		return mapElement;
+	}
+
+	mapElements(): Array<MapElement> {
+		return this.elements;
+	}
+
+	async saveMapElement(mapElement: MapElement): Promise<boolean> {
+		if (mapElement.constructor.name !== MapElement.name) {
+			log('error', `${mapElement} is not mapElement instance:`);
+			log('error', mapElement);
+			return false;
+		}
+
+		await this.entityManager.save(mapElement);
+		log('debug', `mapElement ${mapElement.id} saved.`);
+
+		return true;
+	}
+
+	async getMapElementById(id: string): Promise<MapElement> {
+		const mapElement = find(this.elements, (loadedME: MapElement) => loadedME.id === id);
+
+		if (mapElement) {
+			return mapElement;
+		}
+
+		return null;
+	}
+
+	getElementsForPlayer(id: string, filter = false) {
+		const elements = this.getElementsByVisibilityRules({
+			$or: [
+				{
+					all: true
+				},
+				{
+					owner: id
+				},
+				{
+					for: id
+				}
+			]
+		});
+
+		if (filter) {
+			return map(elements, element => this.filterElement(element));
+		} else {
+			return elements;
+		}
+	}
+
+	getElementsByVisibilityRules(rules: any = { all: true }): MapElement[] {
+		const elements = this.elements.filter(element => this._checkRules(element, rules));
+
+		return elements;
+	}
+
+	filterElement(element) {
+		return {
+			id: element.id,
+			icon: element.mapIcon,
+			position: element.mapPosition,
+			size: element.size
+		};
+	}
+
+	private loadMapElement(mapElement: MapElement): boolean {
+		if (mapElement.constructor.name !== MapElement.name) {
+			log('error', `${mapElement} is not mapElement instance:`);
+			log('error', mapElement);
+			return false;
+		}
+
+		if (find(this.elements, (pa: MapElement) => pa.id === mapElement.id)) {
+			log('debug', `mapElement ${mapElement.id} already loaded.)`);
+			return true;
+		}
+
+		this.elements.push(mapElement);
+		log('debug', `mapElement ${mapElement.id} loaded.`);
+
+		return true;
+	}
+
+	private async unloadMapElement(mapElement: MapElement): Promise<boolean> {
+		if (mapElement.constructor.name !== MapElement.name) {
+			log('error', `${mapElement} is not mapElement instance:`);
+			log('error', mapElement);
+			return false;
+		}
+
+		const toUnload = find(this.elements, (ptu: MapElement) => ptu.id === mapElement.id);
+
+		if (!toUnload) {
+			return false;
+		}
+
+		await this.saveMapElement(toUnload);
+
+		this.elements.filter((pa: MapElement) => pa.id !== mapElement.id);
+		log('debug', `mapElement ${toUnload.login} unloaded.`);
+
+		return true;
+	}
+
+	private _checkRules(element, rules) {
+		let is = false;
+
+		if (rules && rules.$or) {
+			for (let d of rules.$or) {
+				for (let k in d) {
+					if (element.visibilityRules[k] && (element.visibilityRules[k] === d[k])) {
+						is = true;
+					}
+				}
+			}
+		}
+		return is;
+	}
 }

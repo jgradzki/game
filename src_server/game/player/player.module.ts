@@ -6,7 +6,7 @@ import { Player } from './Player.entity';
 import { PlayersService } from './players.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Player])],
+  imports: [TypeOrmModule.forFeature([Player]),],
   components: [PlayersService],
   exports: [TypeOrmModule.forFeature([Player]), PlayersService]
 })

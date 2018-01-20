@@ -1,8 +1,8 @@
 const mapIcons = {
-	home: { img: 'img/home.png' },
-	building: { img: 'img/place.png' },
-	player: { img: 'img/dot.png' },
-	destination: { img: 'img/point.png' }
+	HOME: { img: 'img/home.png' },
+	BUILDING: { img: 'img/place.png' },
+	PLAYER: { img: 'img/dot.png' },
+	DESTINATION: { img: 'img/point.png' }
 };
 
 const mapPosition = {

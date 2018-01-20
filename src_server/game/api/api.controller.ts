@@ -6,12 +6,16 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/Login.dto';
 
 import { PlayersService } from '../player/players.service';
+import { MapService } from '../map/map.service';
+
+import { MapIcon } from '../map/interfaces/map-icon.enum';
 
 @Controller('api')
 export class ApiController {
 
 	constructor(
-		private readonly playersService: PlayersService
+		private readonly playersService: PlayersService,
+		private readonly mapService: MapService
 	) {}
 
 	@Post('register')
@@ -35,7 +39,14 @@ export class ApiController {
 		}
 
 		try {
-			await this.playersService.create(login, pass);
+			const player = await this.playersService.create(login, pass);
+			await this.mapService.create(
+				{ x: 50, y: 50 },
+				MapIcon.HOME,
+				{ owner: player.id },
+				{ width: 20, height: 20 },
+				true
+			);
 
 			res.send({ success: true });
 		} catch (error) {

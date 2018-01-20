@@ -203,13 +203,13 @@ class Map extends Component {
 
 	_renderDestination() {
 		if (this.props.destination) {
-			return <MapElement icon='destination' id='map_dest' position={this.props.destination} size={this.props.config.destSize} />;
+			return <MapElement icon='DESTINATION' id='map_dest' position={this.props.destination} size={this.props.config.destSize} />;
 		}
 	}
 
 	_renderPlayer() {
 		if (this.props.playerPosition) {
-			return <MapElement icon='destination' id='map_player' position={this.props.playerPosition} size={this.props.config.playerSize} />;
+			return <MapElement icon='DESTINATION' id='map_player' position={this.props.playerPosition} size={this.props.config.playerSize} />;
 		}
 	}
 

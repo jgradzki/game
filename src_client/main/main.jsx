@@ -103,7 +103,7 @@ axios.post('game/request/init')
 	.then(data => {
 		log('init', 'Map elements: ', data);
 		if (data) {
-			if (data.success && data.elements) {
+			if (data.elements) {
 				data.elements.forEach(element =>
 					store.dispatch(addMapElement(element.id, element.icon, element.position, element.size))
 				);
