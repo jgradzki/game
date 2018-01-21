@@ -5,6 +5,7 @@ import { ConfigModule } from './config/config.module';
 import { PlayerModule } from './player/player.module';
 import { EventsModule } from './events/events.module';
 import { MapModule } from './map/map.module';
+import { LocationsModule } from './locations/locations.module';
 import { TasksModule } from './tasks/tasks.module';
 
 import { GameController } from './game.controller';
@@ -21,6 +22,7 @@ import { MapService } from './map/map.service';
 		PlayerModule,
 		EventsModule,
 		MapModule,
+		LocationsModule,
 		TasksModule
 	],
 	controllers: [GameController, ApiController, RequestController],

@@ -1,7 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 import { MapPosition } from './interfaces/map-position.interface';
-import { MapElementType } from './interfaces/mapElementType.enum';
 import { MapIcon } from './interfaces/map-icon.enum';
 
 @Entity({ name: 'MapElements' })
@@ -12,7 +11,7 @@ export class MapElement {
 	@Column({ name: 'map_position', type: 'json' })
 	mapPosition: MapPosition;
 
-	@Column({ name: 'map_icon', default: 'default' })
+	@Column({ name: 'map_icon', default: MapIcon.BUILDING })
 	mapIcon: MapIcon;
 
 	@Column({ type: 'json' })

@@ -7,15 +7,18 @@ import { LoginDto } from './dto/Login.dto';
 
 import { PlayersService } from '../player/players.service';
 import { MapService } from '../map/map.service';
+import { LocationsService } from '../locations/locations.service';
 
 import { MapIcon } from '../map/interfaces/map-icon.enum';
+import { LocationType } from '../locations/entities';
 
 @Controller('api')
 export class ApiController {
 
 	constructor(
 		private readonly playersService: PlayersService,
-		private readonly mapService: MapService
+		private readonly mapService: MapService,
+		private readonly locationsService: LocationsService,
 	) {}
 
 	@Post('register')
@@ -46,6 +49,16 @@ export class ApiController {
 				MapIcon.HOME,
 				{ owner: player.id },
 				{ width: 20, height: 20 },
+				true
+			);
+
+			await this.locationsService.createLocation(
+				LocationType.PlayerBase,
+				{x: 50, y: 50},
+				{width: 20, height: 20},
+				{},
+				{player},
+				MapIcon.HOME,
 				true
 			);
 
