@@ -9,4 +9,5 @@ export interface ILocationService {
 		icon: MapIcon,
 		isPerm: boolean
 	): Promise<any>;
+	getLocation(id: string): Promise<any>;
 }

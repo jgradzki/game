@@ -5,9 +5,11 @@ import { log } from '../../logger';
 
 import { MapPosition } from '../map/interfaces/map-position.interface';
 import { MapIcon } from '../map/interfaces/map-icon.enum';
+import { ILocationService } from './interfaces/location-service.interface';
 
 import { LocationType } from './entities';
 
+import { MapService } from '../map/map.service';
 import { PlayerBaseService } from './entities/player-base/player-base.service';
 
 @Component()
@@ -16,6 +18,7 @@ export class LocationsService {
 
 	constructor(
 		private readonly entityManager: EntityManager,
+		private readonly mapService: MapService,
 		private readonly playerBaseService: PlayerBaseService,
 	) {
 		this.locationsServices = {
@@ -42,6 +45,23 @@ export class LocationsService {
 			throw new Error(`Wrong size(${size}.`);
 		}
 
-		this.locationsServices[type].create(mapPosition, size, visibilityRules, data, icon, isPerm);
+		const location = await this.locationsServices[type].create(visibilityRules, data, icon, isPerm);
+		const mapElement = await this.mapService.create(mapPosition, icon, visibilityRules, size, isPerm);
+
+		location.mapElement = mapElement;
+
+		await this.entityManager.save(location);
+
+		location.afterLocationCreate();
+
+		return location;
+	}
+
+	async getLocation(type: LocationType, id: string) {
+		if (!this.locationsServices[type] || !this.locationsServices[type].create) {
+			throw new TypeError(`${type} is not valid location type.`);
+		}
+
+		return await this.locationsServices[type].getLocation(id);
 	}
 }

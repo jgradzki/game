@@ -20,7 +20,6 @@ export class MapElement {
 	@Column({ type: 'json' })
 	visibilityRules = {};
 
-	@Column({ name: 'is_perm', type: 'boolean', nullable: false })
 	isPerm = false;
 
 	dataForPlayer(): any {

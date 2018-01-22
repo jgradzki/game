@@ -1,12 +1,13 @@
 import { Component } from '@nestjs/common';
 import { TypeOrmModule, InjectRepository } from '../../db';
 import {  EntityManager, Repository } from 'typeorm';
-import { hash, compare } from 'bcrypt';
+import { compare } from 'bcrypt';
 import { find, reduce, filter, findIndex } from 'lodash';
 
 import { log } from '../../logger';
 
 import { Player } from './player.entity';
+import { PlayerFactory } from './player.factory';
 
 @Component()
 export class PlayersService {
@@ -15,17 +16,12 @@ export class PlayersService {
 	constructor(
 		private readonly entityManager: EntityManager,
 		@InjectRepository(Player)
-		private readonly playerRepository: Repository<Player>
+		private readonly playerRepository: Repository<Player>,
+		private readonly playerFactory: PlayerFactory
 	) {}
 
 	async create(login: string, password: string, options?: object): Promise<Player> {
-		const player = await this.playerRepository.create({
-			login,
-			password: await this.generateHash(password),
-			mapPosition: { x: 50, y: 50 }
-		});
-
-		await this.entityManager.save(player);
+		const player = await this.playerFactory.create(login, password, options);
 
 		return player;
 	}
@@ -45,7 +41,7 @@ export class PlayersService {
 	loadPlayer(player: Player): boolean {
 		if (player.constructor.name !== Player.name) {
 			log('error', `${player} is not Player instance:`);
-			log('error', Player);
+			log('error', player);
 			return false;
 		}
 
@@ -63,7 +59,7 @@ export class PlayersService {
 	async unloadPlayer(player: Player, save = true): Promise<boolean> {
 		if (player.constructor.name !== Player.name) {
 			log('error', `${player} is not Player instance:`);
-			log('error', Player);
+			log('error', player);
 			return false;
 		}
 
@@ -99,7 +95,7 @@ export class PlayersService {
 	async savePlayer(player: Player): Promise<boolean> {
 		if (player.constructor.name !== Player.name) {
 			log('error', `${player} is not Player instance:`);
-			log('error', Player);
+			log('error', player);
 			return false;
 		}
 
@@ -145,10 +141,6 @@ export class PlayersService {
 
 	async checkPassword(password: string, hashedPassword: string): Promise<boolean> {
 		return await compare(password, hashedPassword);
-	}
-
-	private async generateHash(password: string): Promise<string> {
-		return await hash(password, 10);
 	}
 
 	private async findById(id: string): Promise<Player> {

@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
 
 import { MapPosition } from '../map/interfaces/map-position.interface';
+import { PlayerBase } from '../locations/entities/player-base/player-base.entity';
 
 @Entity({ name: 'Players' })
 export class Player {
@@ -24,6 +25,9 @@ export class Player {
 
 	@Column({ name: 'map_position', type: 'json' })
 	mapPosition: MapPosition;
+
+	@OneToOne(type => PlayerBase, base => base.player) // specify inverse side as a second parameter
+    base: PlayerBase;
 
 	sessionId: string;
 	socket: SocketIO.Socket;

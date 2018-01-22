@@ -7,6 +7,7 @@ export interface ILocation {
 	onPlayerEnter(player: Player): Promise<void>;
 	onPlayerExit(player: Player): Promise<void>;
 	getDataForPlayer(player: Player): Promise<any>;
+	getType(): string;
 }
 
 export abstract class Location {

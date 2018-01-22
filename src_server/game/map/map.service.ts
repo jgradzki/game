@@ -45,6 +45,7 @@ export class MapService {
 		});
 
 		await this.entityManager.save(mapElement);
+		this.elements.push(mapElement);
 
 		return mapElement;
 	}
@@ -84,17 +85,9 @@ export class MapService {
 
 	getElementsForPlayer(id: string, filter = false) {
 		const elements = this.getElementsByVisibilityRules({
-			$or: [
-				{
-					all: true
-				},
-				{
-					owner: id
-				},
-				{
+					all: true,
+					owner: id,
 					for: id
-				}
-			]
 		});
 
 		if (filter) {
@@ -166,18 +159,29 @@ export class MapService {
 		return true;
 	}
 
-	private _checkRules(element, rules) {
-		let is = false;
+	private _checkRules(element, rules): boolean {
+		if (!element || !element.visibilityRules || !rules) {
+			return false;
+		}
 
-		if (rules && rules.$or) {
-			for (let d of rules.$or) {
-				for (let k in d) {
-					if (element.visibilityRules[k] && (element.visibilityRules[k] === d[k])) {
-						is = true;
-					}
-				}
+		const visibilityRules = element.visibilityRules;
+
+		if (rules.all && visibilityRules.all) {
+			return true;
+		}
+
+		if (rules.owner && visibilityRules.owner) {
+			if (rules.owner === visibilityRules.owner) {
+				return true;
 			}
 		}
-		return is;
+
+		if (rules.for && visibilityRules.for) {
+			if (rules.for === visibilityRules.for) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
