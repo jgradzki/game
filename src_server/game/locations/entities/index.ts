@@ -16,6 +16,15 @@ export const enum LocationType {
 	Dungeon = 'Dungeon'
 }
 
+export const stringToLocationType = (type: string): LocationType => {
+	const locationTypes: { [s: string]: LocationType } = {
+		PlayerBase: LocationType.PlayerBase,
+		Dungeon: LocationType.Dungeon,
+	};
+
+	return locationTypes[type];
+};
+
 export const providers = TypeOrmModule.forFeature(map(locations, location => location.model));
 export const services = map(locations, location => location.services);
 export const dependecies = reduce(locations, (all, location) => concat(all, location.dependecies), []);

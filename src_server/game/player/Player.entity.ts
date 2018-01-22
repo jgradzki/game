@@ -29,6 +29,12 @@ export class Player {
 	@OneToOne(type => PlayerBase, base => base.player) // specify inverse side as a second parameter
     base: PlayerBase;
 
+    @Column({ name: 'location_id', nullable: true })
+    locationId: string = null;
+
+    @Column({ name: 'location_type', nullable: true })
+    locationType: string = null;
+
 	sessionId: string;
 	socket: SocketIO.Socket;
 
@@ -47,5 +53,19 @@ export class Player {
 
 	isAlive() {
 		return this.hp > 0;
+	}
+
+	setInLocation(type: string, id: string) {
+		this.locationId = id;
+		this.locationType = type;
+	}
+
+	exitLocation() {
+		this.locationId = null;
+		this.locationType = null;
+	}
+
+	inLocation(): boolean {
+		return !!this.locationId;
 	}
 }

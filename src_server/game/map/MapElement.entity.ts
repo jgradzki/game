@@ -20,12 +20,16 @@ export class MapElement {
 	@Column({ type: 'json' })
 	visibilityRules = {};
 
+	@Column({ type: 'json' })
+	locationTypes = [];
+
 	isPerm = false;
 
 	dataForPlayer(): any {
 		return {
 			mapPosition: this.mapPosition,
-			size: this.size
+			size: this.size,
+			locationTypes: this.locationTypes
 		};
 	}
 

@@ -4,8 +4,8 @@ import Dungeon from './Dungeon.jsx';
 
 const locations = {
 	'default': DefaultLocation,
-	'PLAYER_BASE': PlayerBase,
-	'DUNGEON': Dungeon
+	'PlayerBase': PlayerBase,
+	'Dugeon': Dungeon
 };
 
 export default locations;

@@ -23,8 +23,8 @@ class LocationManager {
 		store.dispatch(locationActions.setLocationType(null));
 	}
 
-	static requestLocationEnter(id) {
-		axios.post('game/request', { type: 'enterLocation', id })
+	static requestLocationEnter(id, type) {
+		axios.post('game/location/enter', { id, type })
 			.then(response => response.data)
 			.then(data => {
 				try {
@@ -40,7 +40,7 @@ class LocationManager {
 	}
 
 	static requestLocationExit() {
-		axios.post('game/request', { type: 'exitLocation' })
+		axios.post('game/location/exit', { })
 			.then(response => response.data)
 			.then(data => {
 				try {

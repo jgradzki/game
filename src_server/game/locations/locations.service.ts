@@ -6,6 +6,7 @@ import { log } from '../../logger';
 import { MapPosition } from '../map/interfaces/map-position.interface';
 import { MapIcon } from '../map/interfaces/map-icon.enum';
 import { ILocationService } from './interfaces/location-service.interface';
+import { ILocation } from './interfaces/location.interface';
 
 import { LocationType } from './entities';
 
@@ -14,7 +15,7 @@ import { PlayerBaseService } from './entities/player-base/player-base.service';
 
 @Component()
 export class LocationsService {
-	private locationsServices = {};
+	private locationsServices: { [s: string]: ILocationService } = {};
 
 	constructor(
 		private readonly entityManager: EntityManager,
@@ -46,7 +47,7 @@ export class LocationsService {
 		}
 
 		const location = await this.locationsServices[type].create(visibilityRules, data, icon, isPerm);
-		const mapElement = await this.mapService.create(mapPosition, icon, visibilityRules, size, isPerm);
+		const mapElement = await this.mapService.create(mapPosition, icon, visibilityRules, [this.locationsServices[type].getLocationName()], size, isPerm);
 
 		location.mapElement = mapElement;
 
@@ -57,7 +58,7 @@ export class LocationsService {
 		return location;
 	}
 
-	async getLocation(type: LocationType, id: string) {
+	async getLocation(type: LocationType, id: string): Promise<ILocation> {
 		if (!this.locationsServices[type] || !this.locationsServices[type].create) {
 			throw new TypeError(`${type} is not valid location type.`);
 		}

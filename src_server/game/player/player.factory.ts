@@ -38,7 +38,7 @@ export class PlayerFactory {
 			MapIcon.HOME,
 			true
 		);
-
+		log('info', `Player ${player.login} registered`);
 		return player;
 	}
 

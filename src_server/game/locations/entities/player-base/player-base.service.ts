@@ -13,7 +13,7 @@ import { MapPosition } from '../../../map/interfaces/map-position.interface';
 import { MapIcon } from '../../../map/interfaces/map-icon.enum';
 
 @Component()
-export class PlayerBaseService implements ILocationService {
+export class PlayerBaseService extends ILocationService {
 	static dependecies = [];
 
 	bases: PlayerBase[] = [];
@@ -22,7 +22,9 @@ export class PlayerBaseService implements ILocationService {
 		@InjectRepository(PlayerBase)
 		private readonly playerBaseRepository: Repository<PlayerBase>,
 		private readonly entityManager: EntityManager
-	) {}
+	) {
+		super();
+	}
 
 	getLocationName() {
 		return PlayerBase.name;
@@ -109,9 +111,24 @@ export class PlayerBaseService implements ILocationService {
 		return true;
 	}
 
-	async getLocation(id: string): Promise<PlayerBase> {
-		const location = find(this.bases, loadedBases => loadedBases.id === id);
+	async getLocation(mapElementId: string): Promise<PlayerBase> {
+		const location = find(this.bases, loadedBases => loadedBases.mapElement.id === mapElementId);
+		if (location) {
+			return location;
+		}
 
+		const baseToLoad = await this.findByMapElementId(mapElementId);
+
+		if (baseToLoad) {
+			this.loadLocation(baseToLoad);
+			return baseToLoad;
+		}
+
+		return null;
+	}
+
+	async getLocationById(id: string): Promise<PlayerBase> {
+		const location = find(this.bases, loadedBases => loadedBases.id === id);
 		if (location) {
 			return location;
 		}
@@ -131,6 +148,15 @@ export class PlayerBaseService implements ILocationService {
 			where: {
 				id
 			}
+		});
+	}
+
+	private async findByMapElementId(mapElementId: string): Promise<PlayerBase> {
+		return await this.playerBaseRepository.findOne({
+			where: {
+				mapElement: mapElementId
+			},
+			relations: ['mapElement']
 		});
 	}
 }

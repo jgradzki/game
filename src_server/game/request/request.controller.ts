@@ -5,20 +5,24 @@ import { LoggedInGuard } from '../guards/loggedin.guard';
 
 import { ConfigService } from '../config/config.service';
 import { PlayersService } from '../player/players.service';
+import { LocationsService } from '../locations/locations.service';
+import { stringToLocationType } from '../locations/entities';
 
 @Controller('game/request')
 @UseGuards(LoggedInGuard)
 export class RequestController {
 	constructor(
 		private readonly playersService: PlayersService,
-		private readonly configService: ConfigService
+		private readonly configService: ConfigService,
+		private readonly locationsService: LocationsService,
 	) {}
 
 	@Post('init')
 	async init(@Response() res, @Session() session) {
 		const player = await this.playersService.getPlayerById(session.playerID);
 
-		res.send({
+
+		const initData = {
 			store: {
 				system: {
 					showDeadWindow: !player.isAlive()
@@ -37,7 +41,27 @@ export class RequestController {
 					energy: player.energy
 				}
 			}
-		});
+		};
+
+		if (player.inLocation()) {
+			const location = await this.locationsService.getLocation(
+				stringToLocationType(player.locationType),
+				player.locationId
+			);
+
+			if (!location) {
+				player.locationId = null;
+				player.locationType = null;
+			} else {
+				initData['inLocation'] = true;
+				initData['location'] = {
+					type: location.getType(),
+					data: await location.getDataForPlayer(player)
+				};
+			}
+		}
+
+		res.send(initData);
 	}
 
 }

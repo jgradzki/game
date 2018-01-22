@@ -33,6 +33,7 @@ export class MapService {
 		mapPosition: MapPosition,
 		mapIcon: MapIcon,
 		visibilityRules,
+		locationTypes: Array<string>,
 		size?: { width: number, height: number },
 		isPerm = false
 	): Promise<MapElement> {
@@ -41,6 +42,7 @@ export class MapService {
 			mapIcon,
 			size,
 			visibilityRules,
+			locationTypes,
 			isPerm
 		});
 
@@ -103,12 +105,13 @@ export class MapService {
 		return elements;
 	}
 
-	filterElement(element) {
+	filterElement(element: MapElement) {
 		return {
 			id: element.id,
 			icon: element.mapIcon,
 			position: element.mapPosition,
-			size: element.size
+			size: element.size,
+			types: element.locationTypes
 		};
 	}
 

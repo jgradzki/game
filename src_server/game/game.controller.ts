@@ -35,7 +35,13 @@ export class GameController {
 
 		session.playerID = 0;
 		session.name = undefined;
-		session.destroy(() => res.redirect('/'));
+		session.destroy(err => {
+			if (err) {
+				log('error', err);
+			}
+
+			res.redirect('/');
+		});
 	}
 
 	private async checkSession(req, res): Promise<boolean> {
