@@ -7,6 +7,9 @@ import { LoginDto } from './dto/Login.dto';
 
 import { PlayersService } from '../player/players.service';
 
+import { MapIcon } from '../map/interfaces/map-icon.enum';
+import { LocationType } from '../locations/entities';
+
 @Controller('api')
 export class ApiController {
 

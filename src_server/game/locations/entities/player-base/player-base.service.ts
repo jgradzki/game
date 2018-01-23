@@ -34,9 +34,9 @@ export class PlayerBaseService extends ILocationService {
 		visibilityRules: any,
 		data?: {player: Player},
 		icon: MapIcon = MapIcon.HOME,
-		isPerm: boolean = true
+		isPerm: boolean = false
 	) {
-		const playerBase = this.playerBaseRepository.create();
+		const playerBase = this.playerBaseRepository.create({ isPerm });
 		playerBase.player = data.player;
 
 		await this.entityManager.save(playerBase);
@@ -103,6 +103,10 @@ export class PlayerBaseService extends ILocationService {
 			log('error', `${location} is not PlayerBase instance:`);
 			log('error', location);
 			return false;
+		}
+
+		if (!location.isPerm) {
+			return;
 		}
 
 		await this.entityManager.save(location);

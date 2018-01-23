@@ -1,5 +1,6 @@
 import { MapPosition } from '../../map/interfaces/map-position.interface';
 import { MapIcon } from '../../map/interfaces/map-icon.enum';
+import { ILocation } from './location.interface';
 
 export abstract class ILocationService {
 	abstract getLocationName(): string;
@@ -9,5 +10,6 @@ export abstract class ILocationService {
 		icon: MapIcon,
 		isPerm: boolean
 	): Promise<any>;
-	abstract getLocation(id: string): Promise<any>;
+	abstract getLocation(id: string): Promise<ILocation>;
+	abstract getLocationById(id: string): Promise<ILocation>;
 }

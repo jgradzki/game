@@ -2,12 +2,18 @@ import { TypeOrmModule } from '../../../db';
 import { map, reduce, concat } from 'lodash';
 
 import { PlayerBaseLocation } from './player-base';
+import { DungeonLocation } from './dungeon';
 
 export const locations = {
 	[PlayerBaseLocation.name]: {
 		model: PlayerBaseLocation.model,
 		services: PlayerBaseLocation.service,
 		dependecies: PlayerBaseLocation.dependecies
+	},
+	[DungeonLocation.name]: {
+		model: DungeonLocation.model,
+		services: DungeonLocation.service,
+		dependecies: DungeonLocation.dependecies
 	}
 };
 

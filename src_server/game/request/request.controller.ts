@@ -21,7 +21,6 @@ export class RequestController {
 	async init(@Response() res, @Session() session) {
 		const player = await this.playersService.getPlayerById(session.playerID);
 
-
 		const initData = {
 			store: {
 				system: {
@@ -40,7 +39,9 @@ export class RequestController {
 					hunger: player.hunger,
 					energy: player.energy
 				}
-			}
+			},
+			inLocation: null,
+			location: null
 		};
 
 		if (player.inLocation()) {
@@ -53,8 +54,8 @@ export class RequestController {
 				player.locationId = null;
 				player.locationType = null;
 			} else {
-				initData['inLocation'] = true;
-				initData['location'] = {
+				initData.inLocation = true;
+				initData.location = {
 					type: location.getType(),
 					data: await location.getDataForPlayer(player)
 				};

@@ -48,9 +48,9 @@ export class LocationsController {
 		}
 
 		const location = await this.locationsService.getLocation(data.type, data.id);
-		const dataForPlayer = await location.getDataForPlayer(player);
+		const dataForPlayer = await location.getDataForPlayer(player, data);
 
-		await location.onPlayerEnter(player);
+		await location.onPlayerEnter(player, data);
 		player.setInLocation(data.type, data.id);
 
 		res.send({

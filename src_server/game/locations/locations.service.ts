@@ -12,6 +12,7 @@ import { LocationType } from './entities';
 
 import { MapService } from '../map/map.service';
 import { PlayerBaseService } from './entities/player-base/player-base.service';
+import { DungeonService } from './entities/dungeon/dungeon.service';
 
 @Component()
 export class LocationsService {
@@ -21,9 +22,11 @@ export class LocationsService {
 		private readonly entityManager: EntityManager,
 		private readonly mapService: MapService,
 		private readonly playerBaseService: PlayerBaseService,
+		private readonly dungeonService: DungeonService,
 	) {
 		this.locationsServices = {
-			[this.playerBaseService.getLocationName()]: this.playerBaseService
+			[this.playerBaseService.getLocationName()]: this.playerBaseService,
+			[this.dungeonService.getLocationName()]: this.dungeonService,
 		};
 	}
 
@@ -50,10 +53,8 @@ export class LocationsService {
 		const mapElement = await this.mapService.create(mapPosition, icon, visibilityRules, [this.locationsServices[type].getLocationName()], size, isPerm);
 
 		location.mapElement = mapElement;
-
+		location.afterLocationCreate(data);
 		await this.entityManager.save(location);
-
-		location.afterLocationCreate();
 
 		return location;
 	}

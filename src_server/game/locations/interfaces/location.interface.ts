@@ -10,9 +10,12 @@ export abstract class ILocation {
     @JoinColumn({ name: 'map_element' })
     mapElement: MapElement;
 
-    abstract afterLocationCreate(): Promise<void>;
-	abstract onPlayerEnter(player: Player): Promise<void>;
-	abstract onPlayerExit(player: Player): Promise<void>;
-	abstract getDataForPlayer(player: Player): Promise<any>;
+    @Column({type: 'boolean', nullable: false})
+    isPerm = false;
+
+    abstract afterLocationCreate(data?: any): Promise<void>;
+	abstract onPlayerEnter(player: Player, data?: any): Promise<void>;
+	abstract onPlayerExit(player: Player, data?: any): Promise<void>;
+	abstract getDataForPlayer(player: Player, data?: any): Promise<any>;
 	abstract getType(): string;
 }

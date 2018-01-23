@@ -5,7 +5,7 @@ import Dungeon from './Dungeon.jsx';
 const locations = {
 	'default': DefaultLocation,
 	'PlayerBase': PlayerBase,
-	'Dugeon': Dungeon
+	'Dungeon': Dungeon
 };
 
 export default locations;
