@@ -33,7 +33,7 @@ export class DungeonService extends ILocationService {
 	async create(
 		visibilityRules: any,
 		data?: {player: Player},
-		icon: MapIcon = MapIcon.HOME,
+		icon: MapIcon = MapIcon.BUILDING,
 		isPerm: boolean = false
 	) {
 		const dungeon = this.dungeonRepository.create({ isPerm });

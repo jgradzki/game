@@ -93,4 +93,39 @@ export class LocationsController {
 
 		res.send({ success: true });
 	}
+
+	@Post('action')
+	async action(@Session() session, @Body() data, @Response() res) {
+		const player = await this.playersService.getPlayerById(session.playerID);
+
+		if (!player.isAlive()) {
+			res.send({
+				error: true,
+				errorMessage: 'Jesteś martwy(na śmierć).'
+			});
+			return;
+		}
+
+		if (!player.inLocation()) {
+			res.send({
+				error: true,
+				errorMessage: 'Nie jesteś w żadnej lokacji.'
+			});
+			return;
+		}
+
+		const location = await this.locationsService.getLocation(
+			stringToLocationType(player.locationType),
+			player.locationId
+		);
+		let respond = {};
+
+		if (location) {
+			respond = await location.action({player, requestData: data});
+		} else {
+			respond = { error: 'location-not-found' };
+		}
+
+		res.send(respond);
+	}
 }

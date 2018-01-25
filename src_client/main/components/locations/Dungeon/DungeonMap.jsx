@@ -118,7 +118,7 @@ class DungeonMap extends Component {
 
 		if (typeof(x)===typeof(1) && typeof(y)===typeof(1)) {
 			if (this._canMove(x, y)) {
-				axios.post('game/request',
+				axios.post('game/location/action',
 					{
 						type: 'dungeonChangePosition',
 						position: {

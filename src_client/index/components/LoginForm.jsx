@@ -14,7 +14,7 @@ class LoginForm extends Component {
 				login: 'Admin',
 				pass: '123456'
 			};
-			setTimeout(() => this._onClick(), 500);
+			setTimeout(() => this._submit(), 1000);
 		} else {
 			this.state = {
 				success: false,
@@ -31,10 +31,24 @@ class LoginForm extends Component {
 				<FormTitle>Logowanie</FormTitle>
 				{this._renderError()}
 				Login:
-				<input type = "text" placeholder="Login" name="login" onChange={ event => this._handleChange(event) } /><br/>
+				<input
+					type="text"
+					placeholder="Login"
+					name="login"
+					onChange={event => this._handleChange(event)}
+					onKeyPress={event => this._onKeyPress(event)}
+				/>
+				<br/>
 				Hasło:
-				<input type = "password" placeholder="Password"name="pass" onChange={ event => this._handleChange(event) } /><br/>
-				<button onClick = { () => this._onClick() }>Submit</button><br/ >
+				<input
+					type="password"
+					placeholder="Password"
+					name="pass"
+					onChange={event => this._handleChange(event)}
+					onKeyPress={event => this._onKeyPress(event)}
+				/>
+				<br/>
+				<button onClick = { () => this._submit() }>Submit</button><br/ >
 			</div>
 		);
 	}
@@ -48,6 +62,12 @@ class LoginForm extends Component {
 		}
 	}
 
+	_onKeyPress(event) {
+		if (event.key === 'Enter') {
+			return this._submit();
+		}
+	}
+
 	_handleChange(event) {
 		if (event.target.name === 'login') {
 			this.setState({ login: event.target.value });
@@ -56,15 +76,13 @@ class LoginForm extends Component {
 		}
 	}
 
-	_onClick() {
+	_submit() {
 		post('/api/login', {
 			login: this.state.login,
 			pass: this.state.pass
 		})
 			.then(response => this._postHandle(response.data))
 			.catch(() => this.setState({ error: 'Wystąpił błąd. Spróbuj ponownie później.' }));
-
-
 	}
 
 	_renderError() {

@@ -32,7 +32,10 @@ export const generateRooms = (min: number = 2, max: number = 3): {
 	}
 
 	const countOfRoomsToGenerate = roll(min, max);
-	const roomsData = {
+	const roomsData: {
+		entry: {x: number, y: number},
+		rooms: { [s: number]: {[s: number]: IRoom } }
+	} = {
 		entry: {x: 0, y: 0},
 		rooms: {}
 	};
@@ -179,7 +182,8 @@ const generateLockedChunks = (roomsData, max) => {
 	}
 
 	return roomsData;
-}
+};
+
 const exclude = (rooms, x, y) => {
 	const check = (tX, tY): boolean => {
 		if (!rooms[tX] || !rooms[tX][tY] || rooms[tX][tY].lock) {

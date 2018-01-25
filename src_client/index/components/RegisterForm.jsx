@@ -37,7 +37,13 @@ class RegisterForm extends Component {
 		}
 	}
 
-	_onClick() {
+	_onKeyPress(event) {
+		if (event.key === 'Enter') {
+			return this._submit();
+		}
+	}
+
+	_submit() {
 		this.setState({ errors: [] });
 		post('/api/register', {
 			login: this.state.login,
@@ -67,11 +73,32 @@ class RegisterForm extends Component {
 				<FormTitle> Rejestracja </FormTitle>
 				{ this._renderError() }
 
-				Login: <input type = "text" name = "login"	onChange = { event => this._handleChange(event) } /><br/>
-				Hasło: <input type = "password" name = "pass" onChange = { event => this._handleChange(event) } /><br/>
-				Powtórz Hasło: <input type = "password" name = "repass" onChange = { event => this._handleChange(event) } /><br/>
+				Login:
+				<input
+					type="text"
+					name = "login"
+					onChange={event => this._handleChange(event)}
+					onKeyPress={event => this._onKeyPress(event)}
+				/>
+				<br/>
+				Hasło:
+				<input
+					type="password"
+					name="pass"
+					onChange={event => this._handleChange(event)}
+					onKeyPress={event => this._onKeyPress(event)}
+				/>
+				<br/>
+				Powtórz Hasło:
+				<input
+					type="password"
+					name="repass"
+					onChange={event => this._handleChange(event)}
+					onKeyPress={event => this._onKeyPress(event)}
+				/>
+				<br/>
 
-				<button onClick = { () => this._onClick() }> Submit </button>
+				<button onClick = { () => this._submit() }> Submit </button>
 			</div>
 		);
 	}

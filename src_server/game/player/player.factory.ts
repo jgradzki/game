@@ -38,6 +38,17 @@ export class PlayerFactory {
 			MapIcon.HOME,
 			true
 		);
+
+		await this.locationsService.createLocation(
+			LocationType.Dungeon,
+			{x: 100, y: 100},
+			{width: 20, height: 20},
+			{for: player.id},
+			{player},
+			MapIcon.BUILDING,
+			true
+		);
+
 		log('info', `Player ${player.login} registered`);
 		return player;
 	}

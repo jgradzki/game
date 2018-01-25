@@ -5,4 +5,5 @@ export interface IRoom {
 		left?: boolean,
 		right?: boolean
 	};
+	lock?: boolean
 }

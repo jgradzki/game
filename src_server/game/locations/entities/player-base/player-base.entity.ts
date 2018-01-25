@@ -55,4 +55,8 @@ export class PlayerBase extends ILocation {
 			}
 		};
 	}
+
+	async action(data: { player: Player, requestData: any }) {
+		return {};
+	}
 }

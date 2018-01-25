@@ -115,7 +115,7 @@ class Dungeon extends Component {
 	_getCurrentRoom() {
 		const playerPosition = this._getPlayerPosition();
 
-		return this._getRooms() && this._getRooms()[playerPosition.y][playerPosition.x];
+		return this._getRooms() && this._getRooms()[playerPosition.x][playerPosition.y];
 	}
 
 	_getEnemies() {
