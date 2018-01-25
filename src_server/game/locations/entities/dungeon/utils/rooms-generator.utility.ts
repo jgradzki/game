@@ -1,4 +1,5 @@
 import { IRoom } from '../interfaces/room.interface';
+import { forEach } from 'lodash';
 
 const odds = {
 	1: 60,
@@ -38,10 +39,22 @@ export const generateRooms = (min: number = 2, max: number = 3): {
 	const roomsCount = 1;
 	const currentRoomLoc = {x: 0, y: 0};
 
-	// while (roomsCount < countOfRoomsToGenerate) {
+	// Generate map
+	for (let x = -max; x <= max; x++) {
+		roomsData.rooms[x] = {};
+		for (let y = -max; y <= max; y++) {
+			roomsData.rooms[x][y] = {
+				lock: false,
+				doors: {}
+			};
+		}
+	}
 
-	roomsData.rooms[0] = { 0: createRoom(countOfRoomsToGenerate - roomsCount, null, min)};
+	roomsData.rooms = generateLockedChunks(roomsData, max).rooms;
 
+	// Entry room
+	roomsData.rooms[0][0]  = createRoom(exclude(roomsData.rooms, 0, 0), countOfRoomsToGenerate - roomsCount, null, min);
+	// Rest rooms
 	roomsData.rooms = generate({
 		attempts: 0,
 		rooms: roomsData.rooms,
@@ -52,8 +65,29 @@ export const generateRooms = (min: number = 2, max: number = 3): {
 		forceCount: min - 3
 	}).rooms;
 
-	return roomsData;
+	const rawRooms = {};
+	// Delete non-room chunks
+	forEach(roomsData.rooms, (v, x) => {
+		let rawX;
 
+		forEach(v, (room, y) => {
+			if (!room.lock && room.lock !== false) {
+				if (!rawX) {
+					rawX = {};
+				}
+
+				rawX[y] = room;
+			}
+		});
+
+		if (rawX) {
+			rawRooms[x] = rawX;
+		}
+	});
+
+	roomsData.rooms = rawRooms;
+
+	return roomsData;
 };
 
 interface IGeneratorData {
@@ -65,6 +99,120 @@ interface IGeneratorData {
 	forceCount?: number;
 	attempts: number;
 }
+const generateLockedChunks = (roomsData, max) => {
+	const colide = (startX, startY, posX, posY, width, height): boolean => {
+		const x = startX + posX;
+		const y = startY + posY;
+		const check = (tX, tY): boolean => {
+			if ((tX === 0) && (tY === 0)) {
+				return true;
+			}
+
+			if ((tX >= startX) && (tX <= width) && (tY >= startY) && (tY <= height)) {
+				return false;
+			}
+
+			if (roomsData.rooms[tX] && roomsData.rooms[tX][tY] && roomsData.rooms[tX][tY].lock) {
+				return true;
+			}
+
+			return false;
+		};
+
+		if (!roomsData.rooms[x] || !roomsData.rooms[x][y]) {
+			return true;
+		}
+
+		if (check(x, y) ||
+			check(x + 1, y) ||
+			check(x + 1, y + 1) ||
+			check(x + 1, y - 1) ||
+			check(x - 1, y) ||
+			check(x - 1, y + 1) ||
+			check(x - 1, y - 1) ||
+			check(x, y + 1) ||
+			check(x, y - 1)
+		) {
+			return true;
+		}
+
+		return false;
+	};
+
+	for (let attempts = 0; attempts < 1000; attempts++) {
+		const c_x = roll(-max, max);
+		const c_y = roll(-max, max);
+
+		if (((c_x > -1) && (c_x < 1)) || ((c_y > -1) && (c_y < 1))) {
+			continue;
+		}
+
+		const size_w = roll(1, Math.ceil(max / 10));
+		const size_h = roll(1, Math.ceil(max / 10));
+		let correct = true;
+
+		for (let x = 0; x < size_w; x++) {
+			for (let y = 0; y < size_h; y++) {
+				if (colide(c_x, c_y, x, y, size_w, size_h)) {
+					correct = false;
+				}
+			}
+		}
+
+		if (correct) {
+			for (let x = 0; x < size_w; x++) {
+				for (let y = 0; y < size_h; y++) {
+					roomsData.rooms[c_x + x][c_y + y].lock = true;
+				}
+			}
+		}
+	}
+
+	for (let x = -max; x <= max; x++) {
+		for (let y = -max; y <= max; y++) {
+			if (!roomsData.rooms[x][y].lock) {
+				if (!colide(x, y, 0, 0, 1, 1)) {
+					roomsData.rooms[x][y].lock = true;
+				}
+			}
+		}
+	}
+
+	return roomsData;
+}
+const exclude = (rooms, x, y) => {
+	const check = (tX, tY): boolean => {
+		if (!rooms[tX] || !rooms[tX][tY] || rooms[tX][tY].lock) {
+			return true;
+		}
+
+		return false;
+	};
+	const toExclude = {
+		up: false,
+		down: false,
+		left: false,
+		right: false
+	};
+
+	if (check(x + 1, y)) {
+		toExclude.up = true;
+	}
+
+	if (check(x - 1, y)) {
+		toExclude.down = true;
+	}
+
+	if (check(x, y + 1)) {
+		toExclude.right = true;
+	}
+
+	if (check(x, y - 1)) {
+		toExclude.left = true;
+	}
+
+	return toExclude;
+};
 
 const generate = (data: IGeneratorData): IGeneratorData => {
 	const { countOfRoomsToGenerate, rooms, currentRoomLoc, entryDirection } = data;
@@ -89,32 +237,9 @@ const generate = (data: IGeneratorData): IGeneratorData => {
 
 	if (currentRoom.doors.up && (entryDirection !== 'up')) {
 		const newRoom = createRoom(
+			exclude(rooms, currentRoomLoc.x, currentRoomLoc.y - 1),
 			countOfRoomsToGenerate - getDoorsCount(currentRoom) - roomsCount,
 			'down',
-			data.forceCount
-		);
-
-		checkLoc(rooms, currentRoomLoc.x);
-		rooms[currentRoomLoc.x][currentRoomLoc.y + 1] = newRoom;
-		roomsCount++;
-		generate({
-			rooms,
-			roomsCount,
-			countOfRoomsToGenerate,
-			currentRoomLoc: {
-				x: currentRoomLoc.x,
-				y: currentRoomLoc.y + 1
-			},
-			entryDirection: 'down',
-			forceCount: data.forceCount - 3,
-			attempts
-		});
-	}
-
-	if (currentRoom.doors.down && (entryDirection !== 'down')) {
-		const newRoom = createRoom(
-			countOfRoomsToGenerate - getDoorsCount(currentRoom) - roomsCount,
-			'up',
 			data.forceCount
 		);
 
@@ -129,14 +254,40 @@ const generate = (data: IGeneratorData): IGeneratorData => {
 				x: currentRoomLoc.x,
 				y: currentRoomLoc.y - 1
 			},
+			entryDirection: 'down',
+			forceCount: data.forceCount - getDoorsCount(newRoom),
+			attempts
+		});
+	}
+
+	if (currentRoom.doors.down && (entryDirection !== 'down')) {
+		const newRoom = createRoom(
+			exclude(rooms, currentRoomLoc.x, currentRoomLoc.y + 1),
+			countOfRoomsToGenerate - getDoorsCount(currentRoom) - roomsCount,
+			'up',
+			data.forceCount
+		);
+
+		checkLoc(rooms, currentRoomLoc.x);
+		rooms[currentRoomLoc.x][currentRoomLoc.y + 1] = newRoom;
+		roomsCount++;
+		generate({
+			rooms,
+			roomsCount,
+			countOfRoomsToGenerate,
+			currentRoomLoc: {
+				x: currentRoomLoc.x,
+				y: currentRoomLoc.y + 1
+			},
 			entryDirection: 'up',
-			forceCount: data.forceCount - 3,
+			forceCount: data.forceCount - getDoorsCount(newRoom),
 			attempts
 		});
 	}
 
 	if (currentRoom.doors.right && (entryDirection !== 'right')) {
 		const newRoom = createRoom(
+			exclude(rooms, currentRoomLoc.x + 1, currentRoomLoc.y),
 			countOfRoomsToGenerate - getDoorsCount(currentRoom) - roomsCount,
 			'left',
 			data.forceCount
@@ -154,13 +305,14 @@ const generate = (data: IGeneratorData): IGeneratorData => {
 				y: currentRoomLoc.y
 			},
 			entryDirection: 'left',
-			forceCount: data.forceCount - 3,
+			forceCount: data.forceCount - getDoorsCount(newRoom),
 			attempts
 		});
 	}
 
 	if (currentRoom.doors.left && (entryDirection !== 'left')) {
 		const newRoom = createRoom(
+			exclude(rooms, currentRoomLoc.x - 1, currentRoomLoc.y),
 			countOfRoomsToGenerate - getDoorsCount(currentRoom) - roomsCount,
 			'right',
 			data.forceCount
@@ -178,7 +330,7 @@ const generate = (data: IGeneratorData): IGeneratorData => {
 				y: currentRoomLoc.y
 			},
 			entryDirection: 'right',
-			forceCount: data.forceCount - 3,
+			forceCount: data.forceCount - getDoorsCount(newRoom),
 			attempts
 		});
 	}
@@ -193,16 +345,16 @@ const generate = (data: IGeneratorData): IGeneratorData => {
 	};
 };
 
-const createRoom = (freeDoors: number = 0, entryDirection: string | null = null, force: number = 0): IRoom => {
+const createRoom = (excludeDoors, freeDoors: number = 0, entryDirection = '', force: number = 0): IRoom => {
 	const room: IRoom = {
 		doors: {}
 	};
 
 	if (entryDirection) {
 		room.doors[entryDirection] = true;
-		rollDoors(room, freeDoors - 1, entryDirection, force);
+		rollDoors(room, freeDoors - 1, {[entryDirection]: true, ...excludeDoors}, force);
 	} else {
-		rollDoors(room, freeDoors, '', force);
+		rollDoors(room, freeDoors, excludeDoors, force);
 	}
 
 	return room;
@@ -216,7 +368,7 @@ const rollDirection = () => {
 	return directions[roll(1, 4)];
 };
 
-const rollDoors = (room: IRoom, maxCount = 0, exclude?: string, force = 0): IRoom => {
+const rollDoors = (room: IRoom, maxCount = 0, excludeDoors?: {[s: string]: boolean}, force = 0): IRoom => {
 	let rollsCount = 1;
 
 	if (maxCount > 3) {
@@ -227,15 +379,22 @@ const rollDoors = (room: IRoom, maxCount = 0, exclude?: string, force = 0): IRoo
 		force = 3;
 	}
 
-	while ((roll(1, 100) < odds[rollsCount]) || (force > rollsCount)) {
+	if (excludeDoors && excludeDoors.up && excludeDoors.down && excludeDoors.left && excludeDoors.right) {
+		return room;
+	}
+
+	let attempts = 0;
+
+	while ((attempts < 20) && ((roll(1, 100) < odds[rollsCount]) || (force > rollsCount))) {
 		if (rollsCount > maxCount) {
 			break;
 		}
 
-		while (true) {
+		while (attempts < 20) {
 			const direction = rollDirection();
+			attempts++;
 
-			if (exclude && exclude[direction]) {
+			if (excludeDoors && excludeDoors[direction]) {
 				continue;
 			}
 			if (!room.doors[direction]) {

@@ -39,6 +39,7 @@ class DungeonMap extends Component {
 	_renderRooms() {
 		let rooms = this.props.location.map;
 		let array = [];
+
 		_.forEach(rooms, (value, x) => {
 			x = parseInt(x, 10);
 			_.forEach(value, (room, y) => {
@@ -47,8 +48,8 @@ class DungeonMap extends Component {
 					left: ( this.roomSize*(x) ),
 					top: ( this.roomSize*(y) )
 				};
-
 				let os = '';
+
 				if (this.props.location.playerPosition.x === x && this.props.location.playerPosition.y === y) {
 					os += ' now';
 				}

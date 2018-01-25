@@ -41,7 +41,7 @@ export class Dungeon extends ILocation {
 			return forEach(v, (room: IRoom, y) => {
 				if (playerPosition.x === x && playerPosition.y === y) {
 					filteredRooms[x][y] = {
-						...room,
+						doors: room.doors,
 						/*enemies: room.enemies && room.enemies.map(enemy => ({
 							name: enemy.name,
 							hp: enemy.hp,
@@ -51,7 +51,6 @@ export class Dungeon extends ILocation {
 					};
 				} else {
 					filteredRooms[x][y] = {
-						is: true,
 						doors: room.doors
 					};
 				}
@@ -69,7 +68,7 @@ export class Dungeon extends ILocation {
 	}
 
 	private generateRooms() {
-		const generatedRooms = roomsGenerator.generateRooms(2, 3);
+		const generatedRooms = roomsGenerator.generateRooms(4, 6);
 
 		this.rooms = generatedRooms.rooms;
 		this.entryRoom = generatedRooms.entry;
