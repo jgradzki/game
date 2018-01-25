@@ -1,6 +1,6 @@
 # Requirements
 
-Application requires database supported by TypeORM.
+Application requires database supported by [TypeORM](https://github.com/typeorm/typeorm/blob/master/docs/connection-options.md#common-connection-options).
 
 NodeGyp: https://github.com/nodejs/node-gyp#installation
 
@@ -24,7 +24,7 @@ NodeGyp: https://github.com/nodejs/node-gyp#installation
   "password": "",
   "database": "game",
   "entities": ["./src_server/**/**.entity.ts"], // dont change it
-  "synchronize": true // dont change it
+  "synchronize": true // set this to false in production
 }
 ```
 3. You can change some game settings in `/server_src/game/data/config.ts`
