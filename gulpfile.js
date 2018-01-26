@@ -137,6 +137,16 @@ gulp.task('eslint', () => {
 		]));
 });
 
+gulp.task('tslint', () => {
+	return gulp.src('*.js', {read: false})
+		.pipe(shell([
+			'tslint src_client/** src_server/** --fix'
+		]));
+});
+
+
+gulp.task('lint', ['eslint', 'tslint'], () => null);
+
 gulp.task('default', () => {
 	gulp.watch(`./${publicSrc}/**/*.*`, ['build-client'])
 		.on('error', handleError)

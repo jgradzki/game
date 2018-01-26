@@ -57,7 +57,7 @@ NodeGyp: https://github.com/nodejs/node-gyp#installation
 ## Auto eslint fix
 
 ```
-> gulp eslint
+> gulp lint
 ```
 
 ## Cleaning build folder
