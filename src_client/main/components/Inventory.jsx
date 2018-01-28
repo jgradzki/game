@@ -56,8 +56,8 @@ class Inventory extends Component {
 								<span>{item.count}</span>
 								<img
 									src=""
-									alt={item.name}
-									title={`${item.name}`}
+									alt={item.key}
+									title={`${item.key}`}
 								/>
 							</ContextMenuProvider>
 							<PlayerInventoryMenu
@@ -77,8 +77,8 @@ class Inventory extends Component {
 						<span>{item.count}</span>
 						<img
 							src=""
-							alt={item.name}
-							title={`${item.name}`}
+							alt={item.key}
+							title={`${item.key}`}
 						/>
 					</div>;
 				}

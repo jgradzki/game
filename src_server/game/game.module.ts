@@ -3,6 +3,7 @@ import { log } from '../logger';
 
 import { ConfigModule } from './config/config.module';
 import { ItemsModule } from './items';
+import { InventoryModule } from './inventory';
 import { PlayerModule } from './player/player.module';
 import { EventsModule } from './events/events.module';
 import { MapModule } from './map/map.module';
@@ -21,6 +22,7 @@ import { MapService } from './map/map.service';
 	imports: [
 		ConfigModule,
 		ItemsModule,
+		InventoryModule,
 		PlayerModule,
 		EventsModule,
 		MapModule,

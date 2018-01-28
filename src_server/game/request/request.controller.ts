@@ -33,8 +33,8 @@ export class RequestController {
 				},
 				player: {
 					name: player.login,
-					inventorySize: 10, // player.inventory.size,
-					inventory: [], // player.inventory.filtreItems(),
+					inventorySize: player.inventory.size,
+					inventory: player.inventory.filtreItems(),
 					hp: player.hp,
 					hunger: player.hunger,
 					energy: player.energy

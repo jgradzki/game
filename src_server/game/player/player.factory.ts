@@ -7,6 +7,8 @@ import { log } from '../../logger';
 
 import { Player } from './player.entity';
 import { LocationsService } from '../locations/locations.service';
+import { ItemsService, ItemTypes } from '../items';
+import { InventoryService } from '../inventory';
 
 import { MapIcon } from '../map/interfaces/map-icon.enum';
 import { LocationType } from '../locations/entities';
@@ -17,14 +19,22 @@ export class PlayerFactory {
 		private readonly entityManager: EntityManager,
 		@InjectRepository(Player)
 		private readonly playerRepository: Repository<Player>,
-		private readonly locationsService: LocationsService
+		private readonly locationsService: LocationsService,
+		private readonly itemsService: ItemsService,
+		private readonly inventoryService: InventoryService
 	) {}
 
 	async create(login: string, password: string, options?: object): Promise<Player> {
+		const item = await this.itemsService.create(ItemTypes.wood);
+		const inventory = await this.inventoryService.create(10);
+		inventory.itemsData = [item.data];
+		await this.inventoryService.saveInventory(inventory);
+
 		const player = await this.playerRepository.create({
 			login,
 			password: await this.generateHash(password),
-			mapPosition: { x: 50, y: 50 }
+			mapPosition: { x: 50, y: 50 },
+			inventory
 		});
 
 		await this.entityManager.save(player);

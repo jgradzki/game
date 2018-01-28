@@ -9,6 +9,8 @@ import { log } from '../../logger';
 import { Player } from './player.entity';
 import { PlayerFactory } from './player.factory';
 
+import { InventoryService } from '../inventory';
+
 @Component()
 export class PlayersService {
 	private readonly players: Player[] = [];
@@ -17,7 +19,8 @@ export class PlayersService {
 		private readonly entityManager: EntityManager,
 		@InjectRepository(Player)
 		private readonly playerRepository: Repository<Player>,
-		private readonly playerFactory: PlayerFactory
+		private readonly playerFactory: PlayerFactory,
+		private readonly inventoryService: InventoryService
 	) {}
 
 	async create(login: string, password: string, options?: object): Promise<Player> {
@@ -115,6 +118,7 @@ export class PlayersService {
 		const playerToLoad = await this.findById(id);
 
 		if (playerToLoad) {
+			playerToLoad.inventory = await this.inventoryService.getInventory(playerToLoad.inventory.id);
 			this.loadPlayer(playerToLoad);
 			return playerToLoad;
 		}
@@ -132,7 +136,9 @@ export class PlayersService {
 		const playerToLoad = await this.findByLogin(login);
 
 		if (playerToLoad) {
+			playerToLoad.inventory = await this.inventoryService.getInventory(playerToLoad.inventory.id);
 			this.loadPlayer(playerToLoad);
+
 			return playerToLoad;
 		}
 
@@ -147,7 +153,8 @@ export class PlayersService {
 		return await this.playerRepository.findOne({
 			where: {
 				id
-			}
+			},
+			relations: ['inventory']
 		});
 	}
 
@@ -155,7 +162,8 @@ export class PlayersService {
 		return await this.playerRepository.findOne({
 			where: {
 				login
-			}
+			},
+			relations: ['inventory']
 		});
 	}
 }

@@ -14,4 +14,12 @@ export abstract class IItem {
 	get type() {
 		return this.data.type;
 	}
+
+	get category() {
+		return this.data.category;
+	}
+
+	get count() {
+		return this.data.count;
+	}
 }

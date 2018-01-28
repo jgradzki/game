@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
 
 import { MapPosition } from '../map/interfaces/map-position.interface';
 import { PlayerBase } from '../locations/entities/player-base/player-base.entity';
+import { Inventory } from '../inventory';
 
 @Entity({ name: 'Players' })
 export class Player {
@@ -28,6 +29,10 @@ export class Player {
 
 	@OneToOne(type => PlayerBase, base => base.player) // specify inverse side as a second parameter
     base: PlayerBase;
+
+    @OneToOne(type => Inventory)
+    @JoinColumn()
+    inventory: Inventory;
 
     @Column({ name: 'location_id', nullable: true })
     locationId: string = null;

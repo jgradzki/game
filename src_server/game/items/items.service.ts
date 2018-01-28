@@ -1,7 +1,7 @@
 import { Component } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '../../db';
-import { find, findIndex, forEach } from 'lodash';
+import { find, findIndex, forEach, map } from 'lodash';
 import { log } from '../../logger';
 
 import { ItemsServiceError } from './items.service.error';
@@ -52,6 +52,26 @@ export class ItemsService {
 		}
 
 		return null;
+	}
+
+	async getOrLoad(itemToLoad: Item|IItem): Promise<IItem> {
+		let item = find(this.items, loadedItems => loadedItems.id === itemToLoad.id);
+
+		if (item) {
+			return item;
+		}
+
+		if (!(itemToLoad instanceof IItem)) {
+			item = this.loadToModel(itemToLoad);
+		}
+
+		this.loadItem(item);
+
+		return item;
+	}
+
+	async getOrLoadArray(itemsToLoad: (Item|IItem)[]): Promise<IItem[]> {
+		return Promise.all([...map(itemsToLoad, async (item) => await this.getOrLoad(item))]);
 	}
 
 	async unloadItem(item: IItem, save = true): Promise<boolean> {
@@ -128,6 +148,10 @@ export class ItemsService {
 			}
 		});
 
-		return this.factories[itemData.type].load(itemData);
+		return this.loadToModel(itemData);
+	}
+
+	private loadToModel(item: Item): IItem {
+		return this.factories[item.type].load(item);
 	}
 }
