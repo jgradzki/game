@@ -1,5 +1,5 @@
 import { Component } from '@nestjs/common';
-import { TypeOrmModule, InjectRepository } from '../../db';
+import { InjectRepository } from '../../db';
 import { EntityManager, Repository } from 'typeorm';
 import { find, map, forEach, findIndex } from 'lodash';
 

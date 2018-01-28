@@ -2,6 +2,7 @@ import { Module  } from '@nestjs/common';
 import { log } from '../logger';
 
 import { ConfigModule } from './config/config.module';
+import { ItemsModule } from './items';
 import { PlayerModule } from './player/player.module';
 import { EventsModule } from './events/events.module';
 import { MapModule } from './map/map.module';
@@ -19,6 +20,7 @@ import { MapService } from './map/map.service';
 @Module({
 	imports: [
 		ConfigModule,
+		ItemsModule,
 		PlayerModule,
 		EventsModule,
 		MapModule,

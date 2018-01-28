@@ -1,4 +1,5 @@
 import 'ts-node/register';
+import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import * as Express from 'express';
 import * as Session from 'express-session';
