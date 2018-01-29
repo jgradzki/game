@@ -1,12 +1,16 @@
 import { ItemFactory } from '../interfaces/item-factory.interface';
-import { WoodItemFactory } from './wood/wood.factory';
+import { WoodItemFactory, WoodItem } from './wood';
 
 export enum ItemTypes {
 	wood = 'wood'
 }
 
-const items: { [s: string]: typeof ItemFactory } = {
+export const items = {
+	wood: WoodItem
+};
+
+const itemsFactorys: { [s: string]: typeof ItemFactory } = {
 	wood: WoodItemFactory
 };
 
-export default items;
+export default itemsFactorys;

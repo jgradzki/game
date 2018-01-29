@@ -15,8 +15,11 @@ import { ApiController } from './api/api.controller';
 import { RequestController } from './request/request.controller';
 
 import { TasksService } from './tasks/tasks.service';
+import { ItemsService } from './items';
+import { InventoryService } from './inventory';
 import { PlayersService } from './player/players.service';
 import { MapService } from './map/map.service';
+import { LocationsService } from './locations/locations.service';
 
 @Module({
 	imports: [
@@ -36,11 +39,15 @@ import { MapService } from './map/map.service';
 export class GameModule {
 	constructor(
 		private readonly tasksService: TasksService,
+		private readonly itemsService: ItemsService,
+		private readonly inventoryService: InventoryService,
 		private readonly playersService: PlayersService,
-		private readonly mapService: MapService
+		private readonly mapService: MapService,
+		private readonly locationsService: LocationsService
 	) {
 		this.catchProcessExit();
 		this.tasksService.startTasks();
+		this.checkAdminAccount();
 	}
 
 	private catchProcessExit() {
@@ -55,8 +62,11 @@ export class GameModule {
 		await this.tasksService.stopTasks();
 
 		Promise.all([
+			this.inventoryService.unloadAllInventories(),
+			this.itemsService.unloadAllItems(),
 			this.mapService.unloadAllMapElements(),
-			this.playersService.unloadAllPlayers()
+			this.playersService.unloadAllPlayers(),
+			this.locationsService.unloadAll()
 		])
 			.then( () => {
 				log('info', 'Goodbye.');
@@ -75,8 +85,19 @@ export class GameModule {
 		}
 	}
 
-	handleUncaughtException(error) {
+	private handleUncaughtException(error) {
 		log('error', error);
 		this.onExit();
+	}
+
+	private async checkAdminAccount() {
+		let admin = await this.playersService.getPlayerByLogin('Admin');
+
+		if (!admin) {
+			admin = await this.playersService.create('Admin', '123456');
+			log('info', 'Admin account created.');
+		} else {
+			await this.playersService.unloadPlayer(admin);
+		}
 	}
 }

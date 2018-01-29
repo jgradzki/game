@@ -1,5 +1,6 @@
 import { IRoom } from '../interfaces/room.interface';
 import { forEach } from 'lodash';
+import { roll } from './';
 
 const odds = {
 	1: 60,
@@ -362,10 +363,6 @@ const createRoom = (excludeDoors, freeDoors: number = 0, entryDirection = '', fo
 	}
 
 	return room;
-};
-
-const roll = (min: number, max: number): number => {
-	return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
 const rollDirection = () => {

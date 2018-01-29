@@ -27,16 +27,16 @@ export class PlayerFactory {
 	async create(login: string, password: string, options?: object): Promise<Player> {
 		const item = await this.itemsService.create(ItemTypes.wood);
 		const inventory = await this.inventoryService.create(10);
-		inventory.itemsData = [item.data];
+		inventory.setItems([item]);
+
 		await this.inventoryService.saveInventory(inventory);
 
 		const player = await this.playerRepository.create({
 			login,
 			password: await this.generateHash(password),
-			mapPosition: { x: 50, y: 50 },
-			inventory
+			mapPosition: { x: 50, y: 50 }
 		});
-
+		player.inventory = inventory;
 		await this.entityManager.save(player);
 
 		await this.locationsService.createLocation(

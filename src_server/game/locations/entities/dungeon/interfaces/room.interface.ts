@@ -1,3 +1,5 @@
+import { IItem } from '../../../../items';
+
 export interface IRoom {
 	doors: {
 		up?: boolean,
@@ -5,5 +7,6 @@ export interface IRoom {
 		left?: boolean,
 		right?: boolean
 	};
-	lock?: boolean
+	lock?: boolean;
+	items?: IItem[];
 }

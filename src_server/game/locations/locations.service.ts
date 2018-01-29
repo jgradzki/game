@@ -1,6 +1,7 @@
 import { Component } from '@nestjs/common';
 import { TypeOrmModule, InjectRepository } from '../../db';
 import {  EntityManager, Repository } from 'typeorm';
+import { map } from 'lodash';
 import { log } from '../../logger';
 
 import { MapPosition } from '../map/interfaces/map-position.interface';
@@ -65,5 +66,9 @@ export class LocationsService {
 		}
 
 		return await this.locationsServices[type].getLocation(id);
+	}
+
+	async unloadAll() {
+		await Promise.all(map(this.locationsServices, service => service.unloadAllLocations()));
 	}
 }

@@ -1,16 +1,22 @@
 import { Component } from '@nestjs/common';
 import { InjectRepository } from '../../../../db';
 import { EntityManager, Repository } from 'typeorm';
-import { find, reduce, filter, findIndex } from 'lodash';
+import { find, reduce, filter, findIndex, isArray } from 'lodash';
 import { log } from '../../../../logger';
 
 import { ILocationService } from '../../interfaces/location-service.interface';
+
+import { ItemsService } from '../../../items';
 
 import { Dungeon } from './dungeon.entity';
 import { Player } from '../../../player/player.entity';
 
 import { MapPosition } from '../../../map/interfaces/map-position.interface';
 import { MapIcon } from '../../../map/interfaces/map-icon.enum';
+
+import { IRoom } from './interfaces/room.interface';
+
+import itemsGenerator from './utils/items-generator.utility';
 
 @Component()
 export class DungeonService extends ILocationService {
@@ -21,7 +27,8 @@ export class DungeonService extends ILocationService {
 	constructor(
 		@InjectRepository(Dungeon)
 		private readonly dungeonRepository: Repository<Dungeon>,
-		private readonly entityManager: EntityManager
+		private readonly entityManager: EntityManager,
+		private readonly itemsService: ItemsService
 	) {
 		super();
 	}
@@ -37,6 +44,9 @@ export class DungeonService extends ILocationService {
 		isPerm: boolean = false
 	) {
 		const dungeon = this.dungeonRepository.create({ isPerm });
+
+		dungeon.generateRooms();
+		dungeon.rooms =  await itemsGenerator(this.itemsService, dungeon.rooms);
 
 		await this.entityManager.save(dungeon);
 
@@ -120,11 +130,12 @@ export class DungeonService extends ILocationService {
 			return location;
 		}
 
-		const baseToLoad = await this.findByMapElementId(mapElementId);
+		const dungeonToLoad = await this.findByMapElementId(mapElementId);
 
-		if (baseToLoad) {
-			this.loadLocation(baseToLoad);
-			return baseToLoad;
+		if (dungeonToLoad) {
+			await this.roomItemsToInstances(dungeonToLoad.rooms);
+			this.loadLocation(dungeonToLoad);
+			return dungeonToLoad;
 		}
 
 		return null;
@@ -136,14 +147,39 @@ export class DungeonService extends ILocationService {
 			return location;
 		}
 
-		const baseToLoad = await this.findById(id);
+		const dungeonToLoad = await this.findById(id);
 
-		if (baseToLoad) {
-			this.loadLocation(baseToLoad);
-			return baseToLoad;
+		if (dungeonToLoad) {
+			await this.roomItemsToInstances(dungeonToLoad.rooms);
+			this.loadLocation(dungeonToLoad);
+			return dungeonToLoad;
 		}
 
 		return null;
+	}
+
+	private async roomItemsToInstances(rooms: {[s: number]: {[s: number]: IRoom }}) {
+		for (const x in rooms) {
+			if (rooms.hasOwnProperty(x)) {
+				const row = rooms[x];
+
+				for (const y in row) {
+					if (row.hasOwnProperty(y)) {
+						const room = rooms[x][y];
+
+						if (isArray(room.items)) {
+							const items = room.items;
+
+							for (const i in items) {
+								if (items.hasOwnProperty(i)) {
+									items[i] = await this.itemsService.getItem(items[i].data.id);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private async findById(id: string): Promise<Dungeon> {

@@ -56,8 +56,8 @@ class Inventory extends Component {
 								<span>{item.count}</span>
 								<img
 									src=""
-									alt={item.key}
-									title={`${item.key}`}
+									alt={item.type}
+									title={`${item.type}`}
 								/>
 							</ContextMenuProvider>
 							<PlayerInventoryMenu
@@ -77,8 +77,8 @@ class Inventory extends Component {
 						<span>{item.count}</span>
 						<img
 							src=""
-							alt={item.key}
-							title={`${item.key}`}
+							alt={item.type}
+							title={`${item.type}`}
 						/>
 					</div>;
 				}
@@ -107,8 +107,7 @@ class Inventory extends Component {
 		onClick: PropTypes.func,
 		onMenuClick: PropTypes.func,
 		items: PropTypes.arrayOf(PropTypes.shape({
-			key: PropTypes.string.isRequired,
-			name: PropTypes.string.isRequired,
+			type: PropTypes.string.isRequired,
 			count: PropTypes.number.isRequired
 		}))
 	};

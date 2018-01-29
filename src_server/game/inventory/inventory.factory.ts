@@ -5,6 +5,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { log } from '../../logger';
 
 import { Inventory } from './inventory.entity';
+import { IItem } from '../items';
 
 @Component()
 export class InventoryFactory {
@@ -14,12 +15,14 @@ export class InventoryFactory {
 		private readonly inventoryRepository: Repository<Inventory>
 	) {}
 
-	async create(size: number): Promise<Inventory> {
-		const inventory = await this.inventoryRepository.create({
+	create(size: number, items?: IItem[]): Inventory {
+		const inventory = this.inventoryRepository.create({
 			size
 		});
 
-		await this.entityManager.save(inventory);
+		if (items) {
+			inventory.setItems(items);
+		}
 
 		return inventory;
 	}

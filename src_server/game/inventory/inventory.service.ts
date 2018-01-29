@@ -6,7 +6,7 @@ import { log } from '../../logger';
 
 import { InventoryFactory } from './inventory.factory';
 import { Inventory } from './inventory.entity';
-import { ItemsService } from '../items';
+import { ItemsService, IItem } from '../items';
 
 @Component()
 export class InventoryService {
@@ -20,14 +20,18 @@ export class InventoryService {
 		private readonly itemsService: ItemsService,
 	) {}
 
-	async create(size = 10): Promise<Inventory> {
-		const inventory = await this.inventoryFactory.create(size);
+	async create(size = 10, items?: IItem[]): Promise<Inventory> {
+		const inventory = this.inventoryFactory.create(size, items);
 
 		await this.saveInventory(inventory);
 
 		this.loadInventory(inventory);
 
 		return inventory;
+	}
+
+	build(size = 10, items?: IItem[]) {
+		return this.inventoryFactory.create(size, items);
 	}
 
 	async getInventory(id: string): Promise<Inventory> {
@@ -39,6 +43,7 @@ export class InventoryService {
 
 		const inventoryToLoad = await this.findById(id);
 		const items = await this.itemsService.getOrLoadArray(inventoryToLoad.itemsData);
+
 		inventoryToLoad.setItems(items);
 
 		if (inventoryToLoad) {

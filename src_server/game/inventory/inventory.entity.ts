@@ -29,8 +29,7 @@ export class Inventory {
 
     filtreItems() {
     	return map(this.items, item => ({
-			key: item.type,
-			type: item.category,
+			type: item.type,
 			count: item.count
 		}));
     }

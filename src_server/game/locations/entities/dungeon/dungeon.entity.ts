@@ -1,10 +1,11 @@
 import { Entity, Column } from 'typeorm';
-import { forEach, find, filter } from 'lodash';
+import { forEach, find, filter, map } from 'lodash';
 
 import { ILocation } from '../../interfaces/location.interface';
 import { IRoom } from './interfaces/room.interface';
 import { DungeonPlayerData } from './interfaces/dungeon-player-data';
 import { Player } from '../../../player/player.entity';
+import { Inventory } from '../../../inventory';
 
 import * as roomsGenerator from './utils/rooms-generator.utility';
 
@@ -26,9 +27,7 @@ export class Dungeon extends ILocation {
 		return 'Dungeon';
 	}
 
-	async afterLocationCreate(data: any): Promise<void> {
-		this.generateRooms();
-	}
+	async afterLocationCreate(data: any): Promise<void> {}
 
 	async onPlayerEnter(player: Player, data?: any): Promise<void> {
 		const playerData = find(this.players, playersArray => playersArray.id === player.id);
@@ -53,10 +52,13 @@ export class Dungeon extends ILocation {
 
 		forEach( this.rooms, (v: {[s: number]: IRoom }, x) => {
 			filteredRooms[x] = {};
+
 			return forEach(v, (room: IRoom, y) => {
-				if (playerPosition.x === x && playerPosition.y === y) {
+				if ((playerPosition.x === parseInt(x, 10)) && (playerPosition.y === parseInt(y, 10))) {
+
 					filteredRooms[x][y] = {
 						doors: room.doors,
+						items: this.getRoomItems(room)
 						/*enemies: room.enemies && room.enemies.map(enemy => ({
 							name: enemy.name,
 							hp: enemy.hp,
@@ -151,10 +153,17 @@ export class Dungeon extends ILocation {
 		return this.rooms[x] && this.rooms[x][y];
 	}
 
-	private generateRooms() {
-		const generatedRooms = roomsGenerator.generateRooms(4, 6);
+	generateRooms(min: number = 4, max: number = 6) {
+		const generatedRooms = roomsGenerator.generateRooms(min, max);
 
 		this.rooms = generatedRooms.rooms;
 		this.entryRoom = generatedRooms.entry;
+	}
+
+	private getRoomItems(room: IRoom) {
+		return map(room.items, item => ({
+			type: item.type,
+			count: item.count
+		}));
 	}
 }

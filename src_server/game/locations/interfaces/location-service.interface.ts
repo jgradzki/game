@@ -12,4 +12,5 @@ export abstract class ILocationService {
 	): Promise<any>;
 	abstract getLocation(id: string): Promise<ILocation>;
 	abstract getLocationById(id: string): Promise<ILocation>;
+	abstract unloadAllLocations(): Promise<any>;
 }
