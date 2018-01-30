@@ -17,7 +17,7 @@ import { DungeonService } from './entities/dungeon/dungeon.service';
 
 @Component()
 export class LocationsService {
-	private locationsServices: { [s: string]: ILocationService } = {};
+	public readonly locationsServices: { [s: string]: ILocationService } = {};
 
 	constructor(
 		private readonly entityManager: EntityManager,

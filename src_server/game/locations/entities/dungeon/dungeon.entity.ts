@@ -9,8 +9,6 @@ import { Inventory } from '../../../inventory';
 
 import * as roomsGenerator from './utils/rooms-generator.utility';
 
-import { actions } from './actions';
-
 @Entity({ name: 'Dungeon' })
 export class Dungeon extends ILocation {
 
@@ -86,24 +84,8 @@ export class Dungeon extends ILocation {
 		if (playerData) {
 			return playerData.position;
 		}
-	}
 
-	async action(data: { player: Player, requestData: any }) {
-		if (!data.requestData || !data.requestData.type) {
-			return {
-				error: 'no-action-type'
-			};
-		}
-
-		const action = actions[data.requestData.type];
-
-		if (!action) {
-			return {
-				error: 'unknown-action'
-			};
-		}
-
-		return await (new action(this)).execute(data.player, data.requestData);
+		return this.entryRoom;
 	}
 
 	changePlayerPosition(player: Player, x: number, y: number) {
@@ -160,7 +142,7 @@ export class Dungeon extends ILocation {
 		this.entryRoom = generatedRooms.entry;
 	}
 
-	private getRoomItems(room: IRoom) {
+	getRoomItems(room: IRoom) {
 		return map(room.items, item => ({
 			type: item.type,
 			count: item.count

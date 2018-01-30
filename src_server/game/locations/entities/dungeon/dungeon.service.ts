@@ -5,7 +5,7 @@ import { find, reduce, filter, findIndex, isArray } from 'lodash';
 import { log } from '../../../../logger';
 
 import { ILocationService } from '../../interfaces/location-service.interface';
-
+import { DungeonController } from './dungeon.controller';
 import { ItemsService } from '../../../items';
 
 import { Dungeon } from './dungeon.entity';
@@ -21,6 +21,7 @@ import itemsGenerator from './utils/items-generator.utility';
 @Component()
 export class DungeonService extends ILocationService {
 	static dependecies = [];
+	static controller = DungeonController;
 
 	dungeons: Dungeon[] = [];
 
@@ -28,6 +29,7 @@ export class DungeonService extends ILocationService {
 		@InjectRepository(Dungeon)
 		private readonly dungeonRepository: Repository<Dungeon>,
 		private readonly entityManager: EntityManager,
+		private readonly dungeonController: DungeonController,
 		private readonly itemsService: ItemsService
 	) {
 		super();
@@ -51,6 +53,10 @@ export class DungeonService extends ILocationService {
 		await this.entityManager.save(dungeon);
 
 		return dungeon;
+	}
+
+	controller() {
+		return this.dungeonController;
 	}
 
 	loadLocation(location: Dungeon): boolean {

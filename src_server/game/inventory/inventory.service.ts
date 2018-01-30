@@ -103,6 +103,51 @@ export class InventoryService {
 		return true;
 	}
 
+	static calculateInventory(inventory: IItem[], inventoryLimit: number, newItem: IItem, newItemMaxStack: number) {
+        inventory = inventory.slice();
+        let itemCount = newItem.count;
+
+        if (inventory.length > 0) {
+            inventory.forEach(itemSlot => {
+                if (itemCount > 0) {
+                    if (itemSlot.type === newItem.type) {
+                        if (itemSlot.count < newItemMaxStack) {
+                            let count = newItemMaxStack - itemSlot.count;
+
+                            if (count > itemCount) {
+                                count = itemCount;
+                            }
+
+                            itemSlot.count += count;
+                            itemCount -= count;
+                        }
+                    }
+                }
+            });
+        }
+
+        while ( ( itemCount > 0 ) && ( inventory.length < inventoryLimit ) ) {
+            let count;
+
+            if (itemCount >= newItemMaxStack) {
+                count = newItemMaxStack;
+            } else {
+                count = itemCount;
+            }
+
+            inventory.push({
+                ...newItem,
+                count
+            });
+            itemCount -= count;
+        }
+
+        return {
+            newInventory: inventory,
+            countTaken: -(itemCount - newItem.count)
+        };
+    }
+
 	private loadInventory(inventory: Inventory) {
 		if (inventory.constructor.name !== Inventory.name) {
 			log('error', `'${inventory}' is not Inventory instance:`);

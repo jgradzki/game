@@ -121,7 +121,12 @@ export class LocationsController {
 		let respond = {};
 
 		if (location) {
-			respond = await location.action({player, requestData: data});
+			const service = this.locationsService.locationsServices[location.getType()];
+			respond = await service.controller().action({
+				location,
+				player,
+				requestData: data
+			});
 		} else {
 			respond = { error: 'location-not-found' };
 		}

@@ -5,6 +5,7 @@ import { find, reduce, filter, findIndex } from 'lodash';
 import { log } from '../../../../logger';
 
 import { ILocationService } from '../../interfaces/location-service.interface';
+import { PlayerBaseController } from './player-base-controller';
 
 import { PlayerBase } from './player-base.entity';
 import { Player } from '../../../player/player.entity';
@@ -21,13 +22,18 @@ export class PlayerBaseService extends ILocationService {
 	constructor(
 		@InjectRepository(PlayerBase)
 		private readonly playerBaseRepository: Repository<PlayerBase>,
-		private readonly entityManager: EntityManager
+		private readonly entityManager: EntityManager,
+		private readonly playerBaseController: PlayerBaseController
 	) {
 		super();
 	}
 
 	getLocationName() {
 		return PlayerBase.name;
+	}
+
+	controller() {
+		return this.playerBaseController;
 	}
 
 	async create(

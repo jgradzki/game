@@ -25,4 +25,8 @@ export abstract class IItem {
 	get count() {
 		return this.data.count;
 	}
+
+	set count(count: number) {
+		this.data.count = count;
+	}
 }

@@ -1,19 +1,22 @@
 import { TypeOrmModule } from '../../../db';
 import { map, reduce, concat } from 'lodash';
 
+import { LocationModule } from '../interfaces/location-module.interface';
 import { PlayerBaseLocation } from './player-base';
 import { DungeonLocation } from './dungeon';
 
 export const locations = {
 	[PlayerBaseLocation.name]: {
 		model: PlayerBaseLocation.model,
-		services: PlayerBaseLocation.service,
-		dependecies: PlayerBaseLocation.dependecies
+		service: PlayerBaseLocation.service,
+		dependecies: PlayerBaseLocation.dependecies,
+		actionController: PlayerBaseLocation.actionController
 	},
 	[DungeonLocation.name]: {
 		model: DungeonLocation.model,
-		services: DungeonLocation.service,
-		dependecies: DungeonLocation.dependecies
+		service: DungeonLocation.service,
+		dependecies: DungeonLocation.dependecies,
+		actionController: DungeonLocation.actionController
 	}
 };
 
@@ -32,5 +35,15 @@ export const stringToLocationType = (type: string): LocationType => {
 };
 
 export const providers = TypeOrmModule.forFeature(map(locations, location => location.model));
-export const services = map(locations, location => location.services);
+export const services = map(locations, location => location.service);
 export const dependecies = reduce(locations, (all, location) => concat(all, location.dependecies), []);
+export const locationsControllers = reduce(locations, (all, location) =>
+	{
+		if (location.actionController) {
+			return concat(all, location.actionController);
+		}
+
+		return all;
+	},
+	[]
+);

@@ -37,6 +37,14 @@ export class ItemsService {
 		return item;
 	}
 
+	build(type: string, count = 1): IItem {
+		if (!this.factories[type]) {
+			throw new ItemsServiceError('item-not-valid-type', `Type '${type} is not valid type of item.`);
+		}
+
+		return this.factories[type].create(count);
+	}
+
 	async getItem(id: string): Promise<IItem> {
 		const item = find(this.items, loadedItems => loadedItems.id === id);
 

@@ -13,24 +13,24 @@ export class Inventory {
 	size: number;
 
 	@OneToMany(type => Item, item => item.inventory)
-    itemsData: Item[];
+	itemsData: Item[];
 
-    items: IItem[] = [];
+	items: IItem[] = [];
 
-    setItems(items: IItem[]) {
-    	this.items = items;
-    	this.itemsData = map(items, item => item.data);
-    }
+	setItems(items: IItem[]) {
+		this.items = items;
+		this.itemsData = map(items, item => item.data);
+	}
 
-    addItem(item: IItem) {
-    	this.items.push(item);
-    	this.itemsData.push(item.data);
-    }
+	addItem(item: IItem) {
+		this.items.push(item);
+		this.itemsData.push(item.data);
+	}
 
-    filtreItems() {
-    	return map(this.items, item => ({
+	filtreItems() {
+		return map(this.items, item => ({
 			type: item.type,
 			count: item.count
 		}));
-    }
+	}
 }
