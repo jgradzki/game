@@ -12,8 +12,8 @@ import { ILocation } from './interfaces/location.interface';
 import { LocationType } from './entities';
 
 import { MapService } from '../map/map.service';
-import { PlayerBaseService } from './entities/player-base/player-base.service';
-import { DungeonService } from './entities/dungeon/dungeon.service';
+import { PlayerBaseService } from './entities/player-base';
+import { DungeonService } from './entities/dungeon';
 
 @Component()
 export class LocationsService {

@@ -8,12 +8,12 @@ import { PlayerModule } from '../player/player.module';
 import { LocationsService } from './locations.service';
 import { LocationsController } from './locations.controller';
 
-import { providers, services, locationsControllers, dependecies } from './entities';
+import { locationsModules } from './entities';
 
 @Module({
-	imports: [ConfigModule, PlayerModule, MapModule, providers, ...dependecies],
+	imports: [ConfigModule, PlayerModule, MapModule, ...locationsModules],
 	controllers: [LocationsController],
-	components: [...services,  ...locationsControllers, LocationsService],
-	exports: [...services, LocationsService]
+	components: [LocationsService],
+	exports: [LocationsService]
 })
 export class LocationsModule {}
