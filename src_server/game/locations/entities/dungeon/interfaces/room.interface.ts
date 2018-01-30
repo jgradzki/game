@@ -1,4 +1,4 @@
-import { IItem } from '../../../../items';
+import { ItemController } from '../../../../items';
 
 export interface IRoom {
 	doors: {
@@ -8,5 +8,5 @@ export interface IRoom {
 		right?: boolean
 	};
 	lock?: boolean;
-	items?: IItem[];
+	items?: ItemController[];
 }

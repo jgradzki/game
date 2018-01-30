@@ -48,7 +48,16 @@ export class LocationsController {
 		}
 
 		const location = await this.locationsService.getLocation(data.type, data.id);
-		const dataForPlayer = await location.getDataForPlayer(player, data);
+
+		if (!location) {
+			res.send({
+				error: true,
+				errorMessage: 'unknown-location'
+			});
+			return;
+		}
+		const locationService = this.locationsService.getLocationService(stringToLocationType(location.getType()));
+		const dataForPlayer = await locationService.getDataForPlayer(location.id, player, data);
 
 		await location.onPlayerEnter(player, data);
 		player.setInLocation(data.type, data.id);

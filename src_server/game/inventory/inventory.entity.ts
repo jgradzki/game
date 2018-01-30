@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { map } from 'lodash';
 
 import { Item } from '../items/item.entity';
-import { IItem } from '../items/interfaces/item.interface';
+import { ItemController } from '../items/interfaces/item.interface';
 
 @Entity({ name: 'Inventories' })
 export class Inventory {
@@ -15,14 +15,14 @@ export class Inventory {
 	@OneToMany(type => Item, item => item.inventory)
 	itemsData: Item[];
 
-	items: IItem[] = [];
+	items: ItemController[] = [];
 
-	setItems(items: IItem[]) {
+	setItems(items: ItemController[]) {
 		this.items = items;
 		this.itemsData = map(items, item => item.data);
 	}
 
-	addItem(item: IItem) {
+	addItem(item: ItemController) {
 		this.items.push(item);
 		this.itemsData.push(item.data);
 	}

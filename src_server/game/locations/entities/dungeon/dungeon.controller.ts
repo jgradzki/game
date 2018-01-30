@@ -1,4 +1,4 @@
-import { Component } from '@nestjs/common';
+import { Component, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '../../../../db';
 import { EntityManager, Repository } from 'typeorm';
 import { find, reduce, filter, findIndex, isArray } from 'lodash';
@@ -8,6 +8,10 @@ import { LocationController } from '../../interfaces/location-controller.interfa
 import { Dungeon } from './dungeon.entity';
 import { Player } from '../../../player/player.entity';
 
+import { DungeonService } from './';
+import { InventoryService } from '../../../inventory';
+import { ItemsService } from '../../../items';
+
 @Component()
 export class DungeonController implements LocationController {
 	protected readonly actions: {[s: string]: (data) => Promise<any> } = {};
@@ -15,10 +19,14 @@ export class DungeonController implements LocationController {
 	constructor(
 		@InjectRepository(Dungeon)
 		private readonly dungeonRepository: Repository<Dungeon>,
-		private readonly entityManager: EntityManager
+		private readonly entityManager: EntityManager,
+		private readonly inventoryService: InventoryService,
+		private readonly itemsService: ItemsService,
+		@Inject(forwardRef(() => DungeonService))
+		private readonly dungeonService: DungeonService
 	) {
-		this.actions.dungeonChangePosition = this.dungeonChangePositionAction;
-		this.actions.takeLoot = this.takeLoot;
+		this.actions.dungeonChangePosition = data => this.dungeonChangePositionAction(data);
+		this.actions.takeLoot = data => this.takeLoot(data);
 	}
 
 	async action(data: { location: Dungeon, player: Player, requestData: any }) {
@@ -61,7 +69,7 @@ export class DungeonController implements LocationController {
 			success: true,
 			data: {
 				// fight: this._checkFight(player),
-				...(await location.getDataForPlayer(player))
+				...(await this.dungeonService.getDataForPlayer(location.id, player))
 			}
 		};
 	}
@@ -80,13 +88,30 @@ export class DungeonController implements LocationController {
 		}
 
 		try {
-			player.inventory.addItem(room.items[slot]);
-			room.items.splice(slot, 1);
+			const inventoryTransfer = await this.inventoryService.transferItem(
+				player.inventory.items,
+				player.inventory.size,
+				room.items[slot],
+				room.items[slot].maxStack
+			);
+
+			if (inventoryTransfer.countTaken === room.items[slot].count) {
+				this.itemsService.removeItem(room.items[slot]);
+				room.items.splice(slot, 1);
+			} else {
+				room.items[slot].count -= inventoryTransfer.countTaken;
+			}
+
+
 		} catch (e) {
+			log('error', e);
+
 			return {
 				error: 'internal-server-error'
 			};
 		}
+
+		location.getRoomItems(room)
 
 		return {
 			success: true,

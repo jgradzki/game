@@ -1,7 +1,7 @@
-import { Component } from '@nestjs/common';
+import { Component, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '../../../../db';
 import { EntityManager, Repository } from 'typeorm';
-import { find, reduce, filter, findIndex, isArray } from 'lodash';
+import { find, reduce, forEach, findIndex, isArray } from 'lodash';
 import { log } from '../../../../logger';
 
 import { ILocationService } from '../../interfaces/location-service.interface';
@@ -29,6 +29,7 @@ export class DungeonService extends ILocationService {
 		@InjectRepository(Dungeon)
 		private readonly dungeonRepository: Repository<Dungeon>,
 		private readonly entityManager: EntityManager,
+		@Inject(forwardRef(() => DungeonController))
 		private readonly dungeonController: DungeonController,
 		private readonly itemsService: ItemsService
 	) {
@@ -164,6 +165,47 @@ export class DungeonService extends ILocationService {
 		return null;
 	}
 
+	async getDataForPlayer(locationId: string, player: Player, data?: any): Promise<any> {
+		const location = await this.getLocationById(locationId);
+
+		if (!location) {
+			return null;
+		}
+
+		const playerPosition = (data && data.position) || location.getPlayerPosition(player.id) || location.entryRoom;
+		const filteredRooms = {};
+
+		forEach(location.rooms, (v: {[s: number]: IRoom }, x) => {
+			filteredRooms[x] = {};
+
+			return forEach(v, (room: IRoom, y) => {
+				if ((playerPosition.x === parseInt(x, 10)) && (playerPosition.y === parseInt(y, 10))) {
+
+					filteredRooms[x][y] = {
+						doors: room.doors,
+						items: location.getRoomItems(room)
+						/*enemies: room.enemies && room.enemies.map(enemy => ({
+							name: enemy.name,
+							hp: enemy.hp,
+							attackPower: enemy.attackPower,
+							attackSpeed: enemy.attackSpeed
+						}))*/
+					};
+				} else {
+					filteredRooms[x][y] = {
+						doors: room.doors
+					};
+				}
+			});
+		});
+
+		return {
+			rooms: filteredRooms,
+			position: playerPosition
+		};
+
+	}
+
 	private async roomItemsToInstances(rooms: {[s: number]: {[s: number]: IRoom }}) {
 		for (const x in rooms) {
 			if (rooms.hasOwnProperty(x)) {
@@ -178,7 +220,7 @@ export class DungeonService extends ILocationService {
 
 							for (const i in items) {
 								if (items.hasOwnProperty(i)) {
-									items[i] = await this.itemsService.getItem(items[i].data.id);
+									rooms[x][y].items[i] = await this.itemsService.getItem(items[i].data.id);
 								}
 							}
 						}

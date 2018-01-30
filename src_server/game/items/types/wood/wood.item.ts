@@ -1,13 +1,21 @@
 import { Item } from '../../item.entity';
-import { IItem } from '../../interfaces/item.interface';
+import { IItemController, ItemController } from '../../interfaces/item.interface';
 
-export class WoodItem extends IItem {
+export class WoodItem extends ItemController implements IItemController {
 	data: Item;
 
-	static maxStack = 8;
+	static maxStack = 3;
 	static rarity = 40;
 
 	constructor(item: Item) {
 		super(item);
+	}
+
+	get maxStack() {
+		return WoodItem.maxStack;
+	}
+
+	get rarity() {
+		return WoodItem.rarity
 	}
 }

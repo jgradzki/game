@@ -31,31 +31,6 @@ export class PlayerBase extends ILocation {
 
 	}
 
-	async getDataForPlayer(player: Player): Promise<any> {
-		return {
-			equipment: {
-				bed: {
-					level: this.bedLevel,
-					upgradeable: false
-				},
-				workshop: {
-					level: this.workshopLevel,
-					upgradeable: [],
-					upgradeCosts: []
-				},
-				box1: {
-					items: []
-				},
-				box2: {
-					items: []
-				},
-				box3: {
-					items: []
-				}
-			}
-		};
-	}
-
 	async action(data: { player: Player, requestData: any }) {
 		return {};
 	}

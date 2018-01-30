@@ -2,6 +2,7 @@ import { MapPosition } from '../../map/interfaces/map-position.interface';
 import { MapIcon } from '../../map/interfaces/map-icon.enum';
 import { ILocation } from './location.interface';
 import { LocationController } from './location-controller.interface';
+import { Player } from '../../player';
 
 export abstract class ILocationService {
 	abstract getLocationName(): string;
@@ -14,5 +15,6 @@ export abstract class ILocationService {
 	abstract getLocation(id: string): Promise<ILocation>;
 	abstract getLocationById(id: string): Promise<ILocation>;
 	abstract unloadAllLocations(): Promise<any>;
+	abstract getDataForPlayer(locationId: string, player: Player, data?: any): Promise<any>;
 	abstract controller(): LocationController;
 }

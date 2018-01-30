@@ -54,10 +54,11 @@ export class RequestController {
 				player.locationId = null;
 				player.locationType = null;
 			} else {
+				const locationService = this.locationsService.getLocationService(stringToLocationType(location.getType()));
 				initData.inLocation = true;
 				initData.location = {
 					type: location.getType(),
-					data: await location.getDataForPlayer(player)
+					data: await locationService.getDataForPlayer(location.id, player)
 				};
 			}
 		}

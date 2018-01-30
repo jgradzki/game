@@ -16,6 +16,5 @@ export abstract class ILocation {
     abstract afterLocationCreate(data?: any): Promise<void>;
 	abstract onPlayerEnter(player: Player, data?: any): Promise<void>;
 	abstract onPlayerExit(player: Player, data?: any): Promise<void>;
-	abstract getDataForPlayer(player: Player, data?: any): Promise<any>;
 	abstract getType(): string;
 }

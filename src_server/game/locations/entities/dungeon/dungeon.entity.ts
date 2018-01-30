@@ -44,40 +44,6 @@ export class Dungeon extends ILocation {
 		this.players = filter(this.players, playersArray => playersArray.id !== player.id);
 	}
 
-	async getDataForPlayer(player: Player, data?: any): Promise<any> {
-		const playerPosition = (data && data.position) || this.getPlayerPosition(player.id) || this.entryRoom;
-		const filteredRooms = {};
-
-		forEach( this.rooms, (v: {[s: number]: IRoom }, x) => {
-			filteredRooms[x] = {};
-
-			return forEach(v, (room: IRoom, y) => {
-				if ((playerPosition.x === parseInt(x, 10)) && (playerPosition.y === parseInt(y, 10))) {
-
-					filteredRooms[x][y] = {
-						doors: room.doors,
-						items: this.getRoomItems(room)
-						/*enemies: room.enemies && room.enemies.map(enemy => ({
-							name: enemy.name,
-							hp: enemy.hp,
-							attackPower: enemy.attackPower,
-							attackSpeed: enemy.attackSpeed
-						}))*/
-					};
-				} else {
-					filteredRooms[x][y] = {
-						doors: room.doors
-					};
-				}
-			});
-		});
-
-		return {
-			rooms: filteredRooms,
-			position: playerPosition
-		};
-	}
-
 	getPlayerPosition(id: string) {
 		const playerData = find(this.players, playersArray => playersArray.id === id);
 

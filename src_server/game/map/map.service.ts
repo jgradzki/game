@@ -73,6 +73,8 @@ export class MapService {
 		for (const element of this.elements) {
 			await this.unloadMapElement(element);
 		}
+
+		log('debug', 'MapElements unloaded.');
 	}
 
 	async getMapElementById(id: string): Promise<MapElement> {

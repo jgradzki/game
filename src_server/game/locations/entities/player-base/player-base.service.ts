@@ -153,6 +153,37 @@ export class PlayerBaseService extends ILocationService {
 		return null;
 	}
 
+	async getDataForPlayer(locationId: string, player: Player, data?: any): Promise<any> {
+		const location = await this.getLocationById(locationId);
+
+		if (!location) {
+			return null;
+		}
+
+		return {
+			equipment: {
+				bed: {
+					level: location.bedLevel,
+					upgradeable: false
+				},
+				workshop: {
+					level: location.workshopLevel,
+					upgradeable: [],
+					upgradeCosts: []
+				},
+				box1: {
+					items: []
+				},
+				box2: {
+					items: []
+				},
+				box3: {
+					items: []
+				}
+			}
+		};
+	}
+
 	private async findById(id: string): Promise<PlayerBase> {
 		return await this.playerBaseRepository.findOne({
 			where: {

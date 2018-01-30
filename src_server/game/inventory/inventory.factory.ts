@@ -5,7 +5,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { log } from '../../logger';
 
 import { Inventory } from './inventory.entity';
-import { IItem } from '../items';
+import { ItemController } from '../items';
 
 @Component()
 export class InventoryFactory {
@@ -15,7 +15,7 @@ export class InventoryFactory {
 		private readonly inventoryRepository: Repository<Inventory>
 	) {}
 
-	create(size: number, items?: IItem[]): Inventory {
+	create(size: number, items?: ItemController[]): Inventory {
 		const inventory = this.inventoryRepository.create({
 			size
 		});

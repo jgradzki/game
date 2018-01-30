@@ -93,6 +93,8 @@ export class PlayersService {
 		for (const player of this.players) {
 			await this.unloadPlayer(player);
 		}
+
+		log('debug', 'Players unloaded.');
 	}
 
 	async savePlayer(player: Player): Promise<boolean> {

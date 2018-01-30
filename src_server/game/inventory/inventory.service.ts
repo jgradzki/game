@@ -6,7 +6,7 @@ import { log } from '../../logger';
 
 import { InventoryFactory } from './inventory.factory';
 import { Inventory } from './inventory.entity';
-import { ItemsService, IItem } from '../items';
+import { ItemsService, ItemController, Item } from '../items';
 
 @Component()
 export class InventoryService {
@@ -20,7 +20,7 @@ export class InventoryService {
 		private readonly itemsService: ItemsService,
 	) {}
 
-	async create(size = 10, items?: IItem[]): Promise<Inventory> {
+	async create(size = 10, items?: ItemController[]): Promise<Inventory> {
 		const inventory = this.inventoryFactory.create(size, items);
 
 		await this.saveInventory(inventory);
@@ -30,7 +30,7 @@ export class InventoryService {
 		return inventory;
 	}
 
-	build(size = 10, items?: IItem[]) {
+	build(size = 10, items?: ItemController[]) {
 		return this.inventoryFactory.create(size, items);
 	}
 
@@ -72,12 +72,14 @@ export class InventoryService {
 			await this.saveInventory(toUnload);
 		}
 
-		const index = findIndex(this.inventories, pa => pa.id === inventory.id);
+		for(const item of inventory.items) {
+			await this.itemsService.unloadItem(item);
+		}
+
+		const index = findIndex(this.inventories, pa => pa.id === toUnload.id);
 
 		if (index > -1) {
 			this.inventories.splice(index, 1);
-		} else {
-			log('error', `@unloadInventory: Error finding index in Inventories of ${inventory.id}`);
 		}
 		log('debug', `Inventory ${inventory.id} unloaded.`);
 
@@ -88,6 +90,8 @@ export class InventoryService {
 		for (const inventory of this.inventories) {
 			await this.unloadInventory(inventory);
 		}
+
+		log('debug', 'Invetories unloaded.');
 	}
 
 	async saveInventory(inventory: Inventory): Promise<boolean> {
@@ -97,56 +101,61 @@ export class InventoryService {
 			return false;
 		}
 
+		inventory.setItems(inventory.items);
+
 		await this.entityManager.save(inventory);
 		log('debug', `Inventory ${inventory.id} saved.`);
 
 		return true;
 	}
 
-	static calculateInventory(inventory: IItem[], inventoryLimit: number, newItem: IItem, newItemMaxStack: number) {
-        inventory = inventory.slice();
-        let itemCount = newItem.count;
+	async transferItem(inventory: ItemController[], inventoryLimit: number, newItem: ItemController, newItemMaxStack: number): Promise<{
+		newItems: ItemController[]
+		countTaken: number
+	}> {
+		let itemCount = newItem.count;
 
-        if (inventory.length > 0) {
-            inventory.forEach(itemSlot => {
-                if (itemCount > 0) {
-                    if (itemSlot.type === newItem.type) {
-                        if (itemSlot.count < newItemMaxStack) {
-                            let count = newItemMaxStack - itemSlot.count;
+		if (inventory.length > 0) {
+			inventory.forEach(itemSlot => {
+				if (itemCount > 0) {
+					if (itemSlot.type === newItem.type) {
+						if (itemSlot.count < newItemMaxStack) {
+							let count = newItemMaxStack - itemSlot.count;
 
-                            if (count > itemCount) {
-                                count = itemCount;
-                            }
+							if (count > itemCount) {
+								count = itemCount;
+							}
 
-                            itemSlot.count += count;
-                            itemCount -= count;
-                        }
-                    }
-                }
-            });
-        }
+							itemSlot.count += count;
+							itemCount -= count;
+						}
+					}
+				}
+			});
+		}
 
-        while ( ( itemCount > 0 ) && ( inventory.length < inventoryLimit ) ) {
-            let count;
+		const newItems: ItemController[] = [];
 
-            if (itemCount >= newItemMaxStack) {
-                count = newItemMaxStack;
-            } else {
-                count = itemCount;
-            }
+		while ( ( itemCount > 0 ) && ( inventory.length < inventoryLimit ) ) {
+			let count;
 
-            inventory.push({
-                ...newItem,
-                count
-            });
-            itemCount -= count;
-        }
+			if (itemCount >= newItemMaxStack) {
+				count = newItemMaxStack;
+			} else {
+				count = itemCount;
+			}
 
-        return {
-            newInventory: inventory,
-            countTaken: -(itemCount - newItem.count)
-        };
-    }
+			const item = await this.itemsService.create(newItem.type, count);
+			inventory.push(item);
+			newItems.push(item);
+			itemCount -= count;
+		}
+
+		return {
+			newItems,
+			countTaken: -(itemCount - newItem.count)
+		};
+	}
 
 	private loadInventory(inventory: Inventory) {
 		if (inventory.constructor.name !== Inventory.name) {

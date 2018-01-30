@@ -4,7 +4,7 @@ import { roll } from './';
 
 import { ItemsService } from '../../../../items';
 import { IRoom } from '../interfaces/room.interface';
-import { IItem } from '../../../../items';
+import { ItemController } from '../../../../items';
 import { items, ItemTypes } from '../../../../items/types';
 
 class ItemsGenerator {
@@ -34,8 +34,8 @@ class ItemsGenerator {
 		return this.rooms;
 	}
 
-	private async generateItems(): Promise<IItem[]> {
-		const itemsForRoom: IItem[] = [];
+	private async generateItems(): Promise<ItemController[]> {
+		const itemsForRoom: ItemController[] = [];
 
 		for (let i = 0; i < 5; i++) {
 			const item = await this.generateItem();
@@ -48,7 +48,7 @@ class ItemsGenerator {
 		return itemsForRoom;
 	}
 
-	private async generateItem(): Promise<IItem> {
+	private async generateItem(): Promise<ItemController> {
 		const itemName = this.itemTypesNames[roll(0, this.itemTypesNames.length - 1)];
 		const itemModel = items[itemName];
 		const itemCount = this.rollItemCount(itemModel);
@@ -60,7 +60,7 @@ class ItemsGenerator {
 		return null;
 	}
 
-	private rollItemCount(itemModel: typeof IItem): number {
+	private rollItemCount(itemModel: typeof ItemController): number {
 		let count = 0;
 
 		while ((roll(0, 100) < itemModel.rarity) && (count < itemModel.maxStack)) {

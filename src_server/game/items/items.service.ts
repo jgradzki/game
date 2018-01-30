@@ -6,13 +6,13 @@ import { log } from '../../logger';
 
 import { ItemsServiceError } from './items.service.error';
 import { Item } from './item.entity';
-import { IItem } from './interfaces/item.interface';
+import { ItemController } from './interfaces/item.interface';
 import { ItemFactory } from './interfaces/item-factory.interface';
 import factories from './types';
 
 @Component()
 export class ItemsService {
-	readonly items: Array<IItem> = [];
+	readonly items: Array<ItemController> = [];
 	readonly factories: { [s: string]: ItemFactory } = {};
 
 	constructor(
@@ -23,7 +23,7 @@ export class ItemsService {
 		forEach(factories, (Factory, name) => this.factories[name] = new Factory(this.itemRepository));
 	}
 
-	async create(type: string, count = 1): Promise<IItem> {
+	async create(type: string, count = 1): Promise<ItemController> {
 		if (!this.factories[type]) {
 			throw new ItemsServiceError('item-not-valid-type', `Type '${type} is not valid type of item.`);
 		}
@@ -37,7 +37,7 @@ export class ItemsService {
 		return item;
 	}
 
-	build(type: string, count = 1): IItem {
+	build(type: string, count = 1): ItemController {
 		if (!this.factories[type]) {
 			throw new ItemsServiceError('item-not-valid-type', `Type '${type} is not valid type of item.`);
 		}
@@ -45,7 +45,7 @@ export class ItemsService {
 		return this.factories[type].create(count);
 	}
 
-	async getItem(id: string): Promise<IItem> {
+	async getItem(id: string): Promise<ItemController> {
 		const item = find(this.items, loadedItems => loadedItems.id === id);
 
 		if (item) {
@@ -62,14 +62,14 @@ export class ItemsService {
 		return null;
 	}
 
-	async getOrLoad(itemToLoad: Item|IItem): Promise<IItem> {
+	async getOrLoad(itemToLoad: Item|ItemController): Promise<ItemController> {
 		let item = find(this.items, loadedItems => loadedItems.id === itemToLoad.id);
 
 		if (item) {
 			return item;
 		}
 
-		if (!(itemToLoad instanceof IItem)) {
+		if (!(itemToLoad instanceof ItemController)) {
 			item = this.loadToModel(itemToLoad);
 		}
 
@@ -78,12 +78,12 @@ export class ItemsService {
 		return item;
 	}
 
-	async getOrLoadArray(itemsToLoad: (Item|IItem)[]): Promise<IItem[]> {
+	async getOrLoadArray(itemsToLoad: (Item|ItemController)[]): Promise<ItemController[]> {
 		return Promise.all([...map(itemsToLoad, async (item) => await this.getOrLoad(item))]);
 	}
 
-	async unloadItem(item: IItem, save = true): Promise<boolean> {
-		if (!(item instanceof IItem)) {
+	async unloadItem(item: ItemController, save = true): Promise<boolean> {
+		if (!(item instanceof ItemController)) {
 			log('error', `'${item}' is not Item instance:`);
 			log('error', item);
 			return false;
@@ -100,12 +100,11 @@ export class ItemsService {
 			await this.saveItem(toUnload);
 		}
 
-		const index = findIndex(this.items, pa => pa.id === item.id);
+
+		const index = findIndex(this.items, pa => pa.id === toUnload.id);
 
 		if (index > -1) {
 			this.items.splice(index, 1);
-		} else {
-			log('error', `@unloadItem: Error finding index in Items of ${item.type}(${item.id})`);
 		}
 		log('debug', `Item ${item.type}(${item.id}) unloaded.`);
 
@@ -116,10 +115,12 @@ export class ItemsService {
 		for (const item of this.items) {
 			await this.unloadItem(item);
 		}
+
+		log('debug', 'Items unloaded.');
 	}
 
-	async saveItem(item: IItem): Promise<boolean> {
-		if (!(item instanceof IItem)) {
+	async saveItem(item: ItemController): Promise<boolean> {
+		if (!(item instanceof ItemController)) {
 			log('error', `'${item}' is not Item instance:`);
 			log('error', item);
 			return false;
@@ -131,8 +132,28 @@ export class ItemsService {
 		return true;
 	}
 
-	private loadItem(item: IItem) {
-		if (!(item instanceof IItem)) {
+	async removeItem(item: ItemController): Promise<boolean> {
+		if (!(item instanceof ItemController)) {
+			log('error', `'${item}' is not Item instance:`);
+			log('error', item);
+			return false;
+		}
+
+		const id = item.id;
+		const index = findIndex(this.items, pa => pa.id === item.id);
+
+		if (index > -1) {
+			this.items.splice(index, 1);
+		}
+
+		await this.entityManager.remove(item.data);
+		log('debug', `Item ${item.type}(${id}) removed.`);
+
+		return true;
+	}
+
+	private loadItem(item: ItemController) {
+		if (!(item instanceof ItemController)) {
 			log('error', `'${item}' is not Item instance:`);
 			log('error', item);
 			return false;
@@ -149,7 +170,7 @@ export class ItemsService {
 		return true;
 	}
 
-	private async findById(id: string): Promise<IItem> {
+	private async findById(id: string): Promise<ItemController> {
 		const itemData = await this.itemRepository.findOne({
 			where: {
 				id
@@ -159,7 +180,7 @@ export class ItemsService {
 		return this.loadToModel(itemData);
 	}
 
-	private loadToModel(item: Item): IItem {
+	private loadToModel(item: Item): ItemController {
 		return this.factories[item.type].load(item);
 	}
 }
