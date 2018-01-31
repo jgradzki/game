@@ -88,7 +88,7 @@ export class DungeonController implements LocationController {
 		}
 
 		try {
-			const inventoryTransfer = await this.inventoryService.transferItem(
+			const inventoryTransfer = await this.inventoryService.utils.transferItem(
 				player.inventory.items,
 				player.inventory.size,
 				room.items[slot],
@@ -96,13 +96,11 @@ export class DungeonController implements LocationController {
 			);
 
 			if (inventoryTransfer.countTaken === room.items[slot].count) {
-				this.itemsService.removeItem(room.items[slot]);
+				await this.itemsService.removeItem(room.items[slot]);
 				room.items.splice(slot, 1);
 			} else {
 				room.items[slot].count -= inventoryTransfer.countTaken;
 			}
-
-
 		} catch (e) {
 			log('error', e);
 

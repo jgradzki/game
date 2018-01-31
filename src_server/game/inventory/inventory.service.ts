@@ -6,6 +6,7 @@ import { log } from '../../logger';
 
 import { InventoryFactory } from './inventory.factory';
 import { Inventory } from './inventory.entity';
+import { InventoryUtils } from './inventory.utils';
 import { ItemsService, ItemController, Item } from '../items';
 
 @Component()
@@ -18,7 +19,12 @@ export class InventoryService {
 		private readonly inventoryRepository: Repository<Inventory>,
 		private readonly inventoryFactory: InventoryFactory,
 		private readonly itemsService: ItemsService,
+		private readonly inventoryUtils: InventoryUtils
 	) {}
+
+	get utils() {
+		return this.inventoryUtils;
+	}
 
 	async create(size = 10, items?: ItemController[]): Promise<Inventory> {
 		const inventory = this.inventoryFactory.create(size, items);
@@ -72,7 +78,7 @@ export class InventoryService {
 			await this.saveInventory(toUnload);
 		}
 
-		for(const item of inventory.items) {
+		for (const item of inventory.items) {
 			await this.itemsService.unloadItem(item);
 		}
 
@@ -107,54 +113,6 @@ export class InventoryService {
 		log('debug', `Inventory ${inventory.id} saved.`);
 
 		return true;
-	}
-
-	async transferItem(inventory: ItemController[], inventoryLimit: number, newItem: ItemController, newItemMaxStack: number): Promise<{
-		newItems: ItemController[]
-		countTaken: number
-	}> {
-		let itemCount = newItem.count;
-
-		if (inventory.length > 0) {
-			inventory.forEach(itemSlot => {
-				if (itemCount > 0) {
-					if (itemSlot.type === newItem.type) {
-						if (itemSlot.count < newItemMaxStack) {
-							let count = newItemMaxStack - itemSlot.count;
-
-							if (count > itemCount) {
-								count = itemCount;
-							}
-
-							itemSlot.count += count;
-							itemCount -= count;
-						}
-					}
-				}
-			});
-		}
-
-		const newItems: ItemController[] = [];
-
-		while ( ( itemCount > 0 ) && ( inventory.length < inventoryLimit ) ) {
-			let count;
-
-			if (itemCount >= newItemMaxStack) {
-				count = newItemMaxStack;
-			} else {
-				count = itemCount;
-			}
-
-			const item = await this.itemsService.create(newItem.type, count);
-			inventory.push(item);
-			newItems.push(item);
-			itemCount -= count;
-		}
-
-		return {
-			newItems,
-			countTaken: -(itemCount - newItem.count)
-		};
 	}
 
 	private loadInventory(inventory: Inventory) {

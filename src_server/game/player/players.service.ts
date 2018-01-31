@@ -29,7 +29,7 @@ export class PlayersService {
 		return player;
 	}
 
-	loaded(): Array<Player> {
+	loadedList(): Array<Player> {
 		return this.players;
 	}
 

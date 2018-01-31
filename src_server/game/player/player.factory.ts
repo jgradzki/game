@@ -25,7 +25,7 @@ export class PlayerFactory {
 	) {}
 
 	async create(login: string, password: string, options?: object): Promise<Player> {
-		const item = await this.itemsService.create(ItemTypes.wood);
+		const item = await this.itemsService.create(ItemTypes.wood, 3);
 		const inventory = await this.inventoryService.create(10);
 		inventory.setItems([item]);
 

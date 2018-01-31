@@ -2,7 +2,9 @@ import { Item } from '../item.entity';
 
 export interface IItemController {
 	maxStack: number,
-	rarity: number
+	rarity: number,
+	type: string,
+	count: number
 }
 
 export abstract class ItemController implements IItemController {

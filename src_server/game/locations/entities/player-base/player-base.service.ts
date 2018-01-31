@@ -1,4 +1,4 @@
-import { Component } from '@nestjs/common';
+import { Component, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '../../../../db';
 import { EntityManager, Repository } from 'typeorm';
 import { find, reduce, filter, findIndex } from 'lodash';
@@ -23,6 +23,7 @@ export class PlayerBaseService extends ILocationService {
 		@InjectRepository(PlayerBase)
 		private readonly playerBaseRepository: Repository<PlayerBase>,
 		private readonly entityManager: EntityManager,
+		@Inject(forwardRef(() => PlayerBaseController))
 		private readonly playerBaseController: PlayerBaseController
 	) {
 		super();
@@ -164,12 +165,12 @@ export class PlayerBaseService extends ILocationService {
 			equipment: {
 				bed: {
 					level: location.bedLevel,
-					upgradeable: false
+					upgradeable: location.isUpgradeable('bed', location.bedLevel)
 				},
 				workshop: {
 					level: location.workshopLevel,
-					upgradeable: [],
-					upgradeCosts: []
+					upgradeable: location.isUpgradeable('workshop', location.workshopLevel),
+					upgradeCosts: location.getUpgradeCosts('workshop', location.workshopLevel)
 				},
 				box1: {
 					items: []

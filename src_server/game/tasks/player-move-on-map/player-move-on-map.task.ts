@@ -9,6 +9,9 @@ import { PlayersService } from '../../player/players.service';
 import { Player } from '../../player/player.entity';
 import { ConfigService } from '../../config/config.service';
 
+/**
+ * @todo Change depending on tics difference to distance.
+ */
 @Component()
 export class PlayerMoveOnMapTask implements ITask {
 	private isRunning = false;

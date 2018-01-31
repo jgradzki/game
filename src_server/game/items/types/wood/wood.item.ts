@@ -4,7 +4,7 @@ import { IItemController, ItemController } from '../../interfaces/item.interface
 export class WoodItem extends ItemController implements IItemController {
 	data: Item;
 
-	static maxStack = 3;
+	static maxStack = 5;
 	static rarity = 40;
 
 	constructor(item: Item) {
