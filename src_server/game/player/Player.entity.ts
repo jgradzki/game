@@ -73,4 +73,23 @@ export class Player {
 	inLocation(): boolean {
 		return !!this.locationId;
 	}
+
+	affect(actions: {
+		hunger?: number
+	}) {
+		if (!actions) {
+			return;
+		}
+
+		if (actions.hunger) {
+			this.hunger -= actions.hunger;
+		}
+
+		if (this.hunger > 100) {
+			this.hunger = 100;
+		}
+		if (this.hunger < 0) {
+			this.hunger = 0;
+		}
+	}
 }

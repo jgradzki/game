@@ -16,6 +16,6 @@ export class WoodItem extends ItemController implements IItemController {
 	}
 
 	get rarity() {
-		return WoodItem.rarity
+		return WoodItem.rarity;
 	}
 }

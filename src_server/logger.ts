@@ -2,6 +2,10 @@ import * as winston from 'winston';
 import * as fs from 'fs';
 import * as path from 'path';
 
+/**
+ * @todo readline transport
+ */
+
 // Log levels: error: 0, warn: 1, info: 2, verbose: 3, debug: 4
 
 const logDir = './logs';

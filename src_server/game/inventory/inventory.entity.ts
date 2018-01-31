@@ -42,11 +42,12 @@ export class Inventory {
 		}
 	}
 
+	getSlot(slot: number): ItemController {
+		return this.items[slot];
+	}
+
 	filtreItems() {
-		return map(this.items, item => ({
-			type: item.type,
-			count: item.count
-		}));
+		return map(this.items, item => item.getItemData());
 	}
 
 	has(items: Array<{type: string, count: number}>) {

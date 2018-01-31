@@ -9,13 +9,23 @@ import { PlayersService } from './players.service';
 
 import { ChangeDestinationDto } from './dto/chnage-destination.dto';
 
+// Actions
+import { EatAction } from './inventory-actions/eat.action';
+
 @Controller('game/player')
 @UseGuards(LoggedInGuard)
 export class PlayerController {
+	private readonly inventoryActions = {};
+
 	constructor(
 		private readonly configService: ConfigService,
-		private readonly playersService: PlayersService
-	) {}
+		private readonly playersService: PlayersService,
+		private readonly eatAction: EatAction
+	) {
+		this.inventoryActions = {
+			eat: this.eatAction
+		};
+	}
 
 	@Post('changeDestination')
 	async game(@Session() session, @Body() destination: ChangeDestinationDto, @Response() res) {
@@ -63,4 +73,18 @@ export class PlayerController {
 		}
 	}
 
+	@Post('inventory')
+	async inventory(@Session() session, @Body() data, @Response() res) {
+		const player = await this.playersService.getPlayerById(session.playerID);
+
+		if (!this.inventoryActions[data.type] || !this.inventoryActions[data.type].action) {
+			res.send({
+				error: 'incorrect-action'
+			});
+		}
+
+		const respond = await this.inventoryActions[data.type].action(player, data);
+
+		res.send(respond);
+	}
 }

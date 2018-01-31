@@ -1,10 +1,11 @@
 import { Item } from '../item.entity';
+import { IEatable, EatEffects } from './attributes/eatable';
 
 export interface IItemController {
-	maxStack: number,
-	rarity: number,
-	type: string,
-	count: number
+	maxStack: number;
+	rarity: number;
+	type: string;
+	count: number;
 }
 
 export abstract class ItemController implements IItemController {
@@ -43,5 +44,26 @@ export abstract class ItemController implements IItemController {
 
 	get rarity(): number {
 		return ItemController.rarity;
+	}
+
+	get eatable(): boolean {
+		return ((!!(this as any).eat) && (!!(this as any).eatEffects));
+	}
+
+	getItemData() {
+		let data: {
+			type: string;
+			count: number;
+			eat?: EatEffects
+		} = {
+			type: this.type,
+			count: this.count
+		};
+
+		if (this.eatable) {
+			data.eat = (this as any).eatEffects;
+		}
+
+		return data;
 	}
 }

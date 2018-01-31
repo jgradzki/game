@@ -1,12 +1,13 @@
-import _ from 'lodash';
+import { isNumber } from 'lodash';
+import axios from 'axios';
 import { log } from '../libs/debug';
 import { store } from './store';
-import makeRequest from '../libs/request';
+
 
 import { setPlayerInventory, setPlayerHP, setPlayerEnergy, setPlayerHunger } from '../actions/player';
 
 export const onMenuAction = (action, slot) => {
-	makeRequest('playerAction',
+	axios.post('game/player/inventory',
 		{
 			type: action,
 			slot
@@ -22,13 +23,13 @@ export const onMenuAction = (action, slot) => {
 				if (data.inventory) {
 					store.dispatch(setPlayerInventory(data.inventory));
 				}
-				if (_.isNumber(data.hp)) {
+				if (isNumber(data.hp)) {
 					store.dispatch(setPlayerHP(data.hp));
 				}
-				if (_.isNumber(data.energy)) {
+				if (isNumber(data.energy)) {
 					store.dispatch(setPlayerEnergy(data.energy));
 				}
-				if (_.isNumber(data.hunger)) {
+				if (isNumber(data.hunger)) {
 					store.dispatch(setPlayerHunger(data.hunger));
 				}
 			}
