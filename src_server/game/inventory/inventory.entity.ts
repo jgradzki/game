@@ -42,6 +42,10 @@ export class Inventory {
 		}
 	}
 
+	get itemsCount(): number {
+		return this.items.length;
+	}
+
 	getSlot(slot: number): ItemController {
 		return this.items[slot];
 	}

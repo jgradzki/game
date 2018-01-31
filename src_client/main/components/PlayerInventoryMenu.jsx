@@ -1,15 +1,32 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ContextMenu, Item, Separator, IconFont } from 'react-contexify';
+import { ContextMenu, Item, Separator } from 'react-contexify';
 import 'react-contexify/dist/ReactContexify.min.css';
 
 class WeaponOptions extends Component {
 	render() {
 		const { combat } = this.props;
 
+		if (combat.equiped) {
+			return (
+				<div>
+					<Item onClick={() => this.props.onClick('remove_melee_weapon')}>
+						Schowaj
+					</Item>
+					<Item disabled>
+						{combat && combat.attack && `Atak: ${combat.attack}`}
+					</Item>
+					<Item disabled>
+						{combat && combat.speed && ` Prędkość: ${combat.speed}`}
+					</Item>
+					<Separator />
+				</div>
+			);
+		}
+
 		return (
 			<div>
-				<Item onClick={() => this.props.onClick('set_as_weapon')}>
+				<Item onClick={() => this.props.onClick('set_as_melee_weapon')}>
 					Wyekwipuj
 				</Item>
 				<Item disabled>

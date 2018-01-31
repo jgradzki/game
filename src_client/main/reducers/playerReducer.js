@@ -8,10 +8,14 @@ const playerReducer = (state = 0, action) => {
 				inLocation: action.inLocation
 			};
 		case actionTypes.SET_PLAYER_INVENTORY:
-
 			return {
 				...state,
 				inventory: action.inventory
+			};
+		case actionTypes.SET_PLAYER_MELEE_WEAPON:
+			return {
+				...state,
+				meleeWeapon: action.item
 			};
 		case actionTypes.ADD_ITEM_TO_PLAYER_INVENTORY:
 			return {

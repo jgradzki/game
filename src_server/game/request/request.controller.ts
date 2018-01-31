@@ -37,7 +37,8 @@ export class RequestController {
 					inventory: player.inventory.filtreItems(),
 					hp: player.hp,
 					hunger: player.hunger,
-					energy: player.energy
+					energy: player.energy,
+					meleeWeapon: player.meleeWeapon && player.meleeWeapon.getItemData()
 				}
 			},
 			inLocation: null,

@@ -21,6 +21,11 @@ export const addItemToInventory = item => ({
 	item
 });
 
+export const setMeleeWeapon = item => ({
+	type: actionTypes.SET_PLAYER_MELEE_WEAPON,
+	item
+});
+
 export const removeItemFromInventory = slot => ({
 	type: actionTypes.REMOVE_ITEM_FROM_PLAYER_INVENTORY,
 	slot

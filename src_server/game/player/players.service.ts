@@ -10,6 +10,7 @@ import { Player } from './player.entity';
 import { PlayerFactory } from './player.factory';
 
 import { InventoryService } from '../inventory';
+import { ItemsService } from '../items';
 
 @Component()
 export class PlayersService {
@@ -20,7 +21,8 @@ export class PlayersService {
 		@InjectRepository(Player)
 		private readonly playerRepository: Repository<Player>,
 		private readonly playerFactory: PlayerFactory,
-		private readonly inventoryService: InventoryService
+		private readonly inventoryService: InventoryService,
+		private readonly itemsService: ItemsService
 	) {}
 
 	async create(login: string, password: string, options?: object): Promise<Player> {
@@ -120,9 +122,7 @@ export class PlayersService {
 		const playerToLoad = await this.findById(id);
 
 		if (playerToLoad) {
-			playerToLoad.inventory = await this.inventoryService.getInventory(playerToLoad.inventory.id);
-			this.loadPlayer(playerToLoad);
-			return playerToLoad;
+			return await this.load(playerToLoad);
 		}
 
 		return null;
@@ -138,10 +138,7 @@ export class PlayersService {
 		const playerToLoad = await this.findByLogin(login);
 
 		if (playerToLoad) {
-			playerToLoad.inventory = await this.inventoryService.getInventory(playerToLoad.inventory.id);
-			this.loadPlayer(playerToLoad);
-
-			return playerToLoad;
+			return await this.load(playerToLoad);
 		}
 
 		return null;
@@ -151,12 +148,28 @@ export class PlayersService {
 		return await compare(password, hashedPassword);
 	}
 
+	private async load(player: Player): Promise<Player> {
+		if (player.constructor.name !== Player.name) {
+			log('error', `${player} is not Player instance:`);
+			log('error', player);
+			return null;
+		}
+
+		player.inventory = await this.inventoryService.getInventory(player.inventory.id);
+		if (player.meleeWeaponData) {
+			player.setMeleeWeapon(await this.itemsService.getItem(player.meleeWeaponData.id));
+		}
+		this.loadPlayer(player);
+
+		return player;
+	}
+
 	private async findById(id: string): Promise<Player> {
 		return await this.playerRepository.findOne({
 			where: {
 				id
 			},
-			relations: ['inventory']
+			relations: ['inventory', 'meleeWeaponData']
 		});
 	}
 
@@ -165,7 +178,7 @@ export class PlayersService {
 			where: {
 				login
 			},
-			relations: ['inventory']
+			relations: ['inventory', 'meleeWeaponData']
 		});
 	}
 }

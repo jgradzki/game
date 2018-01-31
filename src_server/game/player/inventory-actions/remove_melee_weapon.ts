@@ -1,38 +1,38 @@
 import { Component } from '@nestjs/common';
+import { forEach } from 'lodash';
 
 import { Player } from '../player.entity';
 import { InventoryService } from '../../inventory';
 
-import { IEatable } from '../../items/interfaces/attributes/eatable';
+import { IMeleeWeapon } from '../../items/interfaces/attributes/melee-wepon';
 
 @Component()
-export class EatAction {
+export class RemoveMeleeWeponAction {
 
 	constructor(private readonly inventoryService: InventoryService) {}
 
 	async action(player: Player, data: any): Promise<any> {
-		if (!data.slot) {
+		const item = player.meleeWeapon;
+
+		if (!item) {
 			return {
-				error: 'incorrect-data'
+				error: 'no-melee-weapon-equiped'
 			};
 		}
 
-		const slot = parseInt(data.slot, 10);
-		const item = player.inventory.getSlot(slot);
-
-		if (!item.eatable) {
+		if (player.inventory.itemsCount >= player.inventory.size) {
 			return {
-				error: 'incorrect-data'
+				error: 'inventory-is-full'
 			};
 		}
 
-		if (((item as any) as IEatable).eat(player)) {
-			await this.inventoryService.utils.removeItem(player.inventory, item);
-		}
+		player.inventory.addItem(item);
+		player.setMeleeWeapon(null);
 
 		return {
 			success: true,
 			inventory: player.inventory.filtreItems(),
+			meleeWeapon: player.meleeWeapon && player.meleeWeapon.getItemData(),
 			hp: player.hp,
 			hunger: player.hunger,
 			energy: player.energy

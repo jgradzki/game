@@ -11,6 +11,8 @@ import { ChangeDestinationDto } from './dto/chnage-destination.dto';
 
 // Actions
 import { EatAction } from './inventory-actions/eat.action';
+import { SetMeleeWeponAction } from './inventory-actions/set-melee-wepon.action';
+import { RemoveMeleeWeponAction } from './inventory-actions/remove_melee_weapon';
 
 @Controller('game/player')
 @UseGuards(LoggedInGuard)
@@ -20,10 +22,14 @@ export class PlayerController {
 	constructor(
 		private readonly configService: ConfigService,
 		private readonly playersService: PlayersService,
-		private readonly eatAction: EatAction
+		private readonly eatAction: EatAction,
+		private readonly setMeleeWeponAction: SetMeleeWeponAction,
+		private readonly removeMeleeWeponAction: RemoveMeleeWeponAction
 	) {
 		this.inventoryActions = {
-			eat: this.eatAction
+			eat: this.eatAction,
+			set_as_melee_weapon: this.setMeleeWeponAction,
+			remove_melee_weapon: this.removeMeleeWeponAction
 		};
 	}
 
@@ -81,6 +87,7 @@ export class PlayerController {
 			res.send({
 				error: 'incorrect-action'
 			});
+			return;
 		}
 
 		const respond = await this.inventoryActions[data.type].action(player, data);

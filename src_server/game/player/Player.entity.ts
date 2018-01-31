@@ -3,6 +3,7 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'ty
 import { MapPosition } from '../map/interfaces/map-position.interface';
 import { PlayerBase } from '../locations/entities/player-base/player-base.entity';
 import { Inventory } from '../inventory';
+import { Item, ItemController } from '../items';
 
 @Entity({ name: 'Players' })
 export class Player {
@@ -40,6 +41,12 @@ export class Player {
     @Column({ name: 'location_type', nullable: true })
     locationType: string = null;
 
+    @OneToOne(type => Item, { nullable: true })
+    @JoinColumn()
+    meleeWeaponData: Item;
+
+    meleeWeapon: ItemController;
+
 	sessionId: string;
 	socket: SocketIO.Socket;
 
@@ -72,6 +79,24 @@ export class Player {
 
 	inLocation(): boolean {
 		return !!this.locationId;
+	}
+
+	setMeleeWeapon(item: ItemController): ItemController {
+		let old: ItemController = null;
+
+		if (this.meleeWeapon) {
+			old = this.meleeWeapon;
+		}
+
+		if (!item) {
+			this.meleeWeapon = null;
+			this.meleeWeaponData = null;
+		} else {
+			this.meleeWeapon = item;
+			this.meleeWeaponData = item.data;
+		}
+
+		return old;
 	}
 
 	affect(actions: {

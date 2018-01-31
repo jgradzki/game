@@ -18,7 +18,8 @@ class Inventory extends Component {
 					width: this.props.width+'px',
 					height: this.props.height+'px',
 					top: this.props.top+'px',
-					left: this.props.left+'px'
+					left: this.props.left+'px',
+					...this.props.style
 				}}
 			>
 				<div className="inventoryTitle">
@@ -109,7 +110,8 @@ class Inventory extends Component {
 		items: PropTypes.arrayOf(PropTypes.shape({
 			type: PropTypes.string.isRequired,
 			count: PropTypes.number.isRequired
-		}))
+		})),
+		style: PropTypes.object
 	};
 
 	static defaultProps = {

@@ -1,5 +1,6 @@
 import { Item } from '../item.entity';
-import { IEatable, EatEffects } from './attributes/eatable';
+import { EatEffects } from './attributes/eatable';
+import { MeleeCombatEffects } from './attributes/melee-wepon';
 
 export interface IItemController {
 	maxStack: number;
@@ -38,6 +39,14 @@ export abstract class ItemController implements IItemController {
 		this.data.count = count;
 	}
 
+	get durability(): number {
+		return this.data.durability;
+	}
+
+	set durability(count: number) {
+		this.data.durability = count;
+	}
+
 	get maxStack(): number {
 		return ItemController.maxStack;
 	}
@@ -50,18 +59,28 @@ export abstract class ItemController implements IItemController {
 		return ((!!(this as any).eat) && (!!(this as any).eatEffects));
 	}
 
+	get isMeleeWepon(): boolean {
+		return (!!(this as any).combat);
+	}
+
 	getItemData() {
 		let data: {
+			id: string;
 			type: string;
 			count: number;
-			eat?: EatEffects
+			eat?: EatEffects;
+			combat?: MeleeCombatEffects;
 		} = {
+			id: this.id,
 			type: this.type,
 			count: this.count
 		};
 
 		if (this.eatable) {
 			data.eat = (this as any).eatEffects;
+		}
+		if (this.isMeleeWepon) {
+			data.combat = (this as any).combat;
 		}
 
 		return data;

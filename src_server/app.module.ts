@@ -47,7 +47,9 @@ export class ApplicationModule {
 	private handleExit(code) {
 		if (code !== 3) {
 			this.onExit();
+			return;
 		}
+		log('info', 'Goodbye.');
 	}
 
 	private handleUncaughtException(error) {
