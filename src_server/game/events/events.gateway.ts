@@ -42,6 +42,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		const player = await this.playersService.getPlayerById(sess.playerID);
 
 		if (player) {
+			if (player.socket) {
+				player.socket.emit('anotherLogin');
+				player.socket.disconnect(true);
+			}
+
 			player.socket = socket;
 		}
 	}
@@ -50,10 +55,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		const sess = this.getSession(socket);
 
 		const player = await this.playersService.getPlayerById(sess.playerID);
-
-		if (player) {
-			player.socket = null;
-		}
+		// set unlaod timeout
 	}
 
 	/*@SubscribeMessage('test')
