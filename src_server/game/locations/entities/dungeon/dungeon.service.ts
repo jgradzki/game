@@ -19,6 +19,8 @@ import { IRoom } from './interfaces/room.interface';
 import itemsGenerator from './utils/items-generator.utility';
 import enemiesGenerator from './utils/enemies-generator.utility';
 
+import { runFight } from '../../../fight';
+
 @Component()
 export class DungeonService extends ILocationService {
 	static dependecies = [];
@@ -185,6 +187,7 @@ export class DungeonService extends ILocationService {
 
 		const playerPosition = (data && data.position) || location.getPlayerPosition(player.id) || location.entryRoom;
 		const filteredRooms = {};
+		let fight = null;
 
 		forEach(location.rooms, (v: {[s: number]: IRoom }, x) => {
 			filteredRooms[x] = {};
@@ -195,24 +198,31 @@ export class DungeonService extends ILocationService {
 					filteredRooms[x][y] = {
 						doors: room.doors,
 						items: location.getRoomItems(room)
-						/*enemies: room.enemies && room.enemies.map(enemy => ({
-							name: enemy.name,
-							hp: enemy.hp,
-							attackPower: enemy.attackPower,
-							attackSpeed: enemy.attackSpeed
-						}))*/
 					};
+
+					if (room.enemies) {
+						const fightData = runFight(player, room.enemies);
+
+						room.enemies = fightData.enemies;
+
+						fight = {
+							fightLog: fightData.log,
+							playerHP: player.hp
+						};
+					}
 				} else {
 					filteredRooms[x][y] = {
 						doors: room.doors
 					};
 				}
+
 			});
 		});
 
 		return {
 			rooms: filteredRooms,
-			position: playerPosition
+			position: playerPosition,
+			fight
 		};
 
 	}

@@ -12,6 +12,8 @@ import { DungeonService } from './';
 import { InventoryService } from '../../../inventory';
 import { ItemsService } from '../../../items';
 
+import { runFight } from '../../../fight';
+
 @Component()
 export class DungeonController implements LocationController {
 	protected readonly actions: {[s: string]: (data) => Promise<any> } = {};
@@ -67,10 +69,7 @@ export class DungeonController implements LocationController {
 
 		return {
 			success: true,
-			data: {
-				// fight: this._checkFight(player),
-				...(await this.dungeonService.getDataForPlayer(location.id, player))
-			}
+			data: await this.dungeonService.getDataForPlayer(location.id, player)
 		};
 	}
 

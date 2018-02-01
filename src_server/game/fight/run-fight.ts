@@ -52,7 +52,11 @@ export const runFight = (player: Player, enemies: IEnemy[]) => {
 	}
 	if (enemies.length === 0) {
 		log += 'Pokonałeś wszystkich wrogów.\n';
+		enemies = null
 	}
 
-	return log;
+	return {
+		log,
+		enemies
+	};
 };
