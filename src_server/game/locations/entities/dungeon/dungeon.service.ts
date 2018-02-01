@@ -17,6 +17,7 @@ import { MapIcon } from '../../../map/interfaces/map-icon.enum';
 import { IRoom } from './interfaces/room.interface';
 
 import itemsGenerator from './utils/items-generator.utility';
+import enemiesGenerator from './utils/enemies-generator.utility';
 
 @Component()
 export class DungeonService extends ILocationService {
@@ -42,14 +43,24 @@ export class DungeonService extends ILocationService {
 
 	async create(
 		visibilityRules: any,
-		data?: {player: Player},
+		data?: {
+			min?: number,
+			max?: number,
+			difficulty?: number,
+			maxEnemies?: number
+		},
 		icon: MapIcon = MapIcon.BUILDING,
 		isPerm: boolean = false
 	) {
 		const dungeon = this.dungeonRepository.create({ isPerm });
+		const min = (data && data.min) || 4;
+		const max = (data && data.max) || 6;
+		const difficulty = (data && data.difficulty) || 1;
+		const maxEnemies = (data && data.maxEnemies) || 2;
 
-		dungeon.generateRooms();
+		dungeon.generateRooms(min, max, difficulty);
 		dungeon.rooms =  await itemsGenerator(this.itemsService, dungeon.rooms);
+		dungeon.rooms = enemiesGenerator(dungeon.rooms, difficulty, maxEnemies);
 
 		await this.entityManager.save(dungeon);
 

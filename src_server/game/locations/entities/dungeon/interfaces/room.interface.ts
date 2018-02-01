@@ -1,4 +1,5 @@
 import { ItemController } from '../../../../items';
+import { IEnemy } from '../../../interfaces/enemy.interface';
 
 export interface IRoom {
 	doors: {
@@ -9,4 +10,11 @@ export interface IRoom {
 	};
 	lock?: boolean;
 	items?: ItemController[];
+	enemies?: IEnemy[];
+}
+
+export interface IRooms {
+	[s: number]: {
+		[s: number]: IRoom
+	};
 }

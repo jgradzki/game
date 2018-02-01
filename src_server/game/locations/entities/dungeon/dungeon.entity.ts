@@ -101,7 +101,7 @@ export class Dungeon extends ILocation {
 		return this.rooms[x] && this.rooms[x][y];
 	}
 
-	generateRooms(min: number = 4, max: number = 6) {
+	generateRooms(min = 4, max = 6, difficulty = 1) {
 		const generatedRooms = roomsGenerator.generateRooms(min, max);
 
 		this.rooms = generatedRooms.rooms;
