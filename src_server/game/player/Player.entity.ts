@@ -48,6 +48,7 @@ export class Player {
     meleeWeapon: ItemController;
 
 	sessionId: string;
+	ip: string;
 	socket: SocketIO.Socket;
 
 	online = false;

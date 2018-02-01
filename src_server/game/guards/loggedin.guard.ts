@@ -17,14 +17,23 @@ export class LoggedInGuard implements CanActivate {
 		return await LoggedInGuard.check(session, playersService);
 	}
 
-	static async check(session, playersService: PlayersService) {
+	static async check(session: Express.Session, playersService: PlayersService) {
 		if (!session || !session.playerID || !session.login) {
 			return false;
 		}
 
 		const player = await playersService.getPlayerById(session.playerID);
 
-		if (!player || player.login !== session.login || player.sessionId !== session.id) {
+		if (
+			!player ||
+			player.login !== session.login ||
+			player.sessionId !== session.id ||
+			player.id !== session.playerID ||
+			session.ip !== player.ip
+		) {
+			session.login = null;
+			session.ip = null;
+			session.destroy(null);
 			return false;
 		}
 

@@ -59,6 +59,7 @@ export class ApiController {
 				session.playerID = player.id;
 				session.login = player.login;
 				player.sessionId = session.id;
+				player.ip = session.ip;
 				player.setOnline();
 
 				log('info', `Players online: ${this.playersService.onlineCount()}`);
