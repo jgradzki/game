@@ -4,26 +4,30 @@ import { WoodItemFactory, WoodItem } from './wood';
 import { SmallCanItemFactory, SmallCanItem } from './small-can';
 import { AxeItemFactory, AxeItem } from './axe';
 import { JunkItemFactory, JunkItem } from './junk';
+import { HacksawItem, HacksawItemFactory } from './hacksaw';
 
 export enum ItemTypes {
 	wood = 'wood',
 	smallCan = 'smallCan',
 	axe = 'axe',
-	junk = 'junk'
+	junk = 'junk',
+	hacksaw = 'hacksaw'
 }
 
 export const items: {[s: string]: typeof ItemController} = {
 	wood: WoodItem,
 	smallCan: SmallCanItem,
 	axe: AxeItem,
-	junk: JunkItem
+	junk: JunkItem,
+	hacksaw: HacksawItem
 };
 
-const itemsFactorys: { [s: string]: typeof ItemFactory } = {
+const itemsFactories: { [s: string]: typeof ItemFactory } = {
 	wood: WoodItemFactory,
 	smallCan: SmallCanItemFactory,
 	axe: AxeItemFactory,
-	junk: JunkItemFactory
+	junk: JunkItemFactory,
+	hacksaw: HacksawItemFactory
 };
 
-export default itemsFactorys;
+export default itemsFactories;

@@ -46,7 +46,7 @@ export class PlayerBaseController implements LocationController {
 	async upgradeEquipment(data: { location: PlayerBase, player: Player, requestData: any }) {
 		const { location, player, requestData } = data;
 		const level = location.getEquipmentLevel(requestData.equipment);
-		const costs = location.getUpgradeCosts(requestData.equipment, level);
+		const costs = location.getUpgradeCosts(requestData.equipment, level) || [];
 
 		if (!location.isUpgradeable(requestData.equipment, level)) {
 			return{
@@ -54,22 +54,16 @@ export class PlayerBaseController implements LocationController {
 				message: 'You cant upgrade it.'
 			};
 		} else {
-			if (!player.inventory.has(costs)) {
+			if (!this.inventoryService.utils.checkTypeArray(player.inventory.items, costs)) {
 				return {
 					error: true,
 					message: 'Not enough items.'
 				};
 			} else {
-				const success = await this.inventoryService.utils.takeMany(
-					player.inventory,
-					costs
-				);
-
-				if (!success) {
-					return {
-						error: true,
-						message: 'Not enough items.'
-					};
+				for (const cost of costs) {
+					if (!cost.preserve) {
+						await this.inventoryService.utils.takeCount(player.inventory, cost.type, cost.count);
+					}
 				}
 
 				location.upgrade(requestData.equipment);

@@ -65,7 +65,8 @@ export class PlayerBase extends ILocation {
 		if (UpgradeCosts[equipment].levels[currentLevel]) {
 			return UpgradeCosts[equipment].levels[currentLevel].map(item => ({
 				type: item.type,
-				count: item.count
+				count: item.count,
+				preserve: item.preserve
 			}));
 		}
 

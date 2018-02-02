@@ -27,7 +27,7 @@ const costs: ICosts = {
 			[
 				{type: ItemTypes.wood, count: 30},
 				{type: ItemTypes.junk, count: 100},
-				//{type: 'blade', count: 1, preserve: true}
+				{type:  ItemTypes.hacksaw, count: 1, preserve: true}
 			]
 		]
 	}
