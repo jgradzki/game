@@ -13,21 +13,22 @@ NodeGyp: https://github.com/nodejs/node-gyp#installation
 
 # Configuration
 
-1. Make `ormconfig.json` using `ormconfig.example.json`
+1. Make `db.config.json` using `src_server/db.config.example.json`
 2. Edit databse configuration
 ```javascript
 {
   "type": "postgres",
-  "host": "127.0.0.1",
+  "host": "localhost",
   "port": 5432,
-  "username": "root",
+  "username": "admin",
   "password": "",
   "database": "game",
-  "entities": ["./src_server/**/**.entity.ts"], // dont change it
-  "synchronize": true // set this to false in production
+  "synchronize": true, // set to false in production
+  "logging": false,
+  "dropSchema": false // dont set to true in production
 }
 ```
-3. You can change some game settings in `/server_src/game/data/config.ts`
+3. You can change some game settings in `server_src/game/data/config.ts`
 
 # Building
 
@@ -48,7 +49,7 @@ NodeGyp: https://github.com/nodejs/node-gyp#installation
 > gulp
 ```
 
-## Server
+## Server nodemon
 
 ```
 > gulp server
