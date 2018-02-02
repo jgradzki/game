@@ -22,11 +22,11 @@ const costs: ICosts = {
 		levels: [
 			[
 				{type: ItemTypes.wood, count: 10},
-				//{type: 'junk', count: 10}
+				{type: ItemTypes.junk, count: 10}
 			],
 			[
 				{type: ItemTypes.wood, count: 30},
-				//{type: 'junk', count: 100},
+				{type: ItemTypes.junk, count: 100},
 				//{type: 'blade', count: 1, preserve: true}
 			]
 		]

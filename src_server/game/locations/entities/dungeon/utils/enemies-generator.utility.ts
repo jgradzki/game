@@ -30,7 +30,7 @@ const rollEnemies = (filteredEnemies, difficulty = 1, maxEnemies = 2) => {
 
 	while (
 		(enemiesList.length < maxEnemies) &&
-		roll(0, 100) < (25 * (ceil((difficulty+3) / 2)) / (enemiesList.length + 1))
+		roll(0, 100) < (20 * (ceil((difficulty + 3) / 2)) / (enemiesList.length + 1))
 	) {
 		const rolled = roll(0, filteredEnemies.length - 1);
 		const enemy = filteredEnemies[rolled];

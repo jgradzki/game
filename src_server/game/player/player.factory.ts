@@ -54,7 +54,7 @@ export class PlayerFactory {
 			{x: 100, y: 100},
 			{width: 20, height: 20},
 			{for: player.id},
-			{difficulty: 10},
+			{difficulty: 1},
 			MapIcon.BUILDING,
 			true
 		);

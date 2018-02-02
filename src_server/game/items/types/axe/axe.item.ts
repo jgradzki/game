@@ -6,7 +6,7 @@ export class AxeItem extends ItemController implements IItemController, IMeleeWe
 	data: Item;
 
 	static maxStack = 1;
-	static rarity = 50;
+	static rarity = 10;
 
 	combat: MeleeCombatEffects = {
 		attack: 10,

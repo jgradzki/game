@@ -37,8 +37,8 @@ class ItemsGenerator {
 	private async generateItems(): Promise<ItemController[]> {
 		const itemsForRoom: ItemController[] = [];
 
-		for (let i = 0; i < 5; i++) {
-			const item = await this.generateItem();
+		for (const itemName of this.itemTypesNames) {
+			const item = await this.generateItem(itemName);
 
 			if (item) {
 				itemsForRoom.push(item);
@@ -48,8 +48,7 @@ class ItemsGenerator {
 		return itemsForRoom;
 	}
 
-	private async generateItem(): Promise<ItemController> {
-		const itemName = this.itemTypesNames[roll(0, this.itemTypesNames.length - 1)];
+	private async generateItem(itemName: string): Promise<ItemController> {
 		const itemModel = items[itemName];
 		const itemCount = this.rollItemCount(itemModel);
 
@@ -63,7 +62,7 @@ class ItemsGenerator {
 	private rollItemCount(itemModel: typeof ItemController): number {
 		let count = 0;
 
-		while ((roll(0, 100) < itemModel.rarity) && (count < itemModel.maxStack)) {
+		while ((roll(0, 100) < itemModel.rarity)) {
 			count++;
 		}
 
