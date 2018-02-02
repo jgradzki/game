@@ -83,6 +83,9 @@ export class PlayersService {
 			await this.savePlayer(toUnload);
 		}
 
+		await this.inventoryService.unloadInventory(player.inventory);
+		await this.locationsService.unloadLocation(player.base);
+
 		const index = findIndex(this.players, pa => pa.id === player.id);
 
 		if (index > -1) {

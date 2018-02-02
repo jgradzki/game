@@ -50,7 +50,7 @@ export class Player {
 	sessionId: string;
 	ip: string;
 	socket: SocketIO.Socket;
-
+	disconnectTimeout;
 	online = false;
 
 	mapTarget: MapPosition = null;

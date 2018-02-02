@@ -18,6 +18,7 @@ import { log } from '../../logger';
 
 import { LoggedInGuard } from '../guards/loggedin.guard';
 
+import { ConfigService } from '../config/config.service';
 import { PlayersService } from '../player/players.service';
 
 @WebSocketGateway()
@@ -25,7 +26,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	@WebSocketServer() server;
 	session: RequestHandler;
 
-	constructor(private readonly playersService: PlayersService) {}
+	constructor(
+		private readonly playersService: PlayersService,
+		private readonly configService: ConfigService
+	) {}
 
 	afterInit(io: SocketIO.Server) {
 		io.use(sharedsession(this.session));
@@ -48,6 +52,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			}
 
 			player.socket = socket;
+
+			if (player.disconnectTimeout) {
+				clearTimeout(player.disconnectTimeout);
+				player.disconnectTimeout = null;
+			}
 		}
 	}
 
@@ -55,7 +64,16 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		const sess = this.getSession(socket);
 
 		const player = await this.playersService.getPlayerById(sess.playerID);
-		// set unlaod timeout
+
+		if (player) {
+			player.disconnectTimeout = setTimeout(() => {
+				this.playersService.unloadPlayer(player)
+					.then(() => {
+						log('info', `Players online: ${this.playersService.onlineCount()}`);
+					});
+
+			}, this.configService.get('gameServer.unloadPlayerTimeout', 10)*60*1000);
+		}
 	}
 
 	/*@SubscribeMessage('test')

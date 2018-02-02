@@ -14,6 +14,7 @@ export abstract class ILocationService {
 	): Promise<any>;
 	abstract getLocation(id: string): Promise<ILocation>;
 	abstract getLocationById(id: string): Promise<ILocation>;
+	abstract unloadLocation(location: ILocation, save?: boolean);
 	abstract unloadAllLocations(): Promise<any>;
 	abstract getDataForPlayer(locationId: string, player: Player, data?: any): Promise<any>;
 	abstract controller(): LocationController;
