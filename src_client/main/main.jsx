@@ -49,7 +49,7 @@ axios.post('game/request/init')
 			location: config.locationReducerInitial
 		};
 
-		let socket = io();
+		const socket = io();
 
 		socket.on('error', () => {
 			console.log('error');
@@ -116,6 +116,6 @@ axios.post('game/request/init')
 	})
 	.catch(err => {
 		log('error', err);
-		//alert('Something went terribly wrong.');
+		alert('Something went terribly wrong.');
 		//redirect
 	});

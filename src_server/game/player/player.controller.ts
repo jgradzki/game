@@ -90,6 +90,14 @@ export class PlayerController {
 			return;
 		}
 
+		if (!player.isAlive()) {
+			res.send({
+				error: true,
+				errorMessage: 'Jesteś martwy(na śmierć).'
+			});
+			return;
+		}
+
 		const respond = await this.inventoryActions[data.type].action(player, data);
 
 		res.send(respond);

@@ -11,6 +11,9 @@ import { PlayerFactory } from './player.factory';
 
 import { InventoryService } from '../inventory';
 import { ItemsService } from '../items';
+import { LocationsService } from '../locations/locations.service';
+import { LocationType } from '../locations/entities';
+import { PlayerBase } from '../locations/entities/player-base'
 
 @Component()
 export class PlayersService {
@@ -22,7 +25,8 @@ export class PlayersService {
 		private readonly playerRepository: Repository<Player>,
 		private readonly playerFactory: PlayerFactory,
 		private readonly inventoryService: InventoryService,
-		private readonly itemsService: ItemsService
+		private readonly itemsService: ItemsService,
+		private readonly locationsService: LocationsService
 	) {}
 
 	async create(login: string, password: string, options?: object): Promise<Player> {
@@ -155,10 +159,13 @@ export class PlayersService {
 			return null;
 		}
 
+		player.base = (await this.locationsService.getLocationById(LocationType.PlayerBase, player.base.id) as PlayerBase);
 		player.inventory = await this.inventoryService.getInventory(player.inventory.id);
+
 		if (player.meleeWeaponData) {
 			player.setMeleeWeapon(await this.itemsService.getItem(player.meleeWeaponData.id));
 		}
+
 		this.loadPlayer(player);
 
 		return player;
@@ -169,7 +176,7 @@ export class PlayersService {
 			where: {
 				id
 			},
-			relations: ['inventory', 'meleeWeaponData']
+			relations: ['base', 'inventory', 'meleeWeaponData']
 		});
 	}
 
@@ -178,7 +185,7 @@ export class PlayersService {
 			where: {
 				login
 			},
-			relations: ['inventory', 'meleeWeaponData']
+			relations: ['base', 'inventory', 'meleeWeaponData']
 		});
 	}
 }

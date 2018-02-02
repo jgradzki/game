@@ -6,6 +6,8 @@ import { LoggedInGuard } from '../guards/loggedin.guard';
 import { ConfigService } from '../config/config.service';
 import { PlayersService } from '../player/players.service';
 import { LocationsService } from '../locations/locations.service';
+import { InventoryService } from '../inventory';
+import { ItemsService } from '../items';
 import { stringToLocationType } from '../locations/entities';
 
 @Controller('game/request')
@@ -15,6 +17,8 @@ export class RequestController {
 		private readonly playersService: PlayersService,
 		private readonly configService: ConfigService,
 		private readonly locationsService: LocationsService,
+		private readonly inventoryService: InventoryService,
+		private readonly itemsService: ItemsService,
 	) {}
 
 	@Post('init')
@@ -65,6 +69,46 @@ export class RequestController {
 		}
 
 		res.send(initData);
+	}
+
+	@Post('reset')
+	async reset(@Response() res, @Session() session) {
+		const player = await this.playersService.getPlayerById(session.playerID);
+		const { x, y } = player.base.mapElement.mapPosition;
+
+		if (player.isAlive()) {
+			res.send({
+				error: 'cant-reset-when-alive'
+			});
+		}
+
+		this.inventoryService.utils.removeItems(player.inventory, player.inventory.items);
+
+		if (player.inLocation()) {
+
+			const location = await this.locationsService.getLocation(
+				stringToLocationType(player.locationType),
+				player.locationId
+			);
+
+			if (location) {
+				await location.onPlayerExit(player);
+			}
+
+			player.exitLocation();
+		}
+
+		if (player.meleeWeapon) {
+			this.itemsService.removeItem(player.meleeWeapon);
+			player.meleeWeapon = null;
+		}
+
+		player.mapPosition = { x, y };
+		player.hp = 100;
+		player.hunger = 0;
+		player.energy = 100;
+
+		res.send({success: true});
 	}
 
 }

@@ -255,7 +255,8 @@ export class DungeonService extends ILocationService {
 		return await this.dungeonRepository.findOne({
 			where: {
 				id
-			}
+			},
+			relations: ['mapElement']
 		});
 	}
 

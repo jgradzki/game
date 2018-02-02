@@ -189,7 +189,8 @@ export class PlayerBaseService extends ILocationService {
 		return await this.playerBaseRepository.findOne({
 			where: {
 				id
-			}
+			},
+			relations: ['mapElement']
 		});
 	}
 

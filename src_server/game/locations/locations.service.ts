@@ -68,6 +68,14 @@ export class LocationsService {
 		return await this.locationsServices[type].getLocation(id);
 	}
 
+	async getLocationById(type: LocationType, id: string): Promise<ILocation> {
+		if (!this.locationsServices[type] || !this.locationsServices[type].create) {
+			throw new TypeError(`${type} is not valid location type.`);
+		}
+
+		return await this.locationsServices[type].getLocationById(id);
+	}
+
 	getLocationService(type: LocationType): ILocationService {
 		if (!this.locationsServices[type]) {
 			throw new TypeError(`${type} is not valid location type.`);
