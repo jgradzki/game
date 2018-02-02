@@ -6,4 +6,5 @@ public/js/register.js
 node_modules/
 *.log
 /build
-/ormconfig.json
+src_server/db.config.json
+

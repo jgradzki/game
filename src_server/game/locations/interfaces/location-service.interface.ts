@@ -2,7 +2,7 @@ import { MapPosition } from '../../map/interfaces/map-position.interface';
 import { MapIcon } from '../../map/interfaces/map-icon.enum';
 import { ILocation } from './location.interface';
 import { LocationController } from './location-controller.interface';
-import { Player } from '../../player';
+import { Player } from '../../player/player.entity';
 
 export abstract class ILocationService {
 	abstract getLocationName(): string;

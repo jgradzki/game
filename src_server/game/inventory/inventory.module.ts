@@ -1,5 +1,5 @@
 import { Module  } from '@nestjs/common';
-import { TypeOrmModule } from '../../db';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { InventoryService } from './inventory.service';
 import { Inventory } from './inventory.entity';

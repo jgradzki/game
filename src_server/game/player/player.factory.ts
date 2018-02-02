@@ -1,5 +1,5 @@
 import { Component } from '@nestjs/common';
-import { TypeOrmModule, InjectRepository } from '../../db';
+import { TypeOrmModule, InjectRepository } from '@nestjs/typeorm';
 import {  EntityManager, Repository } from 'typeorm';
 import { hash } from 'bcrypt';
 

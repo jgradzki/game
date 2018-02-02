@@ -10,7 +10,7 @@ export interface IItemController {
 }
 
 export abstract class ItemController implements IItemController {
-	abstract data: Item;
+	data: Item;
 
 	static maxStack = 1;
 	static rarity = 20;

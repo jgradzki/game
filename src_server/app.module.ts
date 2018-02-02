@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from './db';
 import { Connection } from 'typeorm';
 import { log } from './logger';
 
@@ -11,7 +10,6 @@ import { AppController } from './app.controller';
 
 @Module({
 	imports: [
-		TypeOrmModule.forRoot(),
 		GameModule,
 		MainPageModule
 	],

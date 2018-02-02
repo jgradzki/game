@@ -1,5 +1,5 @@
 import { Component, Inject, forwardRef } from '@nestjs/common';
-import { InjectRepository } from '../../../../db';
+import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { find, reduce, forEach, findIndex, isArray } from 'lodash';
 import { log } from '../../../../logger';

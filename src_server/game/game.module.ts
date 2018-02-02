@@ -1,4 +1,6 @@
 import { Module  } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { forEach, reduce } from 'lodash';
 import { log } from '../logger';
 
 import { ConfigModule } from './config/config.module';
@@ -16,8 +18,25 @@ import { RequestController } from './request/request.controller';
 
 import { GameService } from './game.service';
 
+import { entities } from './entities';
+/* tslint:disable */
+var dbConfig = require('../db.config.json');
+/* tslint:enable */
+
 @Module({
 	imports: [
+		TypeOrmModule.forRoot({
+			type: dbConfig.type,
+			host: dbConfig.host,
+			port: dbConfig.port,
+			username: dbConfig.username,
+			password: dbConfig.password,
+			database: dbConfig.database,
+			entities,
+			synchronize: dbConfig.synchronize,
+			logging: dbConfig.logging,
+			dropSchema: dbConfig.dropSchema
+		}),
 		ConfigModule,
 		ItemsModule,
 		InventoryModule,

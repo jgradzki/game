@@ -95,19 +95,13 @@ gulp.task('build-client', () => {
 });
 
 gulp.task('build-server', () => {
-	//gulp.src(path.resolve(serverSrc, '**/**/**.js'))
-		/*.on('error', handleError)
-		.pipe(babel({
-			presets: ['es2017', 'stage-0'],
-			plugins: ['transform-es2015-modules-commonjs']
-		}))
-		.on('error', handleError)
-		.pipe(gulp.dest(dest))
-		.on('error', handleError);*/
-
-	 return tsProject.src()
-        .pipe(tsProject())
-        .js.pipe(gulp.dest(dest));
+	return merge(
+		gulp.src(path.resolve(serverSrc, '**/*.json'))
+			.pipe(gulp.dest(path.resolve(dest))),
+		tsProject.src()
+			.pipe(tsProject())
+			.js.pipe(gulp.dest(dest))
+	);
 });
 
 gulp.task('build', ['build-server', 'build-client'], () => {

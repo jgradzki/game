@@ -1,6 +1,6 @@
 import { Component } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
-import { InjectRepository } from '../../db';
+import { InjectRepository } from '@nestjs/typeorm';
 import { find, findIndex } from 'lodash';
 import { log } from '../../logger';
 

@@ -1,5 +1,5 @@
 import { round, forEach, filter } from 'lodash';
-import { Player } from '../player';
+import { Player } from '../player/player.entity';
 import { IEnemy } from '../locations/interfaces/enemy.interface';
 import { IMeleeWeapon } from '../items/interfaces/attributes/melee-wepon';
 

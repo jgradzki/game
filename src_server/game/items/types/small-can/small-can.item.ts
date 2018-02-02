@@ -1,7 +1,7 @@
 import { Item } from '../../item.entity';
 import { IItemController, ItemController } from '../../interfaces/item.interface';
 import { IEatable, EatEffects } from '../../interfaces/attributes/eatable';
-import { Player } from '../../../player';
+import { Player } from '../../../player/player.entity';
 
 export class SmallCanItem extends ItemController implements IItemController, IEatable {
 	data: Item;

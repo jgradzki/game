@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '../../db';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { MapElement } from './MapElement.entity';
 
