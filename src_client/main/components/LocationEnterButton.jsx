@@ -7,11 +7,12 @@ class LocationEnterButton extends Component {
 	constructor(props) {
 		super(props);
 		this.locationID = 0;
+		this.type = '';
 	}
 
 	_LocationEnterButtonOnClick() {
     	if (this._checkPlayer()) {
-			LocationManager.requestLocationEnter(this.locationID);
+			LocationManager.requestLocationEnter(this.locationID, this.type);
     	} else {
     		console.log('Error while entering location, please contact developers');
     	}
@@ -48,6 +49,7 @@ class LocationEnterButton extends Component {
     			if ( ( playerPosition.y < objectCorners.cRightBottom.y ) && ( playerPosition.y > objectCorners.cLeftTop.y ) ) {
     				is = true;
     				this.locationID = t.id;
+    				this.type = t.types[0];
     			}
     		}
     	});
@@ -57,8 +59,8 @@ class LocationEnterButton extends Component {
 	render() {
 		return (
 			<div className="locationEnterButton" >
-				<button 
-					onClick={() => this._LocationEnterButtonOnClick() } 
+				<button
+					onClick={() => this._LocationEnterButtonOnClick() }
 					disabled={!this._checkPlayer()}
 				>Wejdź</button>
 			</div>

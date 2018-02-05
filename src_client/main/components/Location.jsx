@@ -18,17 +18,13 @@ class Location extends Component {
 	_getLocation() {
 		const Location = locations[this.props.location.locationType];
 
-		if (location) {
-			return <div>
-				<Location requestExit={LocationManager.requestLocationExit} />
-			</div>;
-		} else {
-			const DefaultLoc = locations['default'];
-
-			return <div>
-				<DefaultLoc />
-			</div>;
+		if (Location) {
+			return <Location requestExit={LocationManager.requestLocationExit} />;
 		}
+
+		const DefaultLoc = locations['default'];
+
+		return <DefaultLoc />;
 	}
 
 	static propTypes = {

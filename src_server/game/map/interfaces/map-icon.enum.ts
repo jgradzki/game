@@ -1,0 +1,6 @@
+export enum MapIcon {
+	HOME = 'HOME',
+	BUILDING = 'BUILDING',
+	PLAYER = 'PLAYER',
+	DESTINATION = 'DESTINATION'
+}

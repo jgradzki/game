@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { log } from '../../libs/debug';
-import makeRequest from '../../libs/request';
+import axios from 'axios';
 import * as actions from '../../actions/locations/playerBaseActions';
 import { setPlayerInventory } from '../../actions/player';
 
@@ -52,11 +52,10 @@ class PlayerBase extends Component {
 	}
 
 	_upgrade(equipment) {
-		makeRequest(
-			'playerBaseAction',
+		axios.post('game/location/action',
 			{
-				type: 'upgrade',
-				equipment: _.toUpper(equipment)
+				type: 'upgradeEquipment',
+				equipment: _.toLower(equipment)
 			}
 		)
 			.then(response => response.data)

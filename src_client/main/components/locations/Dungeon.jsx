@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import axios from 'axios';
 import { connect } from 'react-redux';
 import { log } from '../../libs/debug';
-import makeRequest from '../../libs/request';
 
 import { setLocationMap, setPlayerPosition } from '../../actions/location';
 import * as dungeonActions from '../../actions/locations/dungeonActions';
@@ -115,7 +115,7 @@ class Dungeon extends Component {
 	_getCurrentRoom() {
 		const playerPosition = this._getPlayerPosition();
 
-		return this._getRooms() && this._getRooms()[playerPosition.y][playerPosition.x];
+		return this._getRooms() && this._getRooms()[playerPosition.x][playerPosition.y];
 	}
 
 	_getEnemies() {
@@ -131,9 +131,9 @@ class Dungeon extends Component {
 
 		if (items) {
 			if (items[slot]) {
-				makeRequest('dungeonAction',
+				axios.post('game/location/action',
 					{
-						type: 'loot',
+						type: 'takeLoot',
 						slot
 					}
 				)

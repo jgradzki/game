@@ -20,12 +20,13 @@ export const stopDrag = () => ({
 	type: actionTypes.MAP_STOP_DRAG
 });
 
-export const addMapElement = (id, icon, position, size) => ({
+export const addMapElement = (id, icon, position, size, types) => ({
 	type: actionTypes.MAP_ADD_ELEMENT,
 	id,
 	position,
 	size,
-	icon
+	icon,
+	types
 });
 
 export const changeDestination = (position, speed = 0) => ({

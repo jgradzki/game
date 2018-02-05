@@ -18,7 +18,8 @@ class Inventory extends Component {
 					width: this.props.width+'px',
 					height: this.props.height+'px',
 					top: this.props.top+'px',
-					left: this.props.left+'px'
+					left: this.props.left+'px',
+					...this.props.style
 				}}
 			>
 				<div className="inventoryTitle">
@@ -56,8 +57,8 @@ class Inventory extends Component {
 								<span>{item.count}</span>
 								<img
 									src=""
-									alt={item.name}
-									title={`${item.name}`}
+									alt={item.type}
+									title={`${item.type}`}
 								/>
 							</ContextMenuProvider>
 							<PlayerInventoryMenu
@@ -77,8 +78,8 @@ class Inventory extends Component {
 						<span>{item.count}</span>
 						<img
 							src=""
-							alt={item.name}
-							title={`${item.name}`}
+							alt={item.type}
+							title={`${item.type}`}
 						/>
 					</div>;
 				}
@@ -107,10 +108,10 @@ class Inventory extends Component {
 		onClick: PropTypes.func,
 		onMenuClick: PropTypes.func,
 		items: PropTypes.arrayOf(PropTypes.shape({
-			key: PropTypes.string.isRequired,
-			name: PropTypes.string.isRequired,
+			type: PropTypes.string.isRequired,
 			count: PropTypes.number.isRequired
-		}))
+		})),
+		style: PropTypes.object
 	};
 
 	static defaultProps = {

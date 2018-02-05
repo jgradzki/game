@@ -1,5 +1,8 @@
 # Requirements
-Application requires database supported by Sequelize and which supports Sequelize.ARRAY (Only PostgreSQL for now).
+
+Application requires database supported by [TypeORM](https://github.com/typeorm/typeorm/blob/master/docs/connection-options.md#common-connection-options).
+
+NodeGyp: https://github.com/nodejs/node-gyp#installation
 
 # Installation
 
@@ -10,19 +13,23 @@ Application requires database supported by Sequelize and which supports Sequeliz
 
 # Configuration
 
-1. Go to `src_server/data/`
-2. Make `config.js` using `config.example.js`
+1. Make `db.config.json` using `src_server/db.config.example.json`
 2. Edit databse configuration
 ```javascript
-db: {
-	adress: '127.0.0.1',
-	port: 5432,
-	user: '',
-	password: '',
-	db_name: '',
-	dialect: 'postgres'
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "admin",
+  "password": "",
+  "database": "game",
+  "synchronize": true, // set to false in production
+  "logging": false,
+  "dropSchema": false // dont set to true in production
 }
 ```
+3. You can change some game settings in `server_src/game/data/config.ts`
+
 # Building
 
 ```
@@ -42,7 +49,7 @@ db: {
 > gulp
 ```
 
-## Server
+## Server nodemon
 
 ```
 > gulp server
@@ -51,7 +58,7 @@ db: {
 ## Auto eslint fix
 
 ```
-> gulp eslint
+> gulp lint
 ```
 
 ## Cleaning build folder

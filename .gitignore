@@ -6,4 +6,5 @@ public/js/register.js
 node_modules/
 *.log
 /build
-/src_server/data/config.js
+src_server/db.config.json
+

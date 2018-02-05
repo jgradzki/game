@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
+import { post } from 'axios';
+
 import FormTitle from './FormTitle.jsx';
 
 class LoginForm extends Component {
 	constructor() {
 		super();
-		this._onClick = this._onClick.bind(this);
-		this._postHandle = this._postHandle.bind(this);
-		this._handleChange = this._handleChange.bind(this);
 
 		if (process.env.NODE_ENV !== 'production') {
 			this.state = {
@@ -15,7 +14,7 @@ class LoginForm extends Component {
 				login: 'Admin',
 				pass: '123456'
 			};
-			setTimeout(() => this._onClick(), 500);
+			setTimeout(() => this._submit(), 1000);
 		} else {
 			this.state = {
 				success: false,
@@ -24,6 +23,34 @@ class LoginForm extends Component {
 				pass: ''
 			};
 		}
+	}
+
+	render() {
+		return (
+			<div className = "loginForm">
+				<FormTitle>Logowanie</FormTitle>
+				{this._renderError()}
+				Login:
+				<input
+					type="text"
+					placeholder="Login"
+					name="login"
+					onChange={event => this._handleChange(event)}
+					onKeyPress={event => this._onKeyPress(event)}
+				/>
+				<br/>
+				Hasło:
+				<input
+					type="password"
+					placeholder="Password"
+					name="pass"
+					onChange={event => this._handleChange(event)}
+					onKeyPress={event => this._onKeyPress(event)}
+				/>
+				<br/>
+				<button onClick = { () => this._submit() }>Submit</button><br/ >
+			</div>
+		);
 	}
 
 	_postHandle(data) {
@@ -35,6 +62,12 @@ class LoginForm extends Component {
 		}
 	}
 
+	_onKeyPress(event) {
+		if (event.key === 'Enter') {
+			return this._submit();
+		}
+	}
+
 	_handleChange(event) {
 		if (event.target.name === 'login') {
 			this.setState({ login: event.target.value });
@@ -43,27 +76,19 @@ class LoginForm extends Component {
 		}
 	}
 
-	_onClick() {
-		$.post('/', { form: { login: this.state.login,
-			pass: this.state.pass } }, this._postHandle, 'json');
+	_submit() {
+		post('/api/login', {
+			login: this.state.login,
+			pass: this.state.pass
+		})
+			.then(response => this._postHandle(response.data))
+			.catch(() => this.setState({ error: 'Wystąpił błąd. Spróbuj ponownie później.' }));
 	}
 
 	_renderError() {
 		if (this.state.error) {
 			return <div className = 'error' > Error: { this.state.error } </div>;
 		}
-	}
-
-	render() {
-		return (
-			<div className = "loginForm">
-				<FormTitle>Logowanie</FormTitle>
-				{this._renderError()}
-				Login: <input type = "text"	placeholder = "Login" name = "login" onChange = { this._handleChange }/><br/ >
-				Hasło: <input type = "password"	placeholder = "Password" name = "pass" onChange = { this._handleChange }/><br/ >
-				<button onClick = { this._onClick }>Submit</button><br/ >
-			</div>
-		);
 	}
 }
 

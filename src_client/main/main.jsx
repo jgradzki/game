@@ -25,7 +25,7 @@ Debug.enable('init', 'error', 'LocationManager');
 log('init', 'Initial configuration: ', config);
 
 
-axios.post('game/request', { type: 'init' })
+axios.post('game/request/init')
 	.then(response => response.data)
 	.then(data => {
 		log('init', 'Session data: ', data);
@@ -49,7 +49,7 @@ axios.post('game/request', { type: 'init' })
 			location: config.locationReducerInitial
 		};
 
-		let socket = io();
+		const socket = io();
 
 		socket.on('error', () => {
 			console.log('error');
@@ -98,14 +98,14 @@ axios.post('game/request', { type: 'init' })
 			);
 		});
 	})
-	.then(() => axios.post('game/request', { type: 'getMapElements' }))
+	.then(() => axios.get('game/map/elements'))
 	.then(response => response.data)
 	.then(data => {
 		log('init', 'Map elements: ', data);
 		if (data) {
-			if (data.success && data.elements) {
+			if (data.elements) {
 				data.elements.forEach(element =>
-					store.dispatch(addMapElement(element.id, element.icon, element.position, element.size))
+					store.dispatch(addMapElement(element.id, element.icon, element.position, element.size, element.types))
 				);
 			}
 
@@ -116,6 +116,6 @@ axios.post('game/request', { type: 'init' })
 	})
 	.catch(err => {
 		log('error', err);
-		//alert('Something went terribly wrong.');
+		alert('Something went terribly wrong.');
 		//redirect
 	});

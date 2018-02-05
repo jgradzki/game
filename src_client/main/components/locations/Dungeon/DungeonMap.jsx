@@ -40,45 +40,42 @@ class DungeonMap extends Component {
 		let rooms = this.props.location.map;
 		let array = [];
 
-		for (let y = 0; y < rooms.length; y++) {
-			for (let x = 0; x < rooms[y].length; x++) {
-				if (rooms[y][x].is) {
-					let position = {
-						left: ( this.roomSize*(x) ),
-						top: ( this.roomSize*(y) )
-					};
+		_.forEach(rooms, (value, x) => {
+			x = parseInt(x, 10);
+			_.forEach(value, (room, y) => {
+				y = parseInt(y, 10);
+				let position = {
+					left: ( this.roomSize*(x) ),
+					top: ( this.roomSize*(y) )
+				};
+				let os = '';
 
-					let os = '';
-
-					if (this.props.location.playerPosition.x === x && this.props.location.playerPosition.y === y) {
-						os += ' now';
-					}
-
-					if (this._canMove(x, y)) {
-						os += ' click';
-					}
-
-					//if(!rooms[y][x].is){
-					//os += ' empty'
-					//}
-					array.push(
-						<DungeonRoom
-							key={y+''+x}
-							overStyle={os}
-							onClick={() => this._roomClickHandler(x, y)}
-							pos={{
-								left: position.left,
-								top: position.top
-							}}
-							left={(rooms[y][x].doors.left ? 'true' : 'false')}
-							right={(rooms[y][x].doors.right ? 'true' : 'false')}
-							up={(rooms[y][x].doors.up ? 'true' : 'false')}
-							down={(rooms[y][x].doors.down ? 'true' : 'false')}
-						/>
-					);
+				if (this.props.location.playerPosition.x === x && this.props.location.playerPosition.y === y) {
+					os += ' now';
 				}
-			}
-		}
+
+				if (this._canMove(x, y)) {
+					os += ' click';
+				}
+
+				array.push(
+					<DungeonRoom
+						key={y+''+x}
+						overStyle={os}
+						onClick={() => this._roomClickHandler(x, y)}
+						pos={{
+							left: position.left,
+							top: position.top
+						}}
+						left={(rooms[x][y].doors.left ? 'true' : 'false')}
+						right={(rooms[x][y].doors.right ? 'true' : 'false')}
+						up={(rooms[x][y].doors.up ? 'true' : 'false')}
+						down={(rooms[x][y].doors.down ? 'true' : 'false')}
+					/>
+				);
+
+			});
+		});
 
 		return array;
 	}
@@ -93,22 +90,22 @@ class DungeonMap extends Component {
 
 		if (this.props.location.playerPosition.x-1 === x && this.props.location.playerPosition.y === y) {
 			//na lewo od current
-			if (rooms[y][x].doors.right) {
+			if (rooms[x][y].doors.right) {
 				can = true;
 			}
 		} else if (this.props.location.playerPosition.x+1 === x && this.props.location.playerPosition.y === y) {
 			//na prawo od current
-			if (rooms[y][x].doors.left) {
+			if (rooms[x][y].doors.left) {
 				can = true;
 			}
 		} else if (this.props.location.playerPosition.x === x && this.props.location.playerPosition.y-1 === y) {
 			//nad current
-			if (rooms[y][x].doors.down) {
+			if (rooms[x][y].doors.down) {
 				can = true;
 			}
 		} else if (this.props.location.playerPosition.x === x && this.props.location.playerPosition.y+1 === y) {
 			//pod current
-			if (rooms[y][x].doors.up) {
+			if (rooms[x][y].doors.up) {
 				can = true;
 			}
 		}
@@ -121,7 +118,7 @@ class DungeonMap extends Component {
 
 		if (typeof(x)===typeof(1) && typeof(y)===typeof(1)) {
 			if (this._canMove(x, y)) {
-				axios.post('game/request',
+				axios.post('game/location/action',
 					{
 						type: 'dungeonChangePosition',
 						position: {

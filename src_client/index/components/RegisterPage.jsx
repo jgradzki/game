@@ -4,9 +4,7 @@ import RegisterForm from './RegisterForm.jsx';
 class RegisterPage extends Component {
 
 	render() {
-		return (
-			<RegisterForm />
-		);
+		return <RegisterForm />;
 	}
 }
 

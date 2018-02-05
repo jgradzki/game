@@ -17,11 +17,23 @@ class InventoryView extends Component {
 		return (
 			<div className="inventoryWindow">
 				<Inventory
+					name="Broń biała"
+					top={10}
+					left={10}
+					width={80}
+					height={70}
+					slots={1}
+					items={this.getMeleeWeapon()}
+					menu='playerInventory'
+					onMenuClick={(action, slot) => onMenuAction(action, slot)}
+					style={{border: '0px'}}
+				/>
+				<Inventory
 					name="Ekwipunek"
-					top={0}
-					left={0}
-					width={495}
-					height={295}
+					top={100}
+					left={3}
+					width={491}
+					height={190}
 					slots={this.props.inventorySize}
 					items={this.props.inventory}
 					menu='playerInventory'
@@ -36,11 +48,26 @@ class InventoryView extends Component {
 		);
 	}
 
+	getMeleeWeapon() {
+		if (!this.props.meleeWeapon || !this.props.meleeWeapon.combat) {
+			return [];
+		}
+
+		return [{
+			...this.props.meleeWeapon,
+			combat: {
+				...this.props.meleeWeapon.combat,
+				equiped: true
+			}
+		}];
+	}
+
 	static propTypes = {
 		inventoryIsOpen: PropTypes.bool.isRequired,
 		inventorySize: PropTypes.number.isRequired,
 		inventory: PropTypes.array.isRequired,
 		closePlayerInventory: PropTypes.func.isRequired,
+		meleeWeapon: PropTypes.object
 	}
 }
 
@@ -48,6 +75,7 @@ let mapStateToProps  = state => ({
 	inventoryIsOpen: state.player.inventoryIsOpen || false,
 	inventorySize: state.player.inventorySize,
 	inventory: state.player.inventory,
+	meleeWeapon: state.player.meleeWeapon
 });
 
 let mapDispatchToProps = dispatch => ({

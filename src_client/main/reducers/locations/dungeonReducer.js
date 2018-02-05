@@ -1,29 +1,40 @@
+import { cloneDeep, forEach } from 'lodash';
 import { actionTypes } from '../../actions/locations/dungeonActions';
 
 const dungeonReducer = (state, action) => {
-	let rooms;
+	let rooms = {};
 
 	switch (action.type) {
 		case actionTypes.REMOVE_ITEM:
-			rooms = state.map.slice();
-			rooms[action.room.y][action.room.x].items = [
-				...rooms[action.room.y][action.room.x].items.slice(0, action.slot),
-				...rooms[action.room.y][action.room.x].items.slice(action.slot + 1)
-			];
+			forEach(cloneDeep(state.map), (row, x) => {
+				let temp;
+
+				forEach(row, (room, y) => {
+					if ((action.room.x !== x) || (action.room.y !== y)) {
+						if (!temp) {
+							temp = {};
+						}
+						temp[y] = room;
+					}
+				});
+				if (temp) {
+					rooms[x] = temp;
+				}
+			});
 			return {
 				...state,
 				map: rooms
 			};
 		case actionTypes.ADD_ITEM:
-			rooms = state.map.slice();
-			rooms[action.room.y][action.room.x].items.push(action.item);
+			rooms = cloneDeep(state.map);
+			rooms[action.room.x][action.room.y].items.push(action.item);
 			return {
 				...state,
 				map: rooms
 			};
 		case actionTypes.SET_LOOT_LIST:
-			rooms = state.map.slice();
-			rooms[action.room.y][action.room.x].items = action.inventory;
+			rooms = cloneDeep(state.map);
+			rooms[action.room.x][action.room.y].items = action.inventory;
 			return {
 				...state,
 				map: rooms

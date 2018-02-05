@@ -37,7 +37,8 @@ const mapStateReducer = (state = 0, action) => {
 					id: action.id,
 					icon: action.icon,
 					position: action.position,
-					size: action.size
+					size: action.size,
+					types: action.types
 				}]
 			};
 		case actionTypes.MAP_CHANGE_DESTINATION:

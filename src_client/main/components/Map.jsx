@@ -114,7 +114,7 @@ class Map extends Component {
 	}
 
 	_mapClick(e) {
-		if (this.props.deadMode) {
+		if (this.props.deadMode || e.button !== 0) {
 			return;
 		}
 
@@ -134,18 +134,16 @@ class Map extends Component {
 	}
 
 	_changeDestination(position) {
-		axios.post('/game/request',
+		axios.post('/game/player/changeDestination',
 			{
-				type: 'changeDestination',
 				position
 			},
 			{
-				method: 'post',
 				timeout: 5000
 			}
 		)
 			.then(response => {
-				let data = response.data;
+				const data = response.data;
 
 				if (data.errorMessage) {
 					this.props.setError(`Błąd: ${data.errorMessage}`);
@@ -156,7 +154,7 @@ class Map extends Component {
 				}
 			})
 			.catch(error => {
-				log('errors', error);
+				log('error', error);
 				if (error && error.toString().includes('timeout')) {
 					this.props.setError('Serwer nie odpowiada.');
 				}
@@ -203,13 +201,13 @@ class Map extends Component {
 
 	_renderDestination() {
 		if (this.props.destination) {
-			return <MapElement icon='destination' id='map_dest' position={this.props.destination} size={this.props.config.destSize} />;
+			return <MapElement icon='DESTINATION' id='map_dest' position={this.props.destination} size={this.props.config.destSize} />;
 		}
 	}
 
 	_renderPlayer() {
 		if (this.props.playerPosition) {
-			return <MapElement icon='destination' id='map_player' position={this.props.playerPosition} size={this.props.config.playerSize} />;
+			return <MapElement icon='DESTINATION' id='map_player' position={this.props.playerPosition} size={this.props.config.playerSize} />;
 		}
 	}
 

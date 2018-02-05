@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { log } from '../libs/debug';
 
 import { getDeadModeWindowStatus } from '../selectors/systemSelectors';
+import { getPlayerStateForTopBar } from '../selectors/playerSelector'
 
 import ErrorBox from './ErrorBox.jsx';
 import DeadView from './DeadView.jsx';
@@ -20,13 +21,13 @@ class GameContainer extends Component {
 		log('render', 'GameContainer render');
 		if (this.props.showDeadWindow) {
 			return (
-				<div className="gameContainer">
+				<div className="gameContainer" onContextMenu={this.contextMenu}>
 					<DeadView />
 				</div>
 			);
 		} else {
 			return (
-				<div className="gameContainer">
+				<div className="gameContainer" onContextMenu={this.contextMenu}>
 					<TopBar />
 					<Map />
 					<Location />
@@ -34,9 +35,14 @@ class GameContainer extends Component {
 					<Loading />
 					<ErrorBox />
 					<InventoryView />
+					{this.props.playerStats.hp <= 0 ? <DeadView /> : null }
 				</div>
 			);
 		}
+	}
+
+	contextMenu(event) {
+		event.preventDefault();
 	}
 
 	static propTypes = {
@@ -45,7 +51,8 @@ class GameContainer extends Component {
 }
 
 let mapStateToProps  = (state, props) => ({
-	showDeadWindow: getDeadModeWindowStatus(state, props)
+	showDeadWindow: getDeadModeWindowStatus(state, props),
+	playerStats: getPlayerStateForTopBar(state, props)
 });
 
 let mapDispatchToProps = dispatch => ({});
