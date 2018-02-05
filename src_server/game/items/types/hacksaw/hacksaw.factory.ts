@@ -6,8 +6,8 @@ import { HacksawItem } from './hacksaw.item';
 export class HacksawItemFactory extends ItemFactory {
 	create(count = 1): HacksawItem {
 		const item = this.itemRepository.create({
-			type: 'blade',
-			category: ItemCategory.MATERIAL,
+			type: 'hacksaw',
+			category: ItemCategory.TOOL,
 			count
 		});
 
